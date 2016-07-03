@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://maohong.github.io/"/>
-  <updated>2016-07-03T13:31:31.000Z</updated>
+  <updated>2016-07-03T15:01:01.000Z</updated>
   <id>http://maohong.github.io/</id>
   
   <author>
@@ -14,6 +14,77 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Storm的消息可靠处理机制</title>
+    <link href="http://maohong.github.io/2015/11/05/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/"/>
+    <id>http://maohong.github.io/2015/11/05/Storm的消息可靠处理机制/</id>
+    <published>2015-11-05T12:51:50.000Z</published>
+    <updated>2016-07-03T15:01:01.000Z</updated>
+    
+    <content type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;提交进入Storm运行的topology实际上是一个有向无环图（DAG），其中的节点是由spout和bolt组成，边则可以理解为消息从一个节点到传输到另一个节点的过程。对于spout产生的tuple，只有在topology上处理完毕后，才认为这个tuple被storm可靠处理。&lt;/p&gt;
+&lt;p&gt;Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，我们在写一个topology程序时，若需要保证spout产生的消息的可靠处理，需要做到两点：&lt;/p&gt;
+&lt;p&gt;第一是spout/bolt每生成一个新的tuple都告诉storm一下（其中spout发出的tuple有个id叫rootId），从而让storm能够追踪rootId和每个衍生tuple的处理状态。&lt;/p&gt;
+&lt;p&gt;第二是每个tuple被下游bolt处理完毕后，无论处理成功或失败，也再告诉storm一下，从而让storm知道是否需要spout重新发送rootId。&lt;/p&gt;
+&lt;p&gt;做了这两件事，storm就能知道这个tuple是否被处理完毕。如果是处理成功了的，就说明最初从spout发出的tuple（rootId）已在topology中处理完毕，无需spout重新发送。如果是处理失败的，storm则会告知spout重新发送rootId这个tuple。&lt;/p&gt;
+&lt;h2 id=&quot;在程序中实现消息可靠处理&quot;&gt;&lt;a href=&quot;#在程序中实现消息可靠处理&quot; class=&quot;headerlink&quot; title=&quot;在程序中实现消息可靠处理&quot;&gt;&lt;/a&gt;在程序中实现消息可靠处理&lt;/h2&gt;&lt;p&gt;那在写一个topology时，我们该如何做上面提到的两件事呢？&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;br&gt;Storm提供了BaseRichBolt抽象类（实现了IRichBolt接口），一个示例bolt如下：&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;20&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;SplitSentence&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;BaseRichBolt&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    OutputCollector _collector;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; &lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;prepare&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(Map conf, TopologyContext context, OutputCollector collector)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        _collector = collector;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; &lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(Tuple t)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        String sentence = t.getString(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt;(String word: sentence.split(&lt;span class=&quot;string&quot;&gt;&quot; &quot;&lt;/span&gt;)) &amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;            &lt;span class=&quot;comment&quot;&gt;//1. 告诉storm生成了一个新的tuple，并且这个tuple的锚点是tuple&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;            _collector.emit(t, &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Values(word));&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        &amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        _collector.ack(t); &lt;span class=&quot;comment&quot;&gt;//2. 告诉storm，t这个tuple已处理完毕&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; &lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;declareOutputFields&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(OutputFieldsDeclarer declarer)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        declarer.declare(&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Fields(&lt;span class=&quot;string&quot;&gt;&quot;word&quot;&lt;/span&gt;));&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&amp;#125;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;这段代码就做了这两件事，一是输出新的tuple并告知storm，二是对当前tuple t处理完毕后，告知storm。&lt;/p&gt;
+&lt;p&gt;对于第一件事，这里要注意的是，在BaseRichBolt中输出一个新的tuple（示例中是word）时，必须指定其锚点（即当前bolt正在处理的tuple），因为输出新的tuple会继续被下游bolt处理，这个锚点tuple和下游tuple之间的路径就是DAG的一条边。如果不指定锚点，则可以理解为storm不知道这条边的存在，也就不会对新输出的tuple进行跟踪了。&lt;/p&gt;
+&lt;p&gt;如果我们确实不需要保证消息的可靠处理，则使用以下方式输出新tuple即可。&lt;/p&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;_collector.emit(&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Values(word));&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;另外，一个tuple的锚点tuple可以有多个，比如如下代码，新输出的tuple的锚点就是tuple1和tuple2。&lt;/p&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;List anchors = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; ArrayList();&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;anchors.add(tuple1);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;anchors.add(tuple2);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;_collector.emit(anchors, &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Values(&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;));&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;对于第二件事，通过调用OutputCollector的ack或fail方法，即可告知storm当前tuple的处理结果。比如，假设我们在bolt中做一些操作的时候出现异常（比如访问redis、DB、hdfs等），可以调fail方法快速重放rootId，避免等到storm判断这个tuple处理超时后才重放。&lt;/p&gt;
+&lt;h2 id=&quot;更简便的方式&quot;&gt;&lt;a href=&quot;#更简便的方式&quot; class=&quot;headerlink&quot; title=&quot;更简便的方式&quot;&gt;&lt;/a&gt;更简便的方式&lt;/h2&gt;&lt;p&gt;很明显，以上方式有几个弊端：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;输出新tuple和对tuple的ack/fail操作需要我们自己维护，代价很高，容易遗忘。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;storm是在内存中维护每个tuple的处理状态，如果只对tuple进行锚点标记但处理完毕后忘记ack/fail，在tuple量非常大时，有内存溢出的风险。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;鉴于此，storm提供了BaseBasicBolt抽象类（实现了IBasicBolt接口）来帮助我们实现对每个tuple的锚点标记和ack/fail。&lt;br&gt;前面的例子可改写如下：&lt;/p&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;SplitSentence&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;BaseBasicBolt&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(Tuple tuple, BasicOutputCollector collector)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        String sentence = tuple.getString(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt;(String word: sentence.split(&lt;span class=&quot;string&quot;&gt;&quot; &quot;&lt;/span&gt;)) &amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;            collector.emit(&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Values(word));&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        &amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;declareOutputFields&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(OutputFieldsDeclarer declarer)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        declarer.declare(&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Fields(&lt;span class=&quot;string&quot;&gt;&quot;word&quot;&lt;/span&gt;));&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&amp;#125;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;可见，在代码中，我们只需要关心bolt的处理逻辑即可，至于标记锚点和ack/fail，均不用关心。&lt;/p&gt;
+&lt;p&gt;细究一下storm框架对IBasicBolt的处理可知，在创建topology时，IBasicBolt是被封装在BasicBoltExecutor类（实现了IRichBolt接口）中处理的。&lt;/p&gt;
+&lt;p&gt;构建topology时的setBolt方法：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../images/bolt-executor.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;原理-amp-示例&quot;&gt;&lt;a href=&quot;#原理-amp-示例&quot; class=&quot;headerlink&quot; title=&quot;原理&amp;amp;示例&quot;&gt;&lt;/a&gt;原理&amp;amp;示例&lt;/h2&gt;&lt;p&gt;刚刚提到对每个topology，storm都在内存中维护其tuple的处理状态，那么对于一个大规模集群，storm是如何高效的维护大量tuple的处理状态的呢？&lt;/p&gt;
+&lt;p&gt;其实，topology在运行时，内部有一组特殊的任务叫acker，专门用来做tuple的ack/fail。当一个root tuple（spout输出的tuple）在DAG中处理完毕后，acker会向产生该tuple的spout发送消息来ack这个tuple。&lt;/p&gt;
+&lt;p&gt;我们可通过参数Config.TOPOLOGY_ACKER_EXECUTORS指定topology中的acker任务的数量，默认是与topology中的worker数相同，在处理大量消息的场景下，可以通过此参数增加topology的acker任务数，以提高对message做ack/fail的效率。&lt;/p&gt;
+&lt;p&gt;storm通过给每个tuple设置一个全局唯一id，并在输出tuple和tuple处理完毕时收集tuple的id，并进行异或运算，巧妙的实现tuple状态的维护。先看下图示例：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../images/storm-ack.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;在这个topology其中包含一个spout，3个bolt和一个acker bolt，紫色线表示tuple的流向，绿色线表示每个bolt处理完tuple后的ack/fail调用，红色线表示acker回调spout的ack/fail方法来标记root tuple处理完毕。&lt;/p&gt;
+&lt;p&gt;以下是storm的ack框架对tuple的处理状态维护过程说明：&lt;/p&gt;
+&lt;p&gt;第(1)(2)步，spout发送T1到bolt1，发送T2到bolt2，T1和T2具有相同的内容（可以认为都把spout的输出作为自己的输入）。每条消息都会有一个全局唯一id，T1的锚点为&lt;rootid,t1&gt;，T2的锚点为&lt;rootid,t2&gt;。&lt;/rootid,t2&gt;&lt;/rootid,t1&gt;&lt;/p&gt;
+&lt;p&gt;第(3)步，spout发送完毕T1、T2后，在acker中注册一条记录rootId=T1^T2。&lt;/p&gt;
+&lt;p&gt;第(4)(5)步，bolt1收到T1处理完毕后对T1进行ack并发送T3,T4到bolt3，所以在acker中注册T1,T3,T4，acker中的跟踪项变为rootId=T1^T2^T1^T3^T4=T2^T3^T4&lt;/p&gt;
+&lt;p&gt;第(6)(7)步，bolt2收到T2处理完毕后对T2进行ack并发送T5,T6,T7到bolt4，所以在acker中注册T2,T5,T6,T7，acker中的跟踪项变为rootId=T2^T3^T4^T2^T5^T6^T7=T3^T4^T5^T6^T7&lt;/p&gt;
+&lt;p&gt;第(8)步，bolt3收到T3,T4处理完毕后对T3,T4进行ack，没有输出新的tuple，所以在acker中注册T3,T4，acker中的跟踪项变为rootId=T3^T4^T5^T6^T7^T3^T4=T5^T6^T7&lt;/p&gt;
+&lt;p&gt;第(9)步，bolt4收到T5,T6,T7处理完毕后对T5,T6,T7进行ack，没有输出新的tuple，所以在acker中注册T5,T6,T7，acker中的跟踪项变为rootId=T5^T6^T7^T5^T6^T7=0&lt;/p&gt;
+&lt;p&gt;第(10)步，acker bolt发现rootId对应的追踪值为0，说明该rootId对应的源消息以及衍生出来的所有消息（bolt1,bolt2新输出的消息）都被成功处理完毕。于是acker bolt会回调spout的ack方法，标识消息rootId已被topology处理成功。&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;提交进入Storm运行的topology实际上是一个有向无环图（DAG），其中的节点是由spout和bolt组成，边则可以理解为消息从一个节点到传输到另一个节点的过程。对于spout产生的tuple，只有在topology上处理完毕后，才认为这个tuple被storm可靠处理。&lt;/p&gt;
+&lt;p&gt;Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，我们在写一个topology程序时，若需要保证spout产生的消息的可靠处理，需要做到两点：&lt;/p&gt;
+&lt;p&gt;第一是spout/bolt每生成一个新的tuple都告诉storm一下（其中spout发出的tuple有个id叫rootId），从而让storm能够追踪rootId和每个衍生tuple的处理状态。&lt;/p&gt;
+&lt;p&gt;第二是每个tuple被下游bolt处理完毕后，无论处理成功或失败，也再告诉storm一下，从而让storm知道是否需要spout重新发送rootId。&lt;/p&gt;
+&lt;p&gt;做了这两件事，storm就能知道这个tuple是否被处理完毕。如果是处理成功了的，就说明最初从spout发出的tuple（rootId）已在topology中处理完毕，无需spout重新发送。如果是处理失败的，storm则会告知spout重新发送rootId这个tuple。&lt;/p&gt;
+&lt;h2 id=&quot;在程序中实现消息可靠处理&quot;&gt;&lt;a href=&quot;#在程序中实现消息可靠处理&quot; class=&quot;headerlink&quot; title=&quot;在程序中实现消息可靠处理&quot;&gt;&lt;/a&gt;在程序中实现消息可靠处理&lt;/h2&gt;&lt;p&gt;那在写一个topology时，我们该如何做上面提到的两件事呢？&lt;br&gt;
+    
+    </summary>
+    
+      <category term="实时计算" scheme="http://maohong.github.io/categories/%E5%AE%9E%E6%97%B6%E8%AE%A1%E7%AE%97/"/>
+    
+      <category term="Storm" scheme="http://maohong.github.io/categories/%E5%AE%9E%E6%97%B6%E8%AE%A1%E7%AE%97/Storm/"/>
+    
+    
+      <category term="Storm" scheme="http://maohong.github.io/tags/Storm/"/>
+    
+      <category term="实时计算" scheme="http://maohong.github.io/tags/%E5%AE%9E%E6%97%B6%E8%AE%A1%E7%AE%97/"/>
+    
+  </entry>
   
   <entry>
     <title>使用hexo+gitpage搭建博客</title>
@@ -454,7 +525,7 @@
     <link href="http://maohong.github.io/2012/11/13/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/"/>
     <id>http://maohong.github.io/2012/11/13/使用zookeeper协调多服务器的任务处理/</id>
     <published>2012-11-13T08:16:43.000Z</published>
-    <updated>2016-07-03T13:31:15.000Z</updated>
+    <updated>2016-07-03T13:33:50.000Z</updated>
     
     <content type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Zookeeper&lt;/strong&gt;是hadoop的子项目，是google的chubby的开源实现，是一个针对大规模分布式系统的可靠的分布式协调系统。Zookeeper一般部署在一个集群上，通过在集群间维护一个数据树，使得连接到集群的client能够获得统一的数据信息，比如系统公共配置信息、节点存活状态等等。因此，在互联网公司中，zookeeper被广泛运用于统一配置管理、名字服务、分布式同步等。&lt;/p&gt;
 &lt;h2 id=&quot;问题&quot;&gt;&lt;a href=&quot;#问题&quot; class=&quot;headerlink&quot; title=&quot;问题&quot;&gt;&lt;/a&gt;问题&lt;/h2&gt;&lt;p&gt;我们看下这样一种场景：&lt;br&gt;前台系统每时每刻都生成大量数据，这些原生数据由后台系统处理完毕后再作他用，我们暂且不谈这些数据的存储形式，只关注如何能够尽可能高效的处理。举个例子，前台系统可能是微博的前端发布系统、搜索引擎上的广告投放系统，或者是任务发布系统，后台系统则可能是对微博和广告信息的审查系统，比如用户发的微博如果包含近期敏感信息则不予显示，若是任务，后台系统则负责处理任务具体的执行。&lt;br&gt;若数据量和任务量较小，单节点的后台系统或许可以处理得过来，但是如果数据量和任务量很大（比如新浪微博，龙年正月初一0点0分0秒，共有32312条微博同时发布），单节点的后台系统肯定吃不消，这时候，可想而知的是多节点同时处理前台过来的数据。&lt;br&gt;最简单的方法是，按消息id对后台节点数取模（msgid%server_num=mod），每个后台节点取自己那份数据进行处理，这就需要每个节点都知晓当前有多少个后台节点以及本节点所应取的mod数。但是，当某个节点宕机时，这个节点所应处理的数据无法被继续处理了，势必会造成阻塞，除非重新配置各节点上的参数，将节点数server_num减1，并修改各节点取数据的mod数。&lt;br&gt;毋庸置疑，这样非常麻烦！如果能够将这种配置信息（实际上是数据在节点间分配的控制信息）统一管理起来，在配置信息发生变化时，各个后台节点能够及时知晓其变化，就可以避免上述情况的发生。&lt;br&gt;因此，采用多节点处理数据时，有两个问题：&lt;br&gt;1.避免多个节点重复处理同一条数据，否则造成资源浪费。&lt;br&gt;2.不能有数据被遗漏处理，尤其是在有后台节点down掉的时候。&lt;br&gt;也就是说，采用多节点同时处理数据时，需要将数据隔离开，分别给不同的节点处理，而且在有节点宕机的情况下，所有数据也必须可以无误的被其他可用节点处理。如何做到这一点呢，使用zookeeper吧！&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
