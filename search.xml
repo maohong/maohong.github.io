@@ -31,12 +31,12 @@
 <p>可见，在代码中，我们只需要关心bolt的处理逻辑即可，至于标记锚点和ack/fail，均不用关心。</p>
 <p>细究一下storm框架对IBasicBolt的处理可知，在创建topology时，IBasicBolt是被封装在BasicBoltExecutor类（实现了IRichBolt接口）中处理的。</p>
 <p>构建topology时的setBolt方法：</p>
-<p><img src="../images/bolt-executor.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20151105/bolt-executor.png" alt=""></p>
 <h2 id="原理-amp-示例"><a href="#原理-amp-示例" class="headerlink" title="原理&amp;示例"></a>原理&amp;示例</h2><p>刚刚提到对每个topology，storm都在内存中维护其tuple的处理状态，那么对于一个大规模集群，storm是如何高效的维护大量tuple的处理状态的呢？</p>
 <p>其实，topology在运行时，内部有一组特殊的任务叫acker，专门用来做tuple的ack/fail。当一个root tuple（spout输出的tuple）在DAG中处理完毕后，acker会向产生该tuple的spout发送消息来ack这个tuple。</p>
 <p>我们可通过参数Config.TOPOLOGY_ACKER_EXECUTORS指定topology中的acker任务的数量，默认是与topology中的worker数相同，在处理大量消息的场景下，可以通过此参数增加topology的acker任务数，以提高对message做ack/fail的效率。</p>
 <p>storm通过给每个tuple设置一个全局唯一id，并在输出tuple和tuple处理完毕时收集tuple的id，并进行异或运算，巧妙的实现tuple状态的维护。先看下图示例：</p>
-<p><img src="../images/storm-ack.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20151105/storm-ack.png" alt=""></p>
 <p>在这个topology其中包含一个spout，3个bolt和一个acker bolt，紫色线表示tuple的流向，绿色线表示每个bolt处理完tuple后的ack/fail调用，红色线表示acker回调spout的ack/fail方法来标记root tuple处理完毕。</p>
 <p>以下是storm的ack框架对tuple的处理状态维护过程说明：</p>
 <p>第(1)(2)步，spout发送T1到bolt1，发送T2到bolt2，T1和T2具有相同的内容（可以认为都把spout的输出作为自己的输入）。每条消息都会有一个全局唯一id，T1的锚点为<rootid,t1>，T2的锚点为<rootid,t2>。</rootid,t2></rootid,t1></p>
@@ -46,6 +46,67 @@
 <p>第(8)步，bolt3收到T3,T4处理完毕后对T3,T4进行ack，没有输出新的tuple，所以在acker中注册T3,T4，acker中的跟踪项变为rootId=T3^T4^T5^T6^T7^T3^T4=T5^T6^T7</p>
 <p>第(9)步，bolt4收到T5,T6,T7处理完毕后对T5,T6,T7进行ack，没有输出新的tuple，所以在acker中注册T5,T6,T7，acker中的跟踪项变为rootId=T5^T6^T7^T5^T6^T7=0</p>
 <p>第(10)步，acker bolt发现rootId对应的追踪值为0，说明该rootId对应的源消息以及衍生出来的所有消息（bolt1,bolt2新输出的消息）都被成功处理完毕。于是acker bolt会回调spout的ack方法，标识消息rootId已被topology处理成功。</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Spark on yarn的内存分配问题]]></title>
+      <url>http://maohong.github.io/2015/08/11/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/</url>
+      <content type="html"><![CDATA[<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在测试spark on yarn时，发现一些内存分配上的问题，具体如下。</p>
+<p>在$SPARK_HOME/conf/spark-env.sh中配置如下参数：</p>
+<blockquote>
+<p>SPARK_EXECUTOR_INSTANCES=4            <em>在yarn集群中启动的executor进程数</em></p>
+<p>SPARK_EXECUTOR_MEMORY=2G              <em>为每个executor进程分配的内存大小</em></p>
+<p>SPARK_DRIVER_MEMORY=1G                <em>为spark-driver进程分配的内存大小</em></p>
+</blockquote>
+<p>执行$SPARK_HOME/bin/spark-sql –master yarn，按yarn-client模式启动spark-sql交互命令行（即driver程序运行在本地，而非yarn的container中），日志显示的关于AppMaster和Executor的内存信息如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-1.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-2.png" alt=""></p>
+<p>日志显示，AppMaster的内存是896MB，其中包含了384MB的memoryOverhead；启动了5个executor，第一个的可用内存是530.3MB，其余每个Executor的可用内存是1060.3MB。</p>
+<p>到yarnUI看下资源使用情况，共启动了5个container，占用内存13G，其中一台NodeManager启动了2个container，占用内存4G（1个AppMaster占1G、另一个占3G），另外3台各启了1个container，每个占用3G内存。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-3.png" alt=""></p>
+<p>再到sparkUI看下executors的情况，这里有5个executor，其中driver是运行在执行spark-sql命令的本地服务器上，另外4个是运行在yarn集群中。Driver的可用storage memory为530.3MB，另外4个都是1060.3MB（与日志信息一致）。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-4.png" alt=""></p>
+<p>那么问题来了：</p>
+<ol>
+<li><p>Yarn为container分配的最小内存由yarn.scheduler.minimum-allocation-mb参数决定，默认是1G，从yarnUI中看确实如此，可为何spark的日志里显示AppMaster的实际内存是896-384=512MB呢？384MB是怎么算出来的？</p>
+</li>
+<li><p>spark配置文件里指定了每个executor的内存为2G，为何日志和sparkUI上显示的是1060.3MB？</p>
+</li>
+<li><p>driver的内存配置为1G，为何sparkUI里显示的是530.3MB呢？</p>
+</li>
+<li><p>为何yarn中每个container分配的内存是3G，而不是executor需要的2G呢？</p>
+</li>
+</ol>
+<h2 id="问题解析"><a href="#问题解析" class="headerlink" title="问题解析"></a>问题解析</h2><p>进过一番调研，发现这里有些概念容易混淆，整理如下，序号对应上面的问题：<br>&lt;!—-more-—&gt;<br>(1) spark的yarn-client向ResourceManager申请提交作业/启动AppMaster时，会判断是否是集群模式，如果是集群模式，则AppMaster的内存大小与driver内存大小一致，否则由spark.yarn.am.memory决定，这个参数的默认值是512MB。我们使用的是yarn-client模式，所以实际内存是512MB。</p>
+<p><font color="red">384MB是spark-client为appMaster额外申请的内存</font>，计算方法如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-5.png" alt=""></p>
+<p>即，默认从参数读取（集群模式从spark.yarn.driver.memoryOverhead参数读，否则从spark.yarn.am.memoryOverhead参数读），若没配此参数，则从AppMaster的内存*一定系数和默认最小overhead中取较大值。</p>
+<p>在spark-1.4.1版本中，MEMORY_OVERHEAD_FACTOR的默认值为0.10（之前是0.07），MEMORY_OVERHEAD_MIN默认为384，我们没有指定spark.yarn.driver.memoryOverhead和spark.yarn.am.memoryOverhead，而amMemory=512M（由spark.yarn.am.memory决定），因此memoryOverhead为max(512*0.10, 384)=384MB。</p>
+<p>Executor的memoryOverhead计算方法与此一样，只是不区分是否集群模式，都默认由spark.yarn.executor.memoryOverhead配置。</p>
+<p>(2) <font color="red">日志和sparkUI上显示的是executor内部用于缓存计算结果的内存空间，并不是executor所拥有的全部内存</font>。这部分内存是由以下公式计算：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-6.png" alt=""></p>
+<p>Runtime.getRuntime.maxMemory按2048MB算，storage memory大小为1105.92MB，sparkUI显示的略小于此值，是正常的。</p>
+<p>(3) 与上述第2点一样，storage memory的大小略小于1024<em>0.9</em>0.6=552.96MB</p>
+<p>(4) 前面提到spark会为container额外申请一部分内存（memoryOverhead），因此，实际为container提交申请的内存大小是2048 + max(2048*0.10, 384) = 2432MB，而<font color="red">yarn在做资源分配时会做资源规整化，即应用程序申请的资源量一定是最小可申请资源量的整数倍（向上取整）</font>，最小可申请内存量由yarn.scheduler.minimum-allocation-mb指定，因此，会为container分配3G内存。</p>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>为了验证上述规则，继续修改配置参数：</p>
+<blockquote>
+<p>SPARK_EXECUTOR_INSTANCES=4          <em>在yarn集群中启动的executor进程数</em></p>
+<p>SPARK_EXECUTOR_MEMORY=4G            <em>为每个executor进程分配的内存大小</em></p>
+<p>SPARK_DRIVER_MEMORY=3G              <em>为spark-driver进程分配的内存大小</em></p>
+</blockquote>
+<p>并在启动spark-sql时指定spark.yarn.am.memory参数：</p>
+<p><strong>bin/spark-sql –master yarn –conf spark.yarn.am.memory=1024m</strong></p>
+<p>再看日志信息：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-7.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-8.png" alt=""></p>
+<p>yarnUI状态：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-9.png" alt=""></p>
+<p>sparkUI的executors信息：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-10.png" alt=""></p>
+<p>可见，AppMaster的实际内存为1024M（1408-384），而其在yarn中的container内存大小为2G（1408大于1G，yarn按资源规整化原则为其分配2G）。</p>
+<p>同理，driver的storage memory空间为3G*0.9*0.6=1.62G，executor的storage memory空间为4G*0.9*0.6=2.16G，executor所在container占用5G内存（4096+max(4096*0.10,384)= 4505.6，大于4G， yarn按资源规整化原则为其分配5G）。</p>
+<p>Yarn集群的内存总占用空间为2+5*4=22G。</p>
 ]]></content>
     </entry>
     
@@ -69,10 +130,15 @@
     <entry>
       <title><![CDATA[Shell中的IFS分隔符使用]]></title>
       <url>http://maohong.github.io/2013/01/29/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/</url>
-      <content type="html"><![CDATA[<p>在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。<br>工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：<br><img src="../images/shell.png" alt=""></p>
-<p>我需要拿到文件中<font color="blue">第三列为1</font>的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。<br><strong>脚本如下：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">for line in `awk -F&quot;\3&quot; &apos;&#123;if($3==1) print $0&#125;&apos; datafile`</div><div class="line">    do</div><div class="line">        echo $line</div><div class="line">done</div></pre></td></tr></table></figure></p>
-<p><strong>结果如下：</strong><br><img src="../images/shell2.png" alt=""><br>本来是想要逐行打印出来的，可结果却不是我想要的，究其原因，是因为在shell的for循环中，列出集合的item时，默认是以<space>或<tab>或<newline>为分隔符，我们的数据文件中有空格，因此它就以空格分割打印了。<br>可以通过显式设置IFS的值来达到我们要的效果，修改后的脚本如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">oldifs=$IFS</div><div class="line">IFS=$&apos;\n&apos;    #change seperator to &apos;\n&apos; to get a line</div><div class="line">for line in `awk -F&quot;\3&quot; &apos;&#123;if($3==1) print $0&#125;&apos; datafile`</div><div class="line">    do</div><div class="line">        echo $line</div><div class="line">done</div><div class="line">IFS=$oldifs #reset seperator</div></pre></td></tr></table></figure></newline></tab></space></p>
-<p>通过先保存当前的IFS变量的值到一个临时变量，再显式设置为我们想要的行分隔符$’\n’，然后在for循环结束后，再重置IFS的值即可。<br><strong>结果如下：</strong><br><img src="../images/shell3.png" alt="">  </p>
+      <content type="html"><![CDATA[<p>在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。</p>
+<p>工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell.png" alt=""></p>
+<p>我需要拿到文件中<font color="blue">第三列为1</font>的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。 </p>
+<p><strong>脚本如下：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">for line in `awk -F&quot;\3&quot; &apos;&#123;if($3==1) print $0&#125;&apos; datafile`</div><div class="line">    do</div><div class="line">        echo $line</div><div class="line">done</div></pre></td></tr></table></figure>
+<p><strong>结果如下：</strong><br><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell2.png" alt=""><br>本来是想要逐行打印出来的，可结果却不是我想要的，究其原因，是因为在shell的for循环中，列出集合的item时，默认是以<space>或<tab>或<newline>为分隔符，我们的数据文件中有空格，因此它就以空格分割打印了。<br>可以通过显式设置IFS的值来达到我们要的效果，修改后的脚本如下：  </newline></tab></space></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">oldifs=$IFS</div><div class="line">IFS=$&apos;\n&apos;    #change seperator to &apos;\n&apos; to get a line</div><div class="line">for line in `awk -F&quot;\3&quot; &apos;&#123;if($3==1) print $0&#125;&apos; datafile`</div><div class="line">    do</div><div class="line">        echo $line</div><div class="line">done</div><div class="line">IFS=$oldifs #reset seperator</div></pre></td></tr></table></figure>
+<p>通过先保存当前的IFS变量的值到一个临时变量，再显式设置为我们想要的行分隔符$’\n’，然后在for循环结束后，再重置IFS的值即可。<br><strong>结果如下：</strong><br><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell3.png" alt="">  </p>
 ]]></content>
     </entry>
     
