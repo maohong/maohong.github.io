@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://maohong.github.io/"/>
-  <updated>2016-07-03T08:07:53.000Z</updated>
+  <updated>2016-07-03T13:31:31.000Z</updated>
   <id>http://maohong.github.io/</id>
   
   <author>
@@ -17,10 +17,10 @@
   
   <entry>
     <title>使用hexo+gitpage搭建博客</title>
-    <link href="http://maohong.github.io/2015/09/02/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
-    <id>http://maohong.github.io/2015/09/02/使用hexo-gitpage搭建博客/</id>
-    <published>2015-09-02T11:50:40.000Z</published>
-    <updated>2016-07-03T08:07:53.000Z</updated>
+    <link href="http://maohong.github.io/2014/09/02/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
+    <id>http://maohong.github.io/2014/09/02/使用hexo-gitpage搭建博客/</id>
+    <published>2014-09-02T11:50:40.000Z</published>
+    <updated>2016-07-03T13:31:31.000Z</updated>
     
     <content type="html">&lt;h2 id=&quot;环境准备&quot;&gt;&lt;a href=&quot;#环境准备&quot; class=&quot;headerlink&quot; title=&quot;环境准备&quot;&gt;&lt;/a&gt;环境准备&lt;/h2&gt;&lt;p&gt;系统：mac osx&lt;br&gt;软件：Node.js，npm，git，hexo&lt;br&gt;具体安装以及git与github打通的配置就不详述了，可以google到各种方法。  &lt;/p&gt;
 &lt;h2 id=&quot;hexo命令&quot;&gt;&lt;a href=&quot;#hexo命令&quot; class=&quot;headerlink&quot; title=&quot;hexo命令&quot;&gt;&lt;/a&gt;hexo命令&lt;/h2&gt;&lt;p&gt;hexo init &amp;lt;folder&amp;gt;  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; #表示执行init命令初始化hexo到你指定的目录  &lt;/p&gt;
@@ -44,7 +44,408 @@
       <category term="工具" scheme="http://maohong.github.io/categories/%E5%B7%A5%E5%85%B7/"/>
     
     
-      <category term="hexo, gitpage" scheme="http://maohong.github.io/tags/hexo-gitpage/"/>
+      <category term="hexo" scheme="http://maohong.github.io/tags/hexo/"/>
+    
+      <category term="gitpage" scheme="http://maohong.github.io/tags/gitpage/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Shell中的IFS分隔符使用</title>
+    <link href="http://maohong.github.io/2013/01/29/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/"/>
+    <id>http://maohong.github.io/2013/01/29/shell中的IFS分隔符/</id>
+    <published>2013-01-29T12:41:54.000Z</published>
+    <updated>2016-07-03T13:31:41.000Z</updated>
+    
+    <content type="html">&lt;p&gt;在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。&lt;br&gt;工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：&lt;br&gt;&lt;img src=&quot;../images/shell.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;我需要拿到文件中&lt;font color=&quot;blue&quot;&gt;第三列为1&lt;/font&gt;的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。&lt;br&gt;&lt;strong&gt;脚本如下：&lt;/strong&gt;&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;for line in `awk -F&amp;quot;\3&amp;quot; &amp;apos;&amp;#123;if($3==1) print $0&amp;#125;&amp;apos; datafile`&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    do&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        echo $line&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;done&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;结果如下：&lt;/strong&gt;&lt;br&gt;&lt;img src=&quot;../images/shell2.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;本来是想要逐行打印出来的，可结果却不是我想要的，究其原因，是因为在shell的for循环中，列出集合的item时，默认是以&lt;space&gt;或&lt;tab&gt;或&lt;newline&gt;为分隔符，我们的数据文件中有空格，因此它就以空格分割打印了。&lt;br&gt;可以通过显式设置IFS的值来达到我们要的效果，修改后的脚本如下：&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;oldifs=$IFS&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;IFS=$&amp;apos;\n&amp;apos;    #change seperator to &amp;apos;\n&amp;apos; to get a line&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;for line in `awk -F&amp;quot;\3&amp;quot; &amp;apos;&amp;#123;if($3==1) print $0&amp;#125;&amp;apos; datafile`&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    do&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        echo $line&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;done&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;IFS=$oldifs #reset seperator&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/newline&gt;&lt;/tab&gt;&lt;/space&gt;&lt;/p&gt;
+&lt;p&gt;通过先保存当前的IFS变量的值到一个临时变量，再显式设置为我们想要的行分隔符$’\n’，然后在for循环结束后，再重置IFS的值即可。&lt;br&gt;&lt;strong&gt;结果如下：&lt;/strong&gt;&lt;br&gt;&lt;img src=&quot;../images/shell3.png&quot; alt=&quot;&quot;&gt;  &lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。&lt;br&gt;工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：&lt;br&gt;&lt;img src=&quot;../images/
+    
+    </summary>
+    
+      <category term="Shell" scheme="http://maohong.github.io/categories/Shell/"/>
+    
+    
+      <category term="shell" scheme="http://maohong.github.io/tags/shell/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>将Hadoop RPC框架应用于多节点任务调度</title>
+    <link href="http://maohong.github.io/2013/01/21/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/"/>
+    <id>http://maohong.github.io/2013/01/21/将Hadoop-RPC框架应用于多节点任务调度/</id>
+    <published>2013-01-21T12:53:38.000Z</published>
+    <updated>2016-07-03T13:30:02.000Z</updated>
+    
+    <content type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前hadoop RPC的数据序列化是通过实现自己定义的Writable接口实现，而从hadoop 2.0开始，数据的序列化工作交给了ProtocolBuffer去做。关于Hadoop RPC的实现原理已经有很多文章进行了详细的介绍（&lt;a href=&quot;http://weixiaolu.iteye.com/blog/1504898&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;源码级强力分析hadoop的RPC机制&lt;/a&gt;，&lt;a href=&quot;http://yanbohappy.sinaapp.com/?p=110&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hadoop基于Protocol Buffer的RPC实现代码分析-Server端&lt;/a&gt;，&lt;a href=&quot;http://yanbohappy.sinaapp.com/?p=115&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;带有HA功能的Hadoop Client端RPC实现原理与代码分析&lt;/a&gt;），这里就不在赘述了。下面就直接引入问题和方案吧。  &lt;/p&gt;
+&lt;h2 id=&quot;问题&quot;&gt;&lt;a href=&quot;#问题&quot; class=&quot;headerlink&quot; title=&quot;问题&quot;&gt;&lt;/a&gt;问题&lt;/h2&gt;&lt;p&gt;工作中经常需要在定时任务系统上写一些定时任务，随着业务规模的增长和扩大，需要定时处理的任务越来越多，任务之间的执行间隔越来越小，某一时间段内（比如0点、整点或半点）执行的任务会越来越密集，只在一台机器上执行这些任务的话，会出现较大的风险：  &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;任务并发度较高时，单机的系统资源将成为瓶颈  &lt;/li&gt;
+&lt;li&gt;如果一个任务的运行占用了整个机器的大部分资源，比如sql查询耗费巨大内存和CPU资源，将直接影响其他任务的运行  &lt;/li&gt;
+&lt;li&gt;任务失败后，如果仍然在同一台节点自动重新执行，失败率较高  &lt;/li&gt;
+&lt;li&gt;机器宕机后，必须第一时间重启机器或重新部署定时任务系统，所有任务都不能按时执行  &lt;/li&gt;
+&lt;li&gt;等等  &lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;方案&quot;&gt;&lt;a href=&quot;#方案&quot; class=&quot;headerlink&quot; title=&quot;方案&quot;&gt;&lt;/a&gt;方案&lt;/h2&gt;&lt;p&gt;可想而知的是，可以通过将定时任务系统进行分布式改造，使用多个节点执行任务，将任务分发到不同节点上进行处理，并且完善失败重试机制，从而提高系统稳定性，实现任务系统的高可靠。&lt;br&gt;既然是在多个节点之间分发任务，肯定得有个任务的管理者(主节点)，在我们现有的系统中，也就是一套可以部署定时任务的web系统，任务代码更新后，部署好这套web系统，即可通过web页面设置定时任务并且进行调度(在单个节点上执行)。执行任务的节点(子节点)有多个以后，如何分发任务到子节点呢，我们可以把任务的信息封装成一个bean，通过RPC发布给子节点，子节点通过这个任务bean获得任务信息，并在指定的时刻执行任务。同时，子节点可以通过与主节点的心跳通信将节点状态和执行任务的情况告诉主节点。&lt;br&gt;这样其实就与hadoop mapreduce分发任务有点相似了，呵呵，这里主节点与子节点之间的通信，我们就可以通过Hadoop RPC框架来实现了，不同的是，我们分发的任务是定时任务，发布任务时需要将任务的定时信息一并发给子节点。  &lt;/p&gt;
+&lt;h2 id=&quot;实现&quot;&gt;&lt;a href=&quot;#实现&quot; class=&quot;headerlink&quot; title=&quot;实现&quot;&gt;&lt;/a&gt;实现&lt;/h2&gt;&lt;p&gt;单点的定时任务系统是基于Quartz的，在分布式环境下，可以继续基于Quartz进行改造，任务的定时信息可以通过Quartz中的JobDetail和Trigger对象来描述并封装，加上任务执行的入口类信息，再通过RPC由主节点发给子节点。子节点收到封装好的任务信息对象后，再构造JobDetail和Trigger，设置好启动时间后，通过入口类启动任务。下面是一个简单的demo。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;br&gt;以下是一个简单的定时任务信息描述对象CronJobInfo，包括JobDetailInfo和TriggerInfo两个属性：  &lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/**
+* 定时任务信息，包括任务信息和触发器信息
+*/&lt;/span&gt;
+&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;CronJobInfo&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Writable&lt;/span&gt;
+&lt;/span&gt;{
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; JobDetailInfo jobDetailInfo = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; JobDetailInfo();
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; TriggerInfo triggerInfo = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; TriggerInfo();
+
+    &lt;span class=&quot;meta&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;readFields&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(DataInput in)&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;throws&lt;/span&gt; IOException
+    &lt;/span&gt;{
+        jobDetailInfo.readFields(in);
+        triggerInfo.readFields(in);
+    }
+
+    &lt;span class=&quot;meta&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(DataOutput out)&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;throws&lt;/span&gt; IOException
+    &lt;/span&gt;{
+        jobDetailInfo.write(out);
+        triggerInfo.write(out);
+    }
+    &lt;span class=&quot;comment&quot;&gt;// getters and setters...&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;任务信息JobDetailInfo，由主节点构造，子节点解析构造JobDetail对象：  &lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;JobDetailInfo&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Writable&lt;/span&gt;
+&lt;/span&gt;{
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; String name; &lt;span class=&quot;comment&quot;&gt;// 任务名称&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; String group = Scheduler.DEFAULT_GROUP; &lt;span class=&quot;comment&quot;&gt;// 任务组&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; String description; &lt;span class=&quot;comment&quot;&gt;// 任务描述&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; Class jobClass; &lt;span class=&quot;comment&quot;&gt;// 任务的启动类&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; JobDataMap jobDataMap; &lt;span class=&quot;comment&quot;&gt;// 任务所需的参数，用来给作业提供数据支持的数据结构&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;boolean&lt;/span&gt; volatility = &lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;; &lt;span class=&quot;comment&quot;&gt;// &amp;lt;span&amp;gt;重启应用之后是否删除任务的相关信息,&amp;lt;/span&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;boolean&lt;/span&gt; durability = &lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;; &lt;span class=&quot;comment&quot;&gt;// 任务完成之后是否依然保留到数据库&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;boolean&lt;/span&gt; shouldRecover = &lt;span class=&quot;keyword&quot;&gt;false&lt;/span&gt;; &lt;span class=&quot;comment&quot;&gt;// 应用重启之后时候忽略过期任务&lt;/span&gt;
+
+    &lt;span class=&quot;meta&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;readFields&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(DataInput in)&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;throws&lt;/span&gt; IOException
+    &lt;/span&gt;{
+        name = WritableUtils.readString(in);
+        group = WritableUtils.readString(in);
+        description = WritableUtils.readString(in);
+        String className = WritableUtils.readString(in);
+        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (className != &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt;)
+        {
+          &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt;
+          {
+             jobClass = Class.forName(&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; String(className));
+          }
+          &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (ClassNotFoundException e)
+          {
+             e.printStackTrace();
+          }
+        }
+        &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; dataMapSize = WritableUtils.readVInt(in);
+        &lt;span class=&quot;keyword&quot;&gt;while&lt;/span&gt; (dataMapSize-- &amp;gt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;)
+        {
+           String key = WritableUtils.readString(in);
+           String value = WritableUtils.readString(in);
+           jobDataMap.put(key, value);
+        }
+        volatility = in.readBoolean();
+        durability = in.readBoolean();
+        shouldRecover = in.readBoolean();
+    }
+
+    &lt;span class=&quot;meta&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(DataOutput out)&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;throws&lt;/span&gt; IOException
+    &lt;/span&gt;{
+        WritableUtils.writeString(out, name);
+        WritableUtils.writeString(out, group);
+        WritableUtils.writeString(out, description);
+        WritableUtils.writeString(out, jobClass.getName());
+        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (jobDataMap == &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt;)
+            WritableUtils.writeVInt(out, &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;);
+        &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt;
+        {
+            WritableUtils.writeVInt(out, jobDataMap.size());
+            &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; (Object k : jobDataMap.keySet())
+            {
+                WritableUtils.writeString(out, k.toString());
+                WritableUtils.writeString(out, jobDataMap.get(k).toString());
+            }
+        }
+        out.writeBoolean(volatility);
+        out.writeBoolean(durability);
+        out.writeBoolean(shouldRecover);
+   }
+   &lt;span class=&quot;comment&quot;&gt;//getters and setters&lt;/span&gt;
+   &lt;span class=&quot;comment&quot;&gt;//.....&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;任务触发器信息TriggerInfo ，由主节点构造，子节点解析构造Trigger对象：  &lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;TriggerInfo&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Writable&lt;/span&gt;
+&lt;/span&gt;{
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; String name; &lt;span class=&quot;comment&quot;&gt;// trigger名称&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; String group = Scheduler.DEFAULT_GROUP; &lt;span class=&quot;comment&quot;&gt;// triger组名称&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; String description; &lt;span class=&quot;comment&quot;&gt;// trigger描述&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; Date startTime; &lt;span class=&quot;comment&quot;&gt;// 启动时间&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; Date endTime; &lt;span class=&quot;comment&quot;&gt;// 结束时间&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; repeatInterval; &lt;span class=&quot;comment&quot;&gt;// 重试时间间隔&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; repeatCount; &lt;span class=&quot;comment&quot;&gt;//重试次数&lt;/span&gt;
+
+    &lt;span class=&quot;meta&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;readFields&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(DataInput in)&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;throws&lt;/span&gt; IOException
+    &lt;/span&gt;{
+       name = WritableUtils.readString(in);
+       group = WritableUtils.readString(in);
+       description = WritableUtils.readString(in);
+       &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; start = in.readLong();
+       startTime = start==&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; ? &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt; : &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Date(start);
+       &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; end = in.readLong();
+       endTime = end==&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; ? &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt; : &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Date(end);
+       repeatInterval = in.readLong();
+       repeatCount = in.readInt();
+    }
+
+    &lt;span class=&quot;meta&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(DataOutput out)&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;throws&lt;/span&gt; IOException
+    &lt;/span&gt;{
+       WritableUtils.writeString(out, name);
+       WritableUtils.writeString(out, group);
+       WritableUtils.writeString(out, description);
+       out.writeLong(startTime == &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt; ? &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; : startTime.getTime());
+       out.writeLong(endTime == &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt; ? &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; : endTime.getTime());
+       out.writeLong(repeatInterval);
+       out.writeInt(repeatCount);
+    }
+    &lt;span class=&quot;comment&quot;&gt;//getters and setters&lt;/span&gt;
+    &lt;span class=&quot;comment&quot;&gt;//.....&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;主从节点通信的协议：  &lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;TaskProtocol&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;VersionedProtocol&lt;/span&gt;
+&lt;/span&gt;{
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; CronJobInfo &lt;span class=&quot;title&quot;&gt;hearbeat&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在这个demo中，主节点启动后，启动RPC server线程，等待客户端（子节点）的连接，当客户端调用heartbeat方法时，主节点将会生成一个任务信息返回给客户端：  &lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;TaskScheduler&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;TaskProtocol&lt;/span&gt;
+&lt;/span&gt;{
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; Logger logger = Logger.getLogger(getClass());
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; Server server;
+
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;TaskScheduler&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;
+    &lt;/span&gt;{
+        &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt;
+        {
+            server = RPC.getServer(&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;192.168.1.101&quot;&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;8888&lt;/span&gt;, &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Configuration());
+            server.start();
+            server.join();
+        }
+        &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (UnknownHostException e)
+        {
+            e.printStackTrace();
+        }
+        &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (IOException e)
+        {
+            e.printStackTrace();
+        }
+        &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    &lt;span class=&quot;meta&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;getProtocolVersion&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(String arg0, &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; arg1)&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;throws&lt;/span&gt; IOException
+    &lt;/span&gt;{
+        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;;
+    }
+
+    &lt;span class=&quot;meta&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; CronJobInfo &lt;span class=&quot;title&quot;&gt;generateCronJob&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;
+    &lt;/span&gt;{
+        &lt;span class=&quot;comment&quot;&gt;// 1、创建JobDetial对象&lt;/span&gt;
+        JobDetailInfo detail = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; JobDetailInfo();
+        &lt;span class=&quot;comment&quot;&gt;// 设置工作项&lt;/span&gt;
+        detail.setJobClass(DemoTask.class);
+        detail.setName(&lt;span class=&quot;string&quot;&gt;&quot;MyJob_1&quot;&lt;/span&gt;);
+        detail.setGroup(&lt;span class=&quot;string&quot;&gt;&quot;JobGroup_1&quot;&lt;/span&gt;);
+
+        &lt;span class=&quot;comment&quot;&gt;// 2、创建Trigger对象&lt;/span&gt;
+        TriggerInfo trigger = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; TriggerInfo();
+        trigger.setName(&lt;span class=&quot;string&quot;&gt;&quot;Trigger_1&quot;&lt;/span&gt;);
+        trigger.setGroup(&lt;span class=&quot;string&quot;&gt;&quot;Trigger_Group_1&quot;&lt;/span&gt;);
+        trigger.setStartTime(&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Date());
+        &lt;span class=&quot;comment&quot;&gt;// 设置重复停止时间，并销毁该Trigger对象&lt;/span&gt;
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis() + &lt;span class=&quot;number&quot;&gt;1000&lt;/span&gt; * &lt;span class=&quot;number&quot;&gt;1L&lt;/span&gt;);
+        trigger.setEndTime(c.getTime());
+        &lt;span class=&quot;comment&quot;&gt;// 设置重复间隔时间&lt;/span&gt;
+        trigger.setRepeatInterval(&lt;span class=&quot;number&quot;&gt;1000&lt;/span&gt; * &lt;span class=&quot;number&quot;&gt;1L&lt;/span&gt;);
+        &lt;span class=&quot;comment&quot;&gt;// 设置重复执行次数&lt;/span&gt;
+        trigger.setRepeatCount(&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;);
+
+        CronJobInfo info = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; CronJobInfo();
+        info.setJobDetailInfo(detail);
+        info.setTriggerInfo(trigger);
+
+        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; info;
+    }
+
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(String[] args)&lt;/span&gt;
+    &lt;/span&gt;{
+        TaskScheduler ts = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; TaskScheduler();
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;demo任务类，打印信息：  &lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;DemoTask&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Job&lt;/span&gt;
+&lt;/span&gt;{
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(JobExecutionContext context)&lt;/span&gt;
+            &lt;span class=&quot;keyword&quot;&gt;throws&lt;/span&gt; JobExecutionException
+    &lt;/span&gt;{
+        System.out.println(&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt; + &lt;span class=&quot;string&quot;&gt;&quot;: executing task @&quot;&lt;/span&gt; + &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Date());
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;子节点demo，启动后连接主节点，远程调用generateCronJob方法，获得一个任务描述信息，并启动定时任务。  &lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;TaskRunner&lt;/span&gt;
+&lt;/span&gt;{
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; Logger logger = Logger.getLogger(getClass());
+    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; TaskProtocol proxy;
+
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;TaskRunner&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;
+    &lt;/span&gt;{
+        InetSocketAddress addr = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; InetSocketAddress(&lt;span class=&quot;string&quot;&gt;&quot;localhost&quot;&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;8888&lt;/span&gt;);
+        &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt;
+        {
+            proxy = (TaskProtocol) RPC.waitForProxy(TaskProtocol.class, &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, addr,
+                    &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Configuration());
+        }
+        &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;close&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;
+    &lt;/span&gt;{
+        RPC.stopProxy(proxy);
+    }
+
+    &lt;span class=&quot;comment&quot;&gt;/**
+     * 从server获取一个定时任务
+     */&lt;/span&gt;
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;getCronJob&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;
+    &lt;/span&gt;{
+        CronJobInfo info = proxy.generateCronJob();
+        JobDetail jobDetail = getJobDetail(info.getJobDetailInfo());
+        SimpleTrigger trigger = getTrigger(info.getTriggerInfo());
+
+        &lt;span class=&quot;comment&quot;&gt;// 创建Scheduler对象，并配置JobDetail和Trigger对象&lt;/span&gt;
+        SchedulerFactory sf = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; StdSchedulerFactory();
+        Scheduler scheduler = &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt;;
+        &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt;
+        {
+            scheduler = sf.getScheduler();
+            scheduler.scheduleJob(jobDetail, trigger);
+            &lt;span class=&quot;comment&quot;&gt;// 执行启动操作&lt;/span&gt;
+            scheduler.start();
+
+        }
+        &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (SchedulerException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    &lt;span class=&quot;comment&quot;&gt;/**
+     * &lt;span class=&quot;doctag&quot;&gt;@param&lt;/span&gt; jobDetailInfo
+     * &lt;span class=&quot;doctag&quot;&gt;@return&lt;/span&gt;
+     */&lt;/span&gt;
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; JobDetail &lt;span class=&quot;title&quot;&gt;getJobDetail&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(JobDetailInfo info)&lt;/span&gt;
+    &lt;/span&gt;{
+        JobDetail detail = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; JobDetail();
+        detail.setName(info.getName());
+        detail.setGroup(info.getGroup());
+        detail.setDescription(info.getDescription());
+        detail.setJobClass(info.getJobClass());
+        detail.setJobDataMap(info.getJobDataMap());
+        detail.setRequestsRecovery(info.isShouldRecover());
+        detail.setDurability(info.isDurability());
+        detail.setVolatility(info.isVolatility());
+        logger.info(&lt;span class=&quot;string&quot;&gt;&quot;client get jobdetail:&quot;&lt;/span&gt; + detail);
+        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; detail;
+    }
+
+    &lt;span class=&quot;comment&quot;&gt;/**
+     * &lt;span class=&quot;doctag&quot;&gt;@param&lt;/span&gt; triggerInfo
+     * &lt;span class=&quot;doctag&quot;&gt;@return&lt;/span&gt;
+     */&lt;/span&gt;
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; SimpleTrigger &lt;span class=&quot;title&quot;&gt;getTrigger&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(TriggerInfo info)&lt;/span&gt;
+    &lt;/span&gt;{
+        SimpleTrigger trigger = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; SimpleTrigger();
+        trigger.setName(info.getName());
+        trigger.setGroup(info.getGroup());
+        trigger.setDescription(info.getDescription());
+        trigger.setStartTime(info.getStartTime());
+        trigger.setEndTime(info.getEndTime());
+        trigger.setRepeatInterval(info.getRepeatInterval());
+        trigger.setRepeatCount(info.getRepeatCount());
+        logger.info(&lt;span class=&quot;string&quot;&gt;&quot;client get trigger:&quot;&lt;/span&gt; + trigger);
+        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; trigger;
+    }
+
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(String[] args)&lt;/span&gt;
+    &lt;/span&gt;{
+        TaskRunner t = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; TaskRunner();
+        t.getCronJob();
+        t.close();
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;先启动TaskScheduler，再启动TaskRunner，结果如下：  &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;TaskScheduler日志:&lt;br&gt;2013-01-20 15:42:21,661 [Socket Reader #1 for port 8888] INFO  [org.apache.hadoop.ipc.Server] – Starting Socket Reader #1 for port 8888&lt;br&gt;2013-01-20 15:42:21,662 [main] INFO  [org.apache.hadoop.ipc.metrics.RpcMetrics] – Initializing RPC Metrics with hostName=TaskScheduler, port=8888&lt;br&gt;2013-01-20 15:42:21,706 [main] INFO  [org.apache.hadoop.ipc.metrics.RpcDetailedMetrics] – Initializing RPC Metrics with hostName=TaskScheduler, port=8888&lt;br&gt;2013-01-20 15:42:21,710 [IPC Server listener on 8888] INFO  [org.apache.hadoop.ipc.Server] – IPC Server listener on 8888: starting&lt;br&gt;2013-01-20 15:42:21,711 [IPC Server Responder] INFO  [org.apache.hadoop.ipc.Server] – IPC Server Responder: starting&lt;br&gt;2013-01-20 15:42:21,711 [IPC Server handler 0 on 8888] INFO  [org.apache.hadoop.ipc.Server] – IPC Server handler 0 on 8888: starting&lt;br&gt;2013-01-20 15:42:24,084 [IPC Server handler 0 on 8888] INFO  [org.mh.rpc.task.TaskScheduler] – generate a task: org.mh.rpc.task.JobDetailInfo@1f26605&lt;/p&gt;
+&lt;p&gt;TaskRunner:&lt;br&gt;2013-01-20 15:42:26,323 [main] INFO  [org.mh.rpc.task.TaskRunner] – client get jobdetail:JobDetail ‘JobGroup_1.MyJob_1′:  jobClass: ‘org.mh.rpc.quartz.GetSumTask isStateful: false isVolatile: false isDurable: false requestsRecovers: false&lt;br&gt;2013-01-20 15:42:26,329 [main] INFO  [org.mh.rpc.task.TaskRunner] – client get trigger:Trigger ‘Trigger_Group_1.Trigger&lt;em&gt;1′:  triggerClass: ‘org.quartz.SimpleTrigger isVolatile: false calendar: ‘null’ misfireInstruction: 0 nextFireTime: null&lt;br&gt;2013-01-20 15:42:26,382 [main] INFO  [org.quartz.simpl.SimpleThreadPool] – Job execution threads will use class loader of thread: main&lt;br&gt;2013-01-20 15:42:26,411 [main] INFO  [org.quartz.core.SchedulerSignalerImpl] – Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl&lt;br&gt;2013-01-20 15:42:26,411 [main] INFO  [org.quartz.core.QuartzScheduler] – Quartz Scheduler v.1.6.5 created.&lt;br&gt;2013-01-20 15:42:26,413 [main] INFO  [org.quartz.simpl.RAMJobStore] – RAMJobStore initialized.&lt;br&gt;2013-01-20 15:42:26,413 [main] INFO  [org.quartz.impl.StdSchedulerFactory] – Quartz scheduler ‘DefaultQuartzScheduler’ initialized from default resource file in Quartz package: ‘quartz.properties’&lt;br&gt;2013-01-20 15:42:26,413 [main] INFO  [org.quartz.impl.StdSchedulerFactory] – Quartz scheduler version: 1.6.5&lt;br&gt;2013-01-20 15:42:26,415 [main] INFO  [org.quartz.core.QuartzScheduler] – Scheduler DefaultQuartzScheduler&lt;/em&gt;$_NON_CLUSTERED started.&lt;br&gt;org.mh.rpc.quartz.DemoTask@1b66b06: executing task @Sun Jan 20 15:42:26 CST 2013&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;上面是一个简单的demo，演示了如何通过RPC将任务调度给节点去执行，对于Quartz来说，任务的形式可以千变万化，关键就看怎么去使用了，分发到多个节点上执行的话，就还需要对任务的信息做更多的封装了。&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前hadoop RPC的数据序列化是通过实现自己定义的Writable接口实现，而从hadoop 2.0开始，数据的序列化工作交给了ProtocolBuffer去做。关于Hadoop RPC的实现原理已经有很多文章进行了详细的介绍（&lt;a href=&quot;http://weixiaolu.iteye.com/blog/1504898&quot;&gt;源码级强力分析hadoop的RPC机制&lt;/a&gt;，&lt;a href=&quot;http://yanbohappy.sinaapp.com/?p=110&quot;&gt;Hadoop基于Protocol Buffer的RPC实现代码分析-Server端&lt;/a&gt;，&lt;a href=&quot;http://yanbohappy.sinaapp.com/?p=115&quot;&gt;带有HA功能的Hadoop Client端RPC实现原理与代码分析&lt;/a&gt;），这里就不在赘述了。下面就直接引入问题和方案吧。  &lt;/p&gt;
+&lt;h2 id=&quot;问题&quot;&gt;&lt;a href=&quot;#问题&quot; class=&quot;headerlink&quot; title=&quot;问题&quot;&gt;&lt;/a&gt;问题&lt;/h2&gt;&lt;p&gt;工作中经常需要在定时任务系统上写一些定时任务，随着业务规模的增长和扩大，需要定时处理的任务越来越多，任务之间的执行间隔越来越小，某一时间段内（比如0点、整点或半点）执行的任务会越来越密集，只在一台机器上执行这些任务的话，会出现较大的风险：  &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;任务并发度较高时，单机的系统资源将成为瓶颈  &lt;/li&gt;
+&lt;li&gt;如果一个任务的运行占用了整个机器的大部分资源，比如sql查询耗费巨大内存和CPU资源，将直接影响其他任务的运行  &lt;/li&gt;
+&lt;li&gt;任务失败后，如果仍然在同一台节点自动重新执行，失败率较高  &lt;/li&gt;
+&lt;li&gt;机器宕机后，必须第一时间重启机器或重新部署定时任务系统，所有任务都不能按时执行  &lt;/li&gt;
+&lt;li&gt;等等  &lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;方案&quot;&gt;&lt;a href=&quot;#方案&quot; class=&quot;headerlink&quot; title=&quot;方案&quot;&gt;&lt;/a&gt;方案&lt;/h2&gt;&lt;p&gt;可想而知的是，可以通过将定时任务系统进行分布式改造，使用多个节点执行任务，将任务分发到不同节点上进行处理，并且完善失败重试机制，从而提高系统稳定性，实现任务系统的高可靠。&lt;br&gt;既然是在多个节点之间分发任务，肯定得有个任务的管理者(主节点)，在我们现有的系统中，也就是一套可以部署定时任务的web系统，任务代码更新后，部署好这套web系统，即可通过web页面设置定时任务并且进行调度(在单个节点上执行)。执行任务的节点(子节点)有多个以后，如何分发任务到子节点呢，我们可以把任务的信息封装成一个bean，通过RPC发布给子节点，子节点通过这个任务bean获得任务信息，并在指定的时刻执行任务。同时，子节点可以通过与主节点的心跳通信将节点状态和执行任务的情况告诉主节点。&lt;br&gt;这样其实就与hadoop mapreduce分发任务有点相似了，呵呵，这里主节点与子节点之间的通信，我们就可以通过Hadoop RPC框架来实现了，不同的是，我们分发的任务是定时任务，发布任务时需要将任务的定时信息一并发给子节点。  &lt;/p&gt;
+&lt;h2 id=&quot;实现&quot;&gt;&lt;a href=&quot;#实现&quot; class=&quot;headerlink&quot; title=&quot;实现&quot;&gt;&lt;/a&gt;实现&lt;/h2&gt;&lt;p&gt;单点的定时任务系统是基于Quartz的，在分布式环境下，可以继续基于Quartz进行改造，任务的定时信息可以通过Quartz中的JobDetail和Trigger对象来描述并封装，加上任务执行的入口类信息，再通过RPC由主节点发给子节点。子节点收到封装好的任务信息对象后，再构造JobDetail和Trigger，设置好启动时间后，通过入口类启动任务。下面是一个简单的demo。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="hadoop" scheme="http://maohong.github.io/categories/hadoop/"/>
+    
+      <category term="分布式" scheme="http://maohong.github.io/categories/hadoop/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+    
+      <category term="hadoop" scheme="http://maohong.github.io/tags/hadoop/"/>
+    
+      <category term="RPC" scheme="http://maohong.github.io/tags/RPC/"/>
+    
+      <category term="任务调度" scheme="http://maohong.github.io/tags/%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/"/>
+    
+      <category term="分布式应用" scheme="http://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
     
   </entry>
   
@@ -53,7 +454,7 @@
     <link href="http://maohong.github.io/2012/11/13/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/"/>
     <id>http://maohong.github.io/2012/11/13/使用zookeeper协调多服务器的任务处理/</id>
     <published>2012-11-13T08:16:43.000Z</published>
-    <updated>2016-07-03T09:10:25.000Z</updated>
+    <updated>2016-07-03T13:31:15.000Z</updated>
     
     <content type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Zookeeper&lt;/strong&gt;是hadoop的子项目，是google的chubby的开源实现，是一个针对大规模分布式系统的可靠的分布式协调系统。Zookeeper一般部署在一个集群上，通过在集群间维护一个数据树，使得连接到集群的client能够获得统一的数据信息，比如系统公共配置信息、节点存活状态等等。因此，在互联网公司中，zookeeper被广泛运用于统一配置管理、名字服务、分布式同步等。&lt;/p&gt;
 &lt;h2 id=&quot;问题&quot;&gt;&lt;a href=&quot;#问题&quot; class=&quot;headerlink&quot; title=&quot;问题&quot;&gt;&lt;/a&gt;问题&lt;/h2&gt;&lt;p&gt;我们看下这样一种场景：&lt;br&gt;前台系统每时每刻都生成大量数据，这些原生数据由后台系统处理完毕后再作他用，我们暂且不谈这些数据的存储形式，只关注如何能够尽可能高效的处理。举个例子，前台系统可能是微博的前端发布系统、搜索引擎上的广告投放系统，或者是任务发布系统，后台系统则可能是对微博和广告信息的审查系统，比如用户发的微博如果包含近期敏感信息则不予显示，若是任务，后台系统则负责处理任务具体的执行。&lt;br&gt;若数据量和任务量较小，单节点的后台系统或许可以处理得过来，但是如果数据量和任务量很大（比如新浪微博，龙年正月初一0点0分0秒，共有32312条微博同时发布），单节点的后台系统肯定吃不消，这时候，可想而知的是多节点同时处理前台过来的数据。&lt;br&gt;最简单的方法是，按消息id对后台节点数取模（msgid%server_num=mod），每个后台节点取自己那份数据进行处理，这就需要每个节点都知晓当前有多少个后台节点以及本节点所应取的mod数。但是，当某个节点宕机时，这个节点所应处理的数据无法被继续处理了，势必会造成阻塞，除非重新配置各节点上的参数，将节点数server_num减1，并修改各节点取数据的mod数。&lt;br&gt;毋庸置疑，这样非常麻烦！如果能够将这种配置信息（实际上是数据在节点间分配的控制信息）统一管理起来，在配置信息发生变化时，各个后台节点能够及时知晓其变化，就可以避免上述情况的发生。&lt;br&gt;因此，采用多节点处理数据时，有两个问题：&lt;br&gt;1.避免多个节点重复处理同一条数据，否则造成资源浪费。&lt;br&gt;2.不能有数据被遗漏处理，尤其是在有后台节点down掉的时候。&lt;br&gt;也就是说，采用多节点同时处理数据时，需要将数据隔离开，分别给不同的节点处理，而且在有节点宕机的情况下，所有数据也必须可以无误的被其他可用节点处理。如何做到这一点呢，使用zookeeper吧！&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -81,10 +482,16 @@
     
     </summary>
     
-      <category term="开源组件, 分布式应用" scheme="http://maohong.github.io/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6-%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+      <category term="开源组件" scheme="http://maohong.github.io/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6/"/>
+    
+      <category term="分布式应用" scheme="http://maohong.github.io/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
     
     
-      <category term="zookeeper,横向扩展,分布式协调" scheme="http://maohong.github.io/tags/zookeeper-%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
+      <category term="zookeeper" scheme="http://maohong.github.io/tags/zookeeper/"/>
+    
+      <category term="横向扩展" scheme="http://maohong.github.io/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
+    
+      <category term="分布式协调" scheme="http://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
     
   </entry>
   

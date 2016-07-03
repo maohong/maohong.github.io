@@ -288,7 +288,7 @@
             
               
                 
-                <a class="post-title-link" href="/2015/09/02/使用hexo-gitpage搭建博客/" itemprop="url">
+                <a class="post-title-link" href="/2014/09/02/使用hexo-gitpage搭建博客/" itemprop="url">
                   使用hexo+gitpage搭建博客
                 </a>
               
@@ -302,8 +302,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-09-02T19:50:40+08:00" content="2015-09-02">
-              2015-09-02
+            <time itemprop="dateCreated" datetime="2014-09-02T19:50:40+08:00" content="2014-09-02">
+              2014-09-02
             </time>
           </span>
 
@@ -332,8 +332,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2015/09/02/使用hexo-gitpage搭建博客/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/02/使用hexo-gitpage搭建博客/" itemprop="commentsCount"></span>
+                <a href="/2014/09/02/使用hexo-gitpage搭建博客/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/09/02/使用hexo-gitpage搭建博客/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -343,7 +343,7 @@
 
           
           
-             <span id="/2015/09/02/使用hexo-gitpage搭建博客/" class="leancloud_visitors" data-flag-title="使用hexo+gitpage搭建博客">
+             <span id="/2014/09/02/使用hexo-gitpage搭建博客/" class="leancloud_visitors" data-flag-title="使用hexo+gitpage搭建博客">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -427,6 +427,291 @@
             
               
                 
+                <a class="post-title-link" href="/2013/01/29/shell中的IFS分隔符/" itemprop="url">
+                  Shell中的IFS分隔符使用
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2013-01-29T20:41:54+08:00" content="2013-01-29">
+              2013-01-29
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Shell/" itemprop="url" rel="index">
+                    <span itemprop="name">Shell</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2013/01/29/shell中的IFS分隔符/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2013/01/29/shell中的IFS分隔符/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2013/01/29/shell中的IFS分隔符/" class="leancloud_visitors" data-flag-title="Shell中的IFS分隔符使用">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。<br>工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：<br><img src="../images/shell.png" alt=""></p>
+<p>我需要拿到文件中<font color="blue">第三列为1</font>的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。<br><strong>脚本如下：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">for line in `awk -F&quot;\3&quot; &apos;&#123;if($3==1) print $0&#125;&apos; datafile`</div><div class="line">    do</div><div class="line">        echo $line</div><div class="line">done</div></pre></td></tr></table></figure></p>
+<p><strong>结果如下：</strong><br><img src="../images/shell2.png" alt=""><br>本来是想要逐行打印出来的，可结果却不是我想要的，究其原因，是因为在shell的for循环中，列出集合的item时，默认是以<space>或<tab>或<newline>为分隔符，我们的数据文件中有空格，因此它就以空格分割打印了。<br>可以通过显式设置IFS的值来达到我们要的效果，修改后的脚本如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">oldifs=$IFS</div><div class="line">IFS=$&apos;\n&apos;    #change seperator to &apos;\n&apos; to get a line</div><div class="line">for line in `awk -F&quot;\3&quot; &apos;&#123;if($3==1) print $0&#125;&apos; datafile`</div><div class="line">    do</div><div class="line">        echo $line</div><div class="line">done</div><div class="line">IFS=$oldifs #reset seperator</div></pre></td></tr></table></figure></newline></tab></space></p>
+<p>通过先保存当前的IFS变量的值到一个临时变量，再显式设置为我们想要的行分隔符$’\n’，然后在for循环结束后，再重置IFS的值即可。<br><strong>结果如下：</strong><br><img src="../images/shell3.png" alt="">  </p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2013/01/21/将Hadoop-RPC框架应用于多节点任务调度/" itemprop="url">
+                  将Hadoop RPC框架应用于多节点任务调度
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2013-01-21T20:53:38+08:00" content="2013-01-21">
+              2013-01-21
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/hadoop/" itemprop="url" rel="index">
+                    <span itemprop="name">hadoop</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/hadoop/分布式/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2013/01/21/将Hadoop-RPC框架应用于多节点任务调度/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2013/01/21/将Hadoop-RPC框架应用于多节点任务调度/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2013/01/21/将Hadoop-RPC框架应用于多节点任务调度/" class="leancloud_visitors" data-flag-title="将Hadoop RPC框架应用于多节点任务调度">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前hadoop RPC的数据序列化是通过实现自己定义的Writable接口实现，而从hadoop 2.0开始，数据的序列化工作交给了ProtocolBuffer去做。关于Hadoop RPC的实现原理已经有很多文章进行了详细的介绍（<a href="http://weixiaolu.iteye.com/blog/1504898">源码级强力分析hadoop的RPC机制</a>，<a href="http://yanbohappy.sinaapp.com/?p=110">Hadoop基于Protocol Buffer的RPC实现代码分析-Server端</a>，<a href="http://yanbohappy.sinaapp.com/?p=115">带有HA功能的Hadoop Client端RPC实现原理与代码分析</a>），这里就不在赘述了。下面就直接引入问题和方案吧。  </p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>工作中经常需要在定时任务系统上写一些定时任务，随着业务规模的增长和扩大，需要定时处理的任务越来越多，任务之间的执行间隔越来越小，某一时间段内（比如0点、整点或半点）执行的任务会越来越密集，只在一台机器上执行这些任务的话，会出现较大的风险：  </p>
+<ul>
+<li>任务并发度较高时，单机的系统资源将成为瓶颈  </li>
+<li>如果一个任务的运行占用了整个机器的大部分资源，比如sql查询耗费巨大内存和CPU资源，将直接影响其他任务的运行  </li>
+<li>任务失败后，如果仍然在同一台节点自动重新执行，失败率较高  </li>
+<li>机器宕机后，必须第一时间重启机器或重新部署定时任务系统，所有任务都不能按时执行  </li>
+<li>等等  </li>
+</ul>
+<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>可想而知的是，可以通过将定时任务系统进行分布式改造，使用多个节点执行任务，将任务分发到不同节点上进行处理，并且完善失败重试机制，从而提高系统稳定性，实现任务系统的高可靠。<br>既然是在多个节点之间分发任务，肯定得有个任务的管理者(主节点)，在我们现有的系统中，也就是一套可以部署定时任务的web系统，任务代码更新后，部署好这套web系统，即可通过web页面设置定时任务并且进行调度(在单个节点上执行)。执行任务的节点(子节点)有多个以后，如何分发任务到子节点呢，我们可以把任务的信息封装成一个bean，通过RPC发布给子节点，子节点通过这个任务bean获得任务信息，并在指定的时刻执行任务。同时，子节点可以通过与主节点的心跳通信将节点状态和执行任务的情况告诉主节点。<br>这样其实就与hadoop mapreduce分发任务有点相似了，呵呵，这里主节点与子节点之间的通信，我们就可以通过Hadoop RPC框架来实现了，不同的是，我们分发的任务是定时任务，发布任务时需要将任务的定时信息一并发给子节点。  </p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>单点的定时任务系统是基于Quartz的，在分布式环境下，可以继续基于Quartz进行改造，任务的定时信息可以通过Quartz中的JobDetail和Trigger对象来描述并封装，加上任务执行的入口类信息，再通过RPC由主节点发给子节点。子节点收到封装好的任务信息对象后，再构造JobDetail和Trigger，设置好启动时间后，通过入口类启动任务。下面是一个简单的demo。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2013/01/21/将Hadoop-RPC框架应用于多节点任务调度/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2012/11/13/使用zookeeper协调多服务器的任务处理/" itemprop="url">
                   使用zookeeper协调多服务器的任务处理
                 </a>
@@ -455,8 +740,20 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/开源组件-分布式应用/" itemprop="url" rel="index">
-                    <span itemprop="name">开源组件, 分布式应用</span>
+                  <a href="/categories/开源组件/" itemprop="url" rel="index">
+                    <span itemprop="name">开源组件</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/开源组件/分布式应用/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式应用</span>
                   </a>
                 </span>
 
@@ -579,7 +876,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -587,7 +884,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -596,7 +893,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
