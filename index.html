@@ -526,8 +526,7 @@
 
       
         
-          
-            <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在测试spark on yarn时，发现一些内存分配上的问题，具体如下。</p>
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在测试spark on yarn时，发现一些内存分配上的问题，具体如下。</p>
 <p>在$SPARK_HOME/conf/spark-env.sh中配置如下参数：</p>
 <blockquote>
 <p>SPARK_EXECUTOR_INSTANCES=4            <em>在yarn集群中启动的executor进程数</em></p>
@@ -553,37 +552,12 @@
 <li><p>为何yarn中每个container分配的内存是3G，而不是executor需要的2G呢？</p>
 </li>
 </ol>
-<h2 id="问题解析"><a href="#问题解析" class="headerlink" title="问题解析"></a>问题解析</h2><p>进过一番调研，发现这里有些概念容易混淆，整理如下，序号对应上面的问题：<br>&lt;!—-more-—&gt;<br>(1) spark的yarn-client向ResourceManager申请提交作业/启动AppMaster时，会判断是否是集群模式，如果是集群模式，则AppMaster的内存大小与driver内存大小一致，否则由spark.yarn.am.memory决定，这个参数的默认值是512MB。我们使用的是yarn-client模式，所以实际内存是512MB。</p>
-<p><font color="red">384MB是spark-client为appMaster额外申请的内存</font>，计算方法如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-5.png" alt=""></p>
-<p>即，默认从参数读取（集群模式从spark.yarn.driver.memoryOverhead参数读，否则从spark.yarn.am.memoryOverhead参数读），若没配此参数，则从AppMaster的内存*一定系数和默认最小overhead中取较大值。</p>
-<p>在spark-1.4.1版本中，MEMORY_OVERHEAD_FACTOR的默认值为0.10（之前是0.07），MEMORY_OVERHEAD_MIN默认为384，我们没有指定spark.yarn.driver.memoryOverhead和spark.yarn.am.memoryOverhead，而amMemory=512M（由spark.yarn.am.memory决定），因此memoryOverhead为max(512*0.10, 384)=384MB。</p>
-<p>Executor的memoryOverhead计算方法与此一样，只是不区分是否集群模式，都默认由spark.yarn.executor.memoryOverhead配置。</p>
-<p>(2) <font color="red">日志和sparkUI上显示的是executor内部用于缓存计算结果的内存空间，并不是executor所拥有的全部内存</font>。这部分内存是由以下公式计算：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-6.png" alt=""></p>
-<p>Runtime.getRuntime.maxMemory按2048MB算，storage memory大小为1105.92MB，sparkUI显示的略小于此值，是正常的。</p>
-<p>(3) 与上述第2点一样，storage memory的大小略小于1024<em>0.9</em>0.6=552.96MB</p>
-<p>(4) 前面提到spark会为container额外申请一部分内存（memoryOverhead），因此，实际为container提交申请的内存大小是2048 + max(2048*0.10, 384) = 2432MB，而<font color="red">yarn在做资源分配时会做资源规整化，即应用程序申请的资源量一定是最小可申请资源量的整数倍（向上取整）</font>，最小可申请内存量由yarn.scheduler.minimum-allocation-mb指定，因此，会为container分配3G内存。</p>
-<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>为了验证上述规则，继续修改配置参数：</p>
-<blockquote>
-<p>SPARK_EXECUTOR_INSTANCES=4          <em>在yarn集群中启动的executor进程数</em></p>
-<p>SPARK_EXECUTOR_MEMORY=4G            <em>为每个executor进程分配的内存大小</em></p>
-<p>SPARK_DRIVER_MEMORY=3G              <em>为spark-driver进程分配的内存大小</em></p>
-</blockquote>
-<p>并在启动spark-sql时指定spark.yarn.am.memory参数：</p>
-<p><strong>bin/spark-sql –master yarn –conf spark.yarn.am.memory=1024m</strong></p>
-<p>再看日志信息：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-7.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-8.png" alt=""></p>
-<p>yarnUI状态：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-9.png" alt=""></p>
-<p>sparkUI的executors信息：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-10.png" alt=""></p>
-<p>可见，AppMaster的实际内存为1024M（1408-384），而其在yarn中的container内存大小为2G（1408大于1G，yarn按资源规整化原则为其分配2G）。</p>
-<p>同理，driver的storage memory空间为3G*0.9*0.6=1.62G，executor的storage memory空间为4G*0.9*0.6=2.16G，executor所在container占用5G内存（4096+max(4096*0.10,384)= 4505.6，大于4G， yarn按资源规整化原则为其分配5G）。</p>
-<p>Yarn集群的内存总占用空间为2+5*4=22G。</p>
-
-          
+<h2 id="问题解析"><a href="#问题解析" class="headerlink" title="问题解析"></a>问题解析</h2><p>进过一番调研，发现这里有些概念容易混淆，整理如下，序号对应上面的问题：<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/08/11/Spark-on-yarn的内存分配问题/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>

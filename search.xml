@@ -78,7 +78,7 @@
 <li><p>为何yarn中每个container分配的内存是3G，而不是executor需要的2G呢？</p>
 </li>
 </ol>
-<h2 id="问题解析"><a href="#问题解析" class="headerlink" title="问题解析"></a>问题解析</h2><p>进过一番调研，发现这里有些概念容易混淆，整理如下，序号对应上面的问题：<br>&lt;!—-more-—&gt;<br>(1) spark的yarn-client向ResourceManager申请提交作业/启动AppMaster时，会判断是否是集群模式，如果是集群模式，则AppMaster的内存大小与driver内存大小一致，否则由spark.yarn.am.memory决定，这个参数的默认值是512MB。我们使用的是yarn-client模式，所以实际内存是512MB。</p>
+<h2 id="问题解析"><a href="#问题解析" class="headerlink" title="问题解析"></a>问题解析</h2><p>进过一番调研，发现这里有些概念容易混淆，整理如下，序号对应上面的问题：<br><a id="more"></a><br>(1) spark的yarn-client向ResourceManager申请提交作业/启动AppMaster时，会判断是否是集群模式，如果是集群模式，则AppMaster的内存大小与driver内存大小一致，否则由spark.yarn.am.memory决定，这个参数的默认值是512MB。我们使用的是yarn-client模式，所以实际内存是512MB。</p>
 <p><font color="red">384MB是spark-client为appMaster额外申请的内存</font>，计算方法如下：</p>
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-5.png" alt=""></p>
 <p>即，默认从参数读取（集群模式从spark.yarn.driver.memoryOverhead参数读，否则从spark.yarn.am.memoryOverhead参数读），若没配此参数，则从AppMaster的内存*一定系数和默认最小overhead中取较大值。</p>
