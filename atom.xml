@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>techtech</title>
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://maohong.github.io/"/>
+  <updated>2016-07-03T06:39:33.000Z</updated>
+  <id>http://maohong.github.io/</id>
+  
+  <author>
+    <name>maohong</name>
+    <email>maohong.tech@gmail.com</email>
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用hexo+gitpage搭建博客</title>
+    <link href="http://maohong.github.io/2016/07/02/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
+    <id>http://maohong.github.io/2016/07/02/使用hexo-gitpage搭建博客/</id>
+    <published>2016-07-02T14:50:40.000Z</published>
+    <updated>2016-07-03T06:39:33.000Z</updated>
+    
+    <content type="html">&lt;h2 id=&quot;环境准备&quot;&gt;&lt;a href=&quot;#环境准备&quot; class=&quot;headerlink&quot; title=&quot;环境准备&quot;&gt;&lt;/a&gt;环境准备&lt;/h2&gt;&lt;p&gt;系统：mac osx&lt;br&gt;软件：Node.js，npm，git，hexo&lt;br&gt;具体安装以及git与github打通的配置就不详述了，可以google到各种方法。  &lt;/p&gt;
+&lt;h2 id=&quot;hexo命令&quot;&gt;&lt;a href=&quot;#hexo命令&quot; class=&quot;headerlink&quot; title=&quot;hexo命令&quot;&gt;&lt;/a&gt;hexo命令&lt;/h2&gt;&lt;p&gt;hexo init &amp;lt;folder&amp;gt;  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; #表示执行init命令初始化hexo到你指定的目录  &lt;/p&gt;
+&lt;p&gt;&lt;font color=&quot;red&quot;&gt;以下命令需要在&amp;lt;folder&amp;gt;目录下执行：&lt;/font&gt;&lt;br&gt;hexo generate  &amp;nbsp;&amp;nbsp;&amp;nbsp;#自动根据当前目录下文件,生成静态网页&lt;br&gt;hexo server &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;#运行本地服务  &lt;/p&gt;
+&lt;p&gt;启动服务后，就可以通过访问 &lt;a href=&quot;http://localhost:4000&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://localhost:4000&lt;/a&gt; 来看看效果了。&lt;br&gt;接下来，可以使用以下命令来创建一篇新博文：&lt;br&gt;hexo new “test blog 1”&lt;br&gt;创建一个名为test blog 1的博客页面，对应的md文件路径是&amp;lt;folder&amp;gt;/source/_posts\test blog 1.md  &lt;/p&gt;
+&lt;p&gt;接下来就可以在这个md文件中写文章了，我使用的是MacDown来编辑md文件，支持实时查看页面效果，还是挺好用的。&lt;/p&gt;
+&lt;h2 id=&quot;发布博客&quot;&gt;&lt;a href=&quot;#发布博客&quot; class=&quot;headerlink&quot; title=&quot;发布博客&quot;&gt;&lt;/a&gt;发布博客&lt;/h2&gt;&lt;p&gt;文章写好后，通过以下方式发布到github上。&lt;br&gt;1.编辑./_config.yml文件，修改以下部分，配置本地内容同步至github：  &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt; deploy:&lt;br&gt; &amp;nbsp;&amp;nbsp;type: git&lt;br&gt; &amp;nbsp;&amp;nbsp;repository: git@github.com:maohong/maohong.github.io.git&lt;br&gt; &amp;nbsp;&amp;nbsp;branch: master  &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;2.执行hexo generate(hexo g)生成html内容&lt;br&gt;3.执行hexo deploy(hexo d)讲更新内容发布至guthub  &lt;/p&gt;
+&lt;p&gt;然后就可以访问主页查看效果了，可以使用github帐户名.github.io进行访问, 也可以设置个性域名。&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;环境准备&quot;&gt;&lt;a href=&quot;#环境准备&quot; class=&quot;headerlink&quot; title=&quot;环境准备&quot;&gt;&lt;/a&gt;环境准备&lt;/h2&gt;&lt;p&gt;系统：mac osx&lt;br&gt;软件：Node.js，npm，git，hexo&lt;br&gt;具体安装以及git与github打通的配置
+    
+    </summary>
+    
+    
+      <category term="hexo, gitpage" scheme="http://maohong.github.io/tags/hexo-gitpage/"/>
+    
+  </entry>
+  
+</feed>
