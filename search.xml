@@ -129,9 +129,10 @@
 <li><p>storm的历史发布版本有很多，为何0.9.4版本里会出现这个不该出现的问题，0.9.4相对老的版本是不是做了什么修改？</p>
 </li>
 <li><p>为何抛出异常后，supervisor进程就这么直接退出了？太弱了吧。。</p>
+<a id="more"></a>
+<p>继续看0.9.4的源码发现，<strong>supervisor中有以下两个事件线程，都会调用download-storm-code方法</strong>：</p>
 </li>
 </ol>
-<p>继续看0.9.4的源码发现，<strong>supervisor中有以下两个事件线程，都会调用download-storm-code方法</strong>：</p>
 <p><strong>一个是synchronize-supervisor，用于同步nimbus任务</strong>，每隔10秒执行一次，会调用mk-synchronize-supervisor方法，以及时获取nimbus分配给该supervisor的新任务并移除已分配但不再需要执行的任务。</p>
 <p><strong>另一个是sync-processes，用于根据任务变化同步管理worker进程</strong>，执行周期由SUPERVISOR-MONITOR-FREQUENCY-SECS（默认3秒）指定，会调用sync-processes方法，以关闭当前不处于valid状态的worker和启动新分配给该supervisor的worker。</p>
 <p>其中，mk-synchronize-supervisor方法和sync-processes方法都会调用download-storm-code方法。</p>
@@ -150,6 +151,44 @@
 <p>关于第3个问题，再回看定义synchronize-supervisor事件线程的代码，是通过事件管理器event-manager来实现的，查看event.clj中的实现，event-manager会从一个LinkedBlockingQueue取出新事件并启动线程处理，线程若抛出非Interrupted异常，则直接退出进程了。</p>
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150701/9.png" alt=""></p>
 <p>至此，问题分析完毕。</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[交换空间使用率过高问题分析]]></title>
+      <url>http://maohong.github.io/2015/06/22/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</url>
+      <content type="html"><![CDATA[<h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p>线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png" alt=""></p>
+<p>图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。</p>
+<p>首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空间。但究竟是什么原因引起物理内存不足呢？因为Jvm堆大小是固定的，所以推断是因堆外内存占用空间较大引起。</p>
+<p>于是，使用jmap -histo:live <pid>把进程中的对象信息dump出来，dump信息如下：</pid></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/2.png" alt=""></p>
+<p>确实发现存在大量DirectByteBuffer对象，这说明内存中确实有大量引用了堆外内存的对象没有被回收！</p>
+<p>同时，内存中也对应存在着大量的sun.misc.Cleaner和java.nio.DirectByteBuffer$Deallocator对象。这两个类是用于回收堆外内存的。Cleaner对象是在DirectByteBuffer的构造函数中创建，其中封装了回收堆外内存的逻辑，Cleaner执行clean资源的操作是通过启动Deallocator线程实现的，这个线程把DirectByteBuffer对象引用的堆外内存做回收。</p>
+<p> 那么问题来了：</p>
+<ol>
+<li><p>为什么DirectByteBuffer对象没有被回收？</p>
+</li>
+<li><p>怎么做才能让DirectByteBuffer对象能被及时回收？</p>
+</li>
+</ol>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><a id="more"></a>
+<p>先看了下启动jvm参数为-Xmn8192M -Xms13312M -Xmx13312M -XX:PermSize=512m -XX:MaxPermSize=512m，很明显，新生代空间配的太大，同时，也没有指定堆外内存的最大空间（-XX:MaxDirectMemorySize），这个参数没设置则默认等于-Xmx，然而服务器总内存只有16G，所以时间长了很可能会发生堆外内存溢出！</p>
+<p>因为此服务是kafka集群的消费者，每天接收的报文量在1亿以上，这个过程中产生了大量的DirectByteBuffer对象，这些对象直接引用堆外内存，而同时，这些临时对象也会被回收，由于新生代空间配的很大，触发minor GC的频率不够高，从而不能及时释放已被占用的堆外内存，随着时间的推移，进程启动过一段时间后，堆外内存占用越来越多，最终被OS交换到swap空间。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>调整jvm参数，减少新生代大小为jvm堆空间的3/8，并指定堆外内存大小，调整后的jvm参数为-Xmn3840M -Xms10240M -Xmx10240M -XX:PermSize=512m -XX:MaxPermSize=512m -XX:MaxDirectMemorySize=4096m</p>
+<p>调整后，swap空间占用情况有所好转，但依然占用2G左右！如下图所示。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/3.png" alt=""></p>
+<p>4月21日调整参数重启服务后，在相当长的一段时间内，swap空间占用率极低，但在5月2日又出现swap空间使用率上升的情况。继续看了下jvm堆空间使用情况和full gc情况，如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/4.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/5.png" alt=""></p>
+<p>结合上面两张图，可见young gc较多，jvm堆空间整体使用率稳步上升，在5月2日与5月8日发生了两次full gc，并且每次发生fullgc后，jvm堆空间使用率下降较多，swap空间使用量只有小范围下降。这说明有一部分DirectByteBuffer对象在fullgc阶段做了回收，但依然有很多DirectByteBuffer对象没有被回收，仍然占用着堆外内存。</p>
+<p>选择一台机器，继续减小其堆空间，jvm参数为-Xmn2048M -Xms6144M -Xmx6144M -XX:PermSize=512m -XX:MaxPermSize=512m -XX:MaxDirectMemorySize=4096m，经过一段时间观察，交换空间使用率很低，应该没再发生内存页交换了，同时gc频率变高，jvm堆空间的使用率在正常范围，说明DirectByteBuffer对象被更及时的回收了。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/6.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/7.png" alt=""></p>
+<font color="‘red’">由此可见，swap空间占用率高的原因主要还是JVM堆空间太高导致的堆外内存回收不及时。</font>
+
+<h2 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h2><p>看了下kafka-client的源码，接受消息时使用的是ByteBuffer，并没有使用DirectByteBuffer，所以很奇怪，这些大量的DirectByteBuffer对象是从哪生成的？哪里用到的？</p>
+<p>运行命令jmap -dump:live,format=b,file=/data/server.dump <pid>，dump出内存快照，并用eclipse mat分析后，发现是zkclient中的一个地方用的，由于dump出的这个快照是问题解决后的内存快照，所以并不能说明问题，如果要找到根本原因，还是需要复现swap空间过高的场景，再做内存快照的dump。</pid></p>
 ]]></content>
     </entry>
     

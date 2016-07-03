@@ -107,7 +107,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150701/7.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150701/8.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150701/9.png">
-<meta property="og:updated_time" content="2016-07-03T15:56:35.000Z">
+<meta property="og:updated_time" content="2016-07-03T15:58:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="storm集群supervisor节点异常退出问题排查">
 <meta name="twitter:description" content="问题出现测试storm集群为0.9.4版本，前段时间出现supervisor进程挂掉，而其上work进程仍然运行的诡异情况，通过日志看到supervisor进程挂掉之前出现以下异常：
@@ -408,9 +408,10 @@
 <li><p>storm的历史发布版本有很多，为何0.9.4版本里会出现这个不该出现的问题，0.9.4相对老的版本是不是做了什么修改？</p>
 </li>
 <li><p>为何抛出异常后，supervisor进程就这么直接退出了？太弱了吧。。</p>
+<a id="more"></a>
+<p>继续看0.9.4的源码发现，<strong>supervisor中有以下两个事件线程，都会调用download-storm-code方法</strong>：</p>
 </li>
 </ol>
-<p>继续看0.9.4的源码发现，<strong>supervisor中有以下两个事件线程，都会调用download-storm-code方法</strong>：</p>
 <p><strong>一个是synchronize-supervisor，用于同步nimbus任务</strong>，每隔10秒执行一次，会调用mk-synchronize-supervisor方法，以及时获取nimbus分配给该supervisor的新任务并移除已分配但不再需要执行的任务。</p>
 <p><strong>另一个是sync-processes，用于根据任务变化同步管理worker进程</strong>，执行周期由SUPERVISOR-MONITOR-FREQUENCY-SECS（默认3秒）指定，会调用sync-processes方法，以关闭当前不处于valid状态的worker和启动新分配给该supervisor的worker。</p>
 <p>其中，mk-synchronize-supervisor方法和sync-processes方法都会调用download-storm-code方法。</p>
@@ -463,8 +464,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2014/09/02/使用hexo-gitpage搭建博客/" rel="next" title="使用hexo+gitpage搭建博客">
-                <i class="fa fa-chevron-left"></i> 使用hexo+gitpage搭建博客
+              <a href="/2015/06/22/交换空间使用率过高问题分析/" rel="next" title="交换空间使用率过高问题分析">
+                <i class="fa fa-chevron-left"></i> 交换空间使用率过高问题分析
               </a>
             
           </div>
@@ -554,7 +555,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -562,7 +563,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -571,7 +572,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">20</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
