@@ -281,7 +281,7 @@
     <link href="http://maohong.github.io/2015/06/22/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
     <id>http://maohong.github.io/2015/06/22/交换空间使用率过高问题分析/</id>
     <published>2015-06-22T02:02:04.000Z</published>
-    <updated>2016-07-03T16:08:05.000Z</updated>
+    <updated>2016-07-04T15:38:16.000Z</updated>
     
     <content type="html">&lt;h2 id=&quot;问题现象&quot;&gt;&lt;a href=&quot;#问题现象&quot; class=&quot;headerlink&quot; title=&quot;问题现象&quot;&gt;&lt;/a&gt;问题现象&lt;/h2&gt;&lt;p&gt;线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
@@ -311,7 +311,7 @@
 &lt;p&gt;选择一台机器，继续减小其堆空间，jvm参数为-Xmn2048M -Xms6144M -Xmx6144M -XX:PermSize=512m -XX:MaxPermSize=512m -XX:MaxDirectMemorySize=4096m，经过一段时间观察，交换空间使用率很低，应该没再发生内存页交换了，同时gc频率变高，jvm堆空间的使用率在正常范围，说明DirectByteBuffer对象被更及时的回收了。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/7.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;font color=&quot;‘red’&quot;&gt;由此可见，swap空间占用率高的原因主要还是JVM堆空间太高导致的堆外内存回收不及时。&lt;/font&gt;
+&lt;font color=&quot;red&quot;&gt;由此可见，swap空间占用率高的原因主要还是JVM堆空间太高导致的堆外内存回收不及时。&lt;/font&gt;
 
 &lt;h2 id=&quot;遗留问题&quot;&gt;&lt;a href=&quot;#遗留问题&quot; class=&quot;headerlink&quot; title=&quot;遗留问题&quot;&gt;&lt;/a&gt;遗留问题&lt;/h2&gt;&lt;p&gt;看了下kafka-client的源码，接受消息时使用的是ByteBuffer，并没有使用DirectByteBuffer，所以很奇怪，这些大量的DirectByteBuffer对象是从哪生成的？哪里用到的？&lt;/p&gt;
 &lt;p&gt;运行命令jmap -dump:live,format=b,file=/data/server.dump &lt;pid&gt;，dump出内存快照，并用eclipse mat分析后，发现是zkclient中的一个地方用的，由于dump出的这个快照是问题解决后的内存快照，所以并不能说明问题，如果要找到根本原因，还是需要复现swap空间过高的场景，再做内存快照的dump。&lt;/pid&gt;&lt;/p&gt;

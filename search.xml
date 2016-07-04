@@ -185,7 +185,7 @@
 <p>选择一台机器，继续减小其堆空间，jvm参数为-Xmn2048M -Xms6144M -Xmx6144M -XX:PermSize=512m -XX:MaxPermSize=512m -XX:MaxDirectMemorySize=4096m，经过一段时间观察，交换空间使用率很低，应该没再发生内存页交换了，同时gc频率变高，jvm堆空间的使用率在正常范围，说明DirectByteBuffer对象被更及时的回收了。</p>
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/6.png" alt=""></p>
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/7.png" alt=""></p>
-<font color="‘red’">由此可见，swap空间占用率高的原因主要还是JVM堆空间太高导致的堆外内存回收不及时。</font>
+<font color="red">由此可见，swap空间占用率高的原因主要还是JVM堆空间太高导致的堆外内存回收不及时。</font>
 
 <h2 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h2><p>看了下kafka-client的源码，接受消息时使用的是ByteBuffer，并没有使用DirectByteBuffer，所以很奇怪，这些大量的DirectByteBuffer对象是从哪生成的？哪里用到的？</p>
 <p>运行命令jmap -dump:live,format=b,file=/data/server.dump <pid>，dump出内存快照，并用eclipse mat分析后，发现是zkclient中的一个地方用的，由于dump出的这个快照是问题解决后的内存快照，所以并不能说明问题，如果要找到根本原因，还是需要复现swap空间过高的场景，再做内存快照的dump。</pid></p>
