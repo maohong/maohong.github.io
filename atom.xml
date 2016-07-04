@@ -537,6 +537,55 @@
   </entry>
   
   <entry>
+    <title>mac系统下hadoop-2.7源码编译、导入eclipse及打包</title>
+    <link href="http://maohong.github.io/2015/05/18/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/"/>
+    <id>http://maohong.github.io/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/</id>
+    <published>2015-05-18T02:00:44.000Z</published>
+    <updated>2016-07-04T16:08:17.000Z</updated>
+    
+    <content type="html">&lt;h2 id=&quot;编译环境要求&quot;&gt;&lt;a href=&quot;#编译环境要求&quot; class=&quot;headerlink&quot; title=&quot;编译环境要求&quot;&gt;&lt;/a&gt;编译环境要求&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;JDK1.7+&lt;br&gt;MAVEN 3.0以上版本&lt;br&gt;如果需要编译native code，还需要CMake 2.6、Zlib devel、openssl devel（mac下一般安装了xcode后应该都会有这些包）。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;编译方法&quot;&gt;&lt;a href=&quot;#编译方法&quot; class=&quot;headerlink&quot; title=&quot;编译方法&quot;&gt;&lt;/a&gt;编译方法&lt;/h2&gt;&lt;p&gt;解压源码包hadoop-2.7.0-src.tar.gz，iterm下进入文件夹hadoop-2.7.0-src，然后根据需要执行相应的mvn命令就可以了。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;仅编译：mvn compile&lt;br&gt;打包生成jar：mvn package&lt;br&gt;生成eclipse项目：eclipse:eclipse -DskipTests，加上-DskipTests可跳过test阶段。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;期间遇到几个问题，记录如下。&lt;/p&gt;
+&lt;h2 id=&quot;问题记录&quot;&gt;&lt;a href=&quot;#问题记录&quot; class=&quot;headerlink&quot; title=&quot;问题记录&quot;&gt;&lt;/a&gt;问题记录&lt;/h2&gt;&lt;p&gt;先执行mvn eclipse:eclipse -DskipTest生成eclipse项目，执行到一半时，提示下面的报错：&lt;/p&gt;
+&lt;font color=&quot;red&quot;&gt;‘protoc –version’ did not return a version -&amp;gt; [Help 1]&lt;/font&gt;
+
+&lt;p&gt;意思也就是是找不到protoc命令，安装protocolbuffer后重试，又提示错误：&lt;/p&gt;
+&lt;font color=&quot;red&quot;&gt;protoc version is ‘libprotoc 2.6.1′, expected version is ’2.5.0′&lt;/font&gt;
+
+&lt;p&gt;看上去是protocolbuffer版本问题，hadoop需要的版本是2.5.0，而系统安装的是2.6.1，查了很多资料，都是说protocolbuffer版本太低后来升到2.5的，而我这是2.6.1的版本，难不成还得降回去，不至于吧。因此，猜测这个版本限制是在pom.xml中写死的，于是grep了一下，发现果然在hadoop-project/pom.xml中配置了编译时使用的pb版本。&lt;/p&gt;
+&lt;font color=&quot;red&quot;&gt;\&lt;protobuf.version&gt;2.5.0\&lt;/protobuf.version&gt;&lt;/font&gt;
+
+&lt;p&gt;把以上配置项改为2.6.1，再重新执行生成eclipse项目的命令就OK了。&lt;/p&gt;
+&lt;h2 id=&quot;导入eclipse及打包&quot;&gt;&lt;a href=&quot;#导入eclipse及打包&quot; class=&quot;headerlink&quot; title=&quot;导入eclipse及打包&quot;&gt;&lt;/a&gt;导入eclipse及打包&lt;/h2&gt;&lt;p&gt;生成eclipse项目后，从eclipse里import existing project into workspace，选择hadoop-2.7.0-src目录，就会把所有代码模块导入eclipse了。接下来就可以看代码并修改了，比如增加一些日志信息等。&lt;/p&gt;
+&lt;p&gt;代码修改完毕后，可以再打出一个新的hadoop-distribution包来验证代码修改效果。&lt;/p&gt;
+&lt;p&gt;在hadoop-2.7.0-src目录下执行命令：&lt;font color=&quot;red&quot;&gt;mvn package -Pdist -Ptar -Pdocs -skipTests &lt;/font&gt;&lt;/p&gt;
+&lt;p&gt;等上漫长的一段时间，编译成功后，可以到hadoop-dist/target下找到新的jar包。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150518-hadoop%E7%BC%96%E8%AF%91%E6%89%93%E5%8C%85/1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;补充说明&quot;&gt;&lt;a href=&quot;#补充说明&quot; class=&quot;headerlink&quot; title=&quot;补充说明&quot;&gt;&lt;/a&gt;补充说明&lt;/h2&gt;&lt;p&gt;编译过程需要从maven中央仓库下载大量依赖包，我使用的是oschina的库。&lt;/p&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;20&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;21&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;22&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;23&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;24&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;25&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;26&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;27&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;28&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;29&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;30&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;31&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;32&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;33&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;34&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;35&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&amp;lt;mirror&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &amp;lt;id&amp;gt;CN&amp;lt;/id&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &amp;lt;name&amp;gt;OSChina Central&amp;lt;/name&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &amp;lt;url&amp;gt;http://maven.oschina.net/content/groups/public/&amp;lt;/url&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &amp;lt;mirrorOf&amp;gt;central&amp;lt;/mirrorOf&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&amp;lt;/mirror&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &amp;lt;profile&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;	&amp;lt;id&amp;gt;oschina&amp;lt;/id&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;	&amp;lt;repositories&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;		&amp;lt;repository&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;id&amp;gt;nexus&amp;lt;/id&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;name&amp;gt;local private nexus&amp;lt;/name&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;url&amp;gt;http://maven.oschina.net/content/groups/public/&amp;lt;/url&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;releases&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;				&amp;lt;enabled&amp;gt;true&amp;lt;/enabled&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;/releases&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;snapshots&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;				&amp;lt;enabled&amp;gt;false&amp;lt;/enabled&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;/snapshots&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;		&amp;lt;/repository&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;	&amp;lt;/repositories&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;	&amp;lt;pluginRepositories&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;		&amp;lt;pluginRepository&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;id&amp;gt;nexus&amp;lt;/id&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;name&amp;gt;local private nexus&amp;lt;/name&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;url&amp;gt;http://maven.oschina.net/content/groups/public/&amp;lt;/url&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;releases&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;				&amp;lt;enabled&amp;gt;true&amp;lt;/enabled&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;/releases&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;snapshots&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;				&amp;lt;enabled&amp;gt;false&amp;lt;/enabled&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;			&amp;lt;/snapshots&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;		&amp;lt;/pluginRepository&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;	&amp;lt;/pluginRepositories&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &amp;lt;/profile&amp;gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;编译环境要求&quot;&gt;&lt;a href=&quot;#编译环境要求&quot; class=&quot;headerlink&quot; title=&quot;编译环境要求&quot;&gt;&lt;/a&gt;编译环境要求&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;JDK1.7+&lt;br&gt;MAVEN 3.0以上版本&lt;br&gt;如果需要编译native 
+    
+    </summary>
+    
+      <category term="开源组件" scheme="http://maohong.github.io/categories/%E5%BC%80%E6%BA%90%E7%BB%84%E4%BB%B6/"/>
+    
+    
+      <category term="hadoop" scheme="http://maohong.github.io/tags/hadoop/"/>
+    
+      <category term="eclipse" scheme="http://maohong.github.io/tags/eclipse/"/>
+    
+  </entry>
+  
+  <entry>
     <title>使用hexo+gitpage搭建博客</title>
     <link href="http://maohong.github.io/2014/09/02/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
     <id>http://maohong.github.io/2014/09/02/使用hexo-gitpage搭建博客/</id>
@@ -685,6 +734,50 @@
       <category term="httpclient" scheme="http://maohong.github.io/tags/httpclient/"/>
     
       <category term="tcp连接数" scheme="http://maohong.github.io/tags/tcp%E8%BF%9E%E6%8E%A5%E6%95%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>前后端的CharacterEncoding不一致导致提交的表单数据丢失问题</title>
+    <link href="http://maohong.github.io/2014/03/20/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/"/>
+    <id>http://maohong.github.io/2014/03/20/前后端的CharacterEncoding不一致导致提交的表单数据丢失问题/</id>
+    <published>2014-03-20T03:09:03.000Z</published>
+    <updated>2016-07-04T16:11:10.000Z</updated>
+    
+    <content type="html">&lt;p&gt;最近在开发分布式任务调度系统的web端时，遇到一个坑，记录如下：&lt;/p&gt;
+&lt;p&gt;在页面上新增和修改任务，提交后，任务的属性在后端怎么都接收不到，但是在另一个协同开发的同学那边本地调试就OK，在我的本地和公共开发环境都不行，这不合理啊。。。。。&lt;/p&gt;
+&lt;p&gt;排查了很多地方，js、setter等等，一直没发现问题在哪。跟负责前端的同学交流了下，发现前端post的数据确实是修改过的，也就是后端接收有问题。&lt;/p&gt;
+&lt;p&gt;于是把最新版本和历史版本对比，发现最新版本新增了一个LogFilter，用于记录pagedelay的，仔细一看，logFilter里面是&lt;/p&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;request.setCharacterEncoding(“UTF-&lt;span class=&quot;number&quot;&gt;8&lt;/span&gt;″);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;response.setContentType(“text/html;charset=UTF-&lt;span class=&quot;number&quot;&gt;8&lt;/span&gt;″);&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;但页面上是GBK编码，所以导致数据在这个filter中编码出错，造成数据丢失，后端接收到的数据为null。&lt;/p&gt;
+&lt;font color=&quot;red&quot;&gt;解决方法：&lt;/font&gt;
+
+&lt;p&gt;把logFilter里的UTF-8改为GBK，就一切正常了。&lt;/p&gt;
+&lt;font color=&quot;red&quot;&gt;疑问：&lt;/font&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;为何历史本没问题呢，因为历史版本中的logFilter配在struts2Filter之后，请求根本走不到logFilter里去。。。。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;为何协同开发的同学本地调试没问题呢，那是因为他把web.xml里的LogFilter的filtermapping注掉了。。。。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;好一个歪萝卜大烂坑。。。&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近在开发分布式任务调度系统的web端时，遇到一个坑，记录如下：&lt;/p&gt;
+&lt;p&gt;在页面上新增和修改任务，提交后，任务的属性在后端怎么都接收不到，但是在另一个协同开发的同学那边本地调试就OK，在我的本地和公共开发环境都不行，这不合理啊。。。。。&lt;/p&gt;
+&lt;p&gt;排查了很多地方，
+    
+    </summary>
+    
+      <category term="问题分析" scheme="http://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    
+    
+      <category term="web开发" scheme="http://maohong.github.io/tags/web%E5%BC%80%E5%8F%91/"/>
+    
+      <category term="java" scheme="http://maohong.github.io/tags/java/"/>
     
   </entry>
   

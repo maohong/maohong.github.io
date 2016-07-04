@@ -362,6 +362,36 @@
     </entry>
     
     <entry>
+      <title><![CDATA[mac系统下hadoop-2.7源码编译、导入eclipse及打包]]></title>
+      <url>http://maohong.github.io/2015/05/18/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/</url>
+      <content type="html"><![CDATA[<h2 id="编译环境要求"><a href="#编译环境要求" class="headerlink" title="编译环境要求"></a>编译环境要求</h2><blockquote>
+<p>JDK1.7+<br>MAVEN 3.0以上版本<br>如果需要编译native code，还需要CMake 2.6、Zlib devel、openssl devel（mac下一般安装了xcode后应该都会有这些包）。</p>
+</blockquote>
+<h2 id="编译方法"><a href="#编译方法" class="headerlink" title="编译方法"></a>编译方法</h2><p>解压源码包hadoop-2.7.0-src.tar.gz，iterm下进入文件夹hadoop-2.7.0-src，然后根据需要执行相应的mvn命令就可以了。</p>
+<blockquote>
+<p>仅编译：mvn compile<br>打包生成jar：mvn package<br>生成eclipse项目：eclipse:eclipse -DskipTests，加上-DskipTests可跳过test阶段。</p>
+</blockquote>
+<p>期间遇到几个问题，记录如下。</p>
+<h2 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h2><p>先执行mvn eclipse:eclipse -DskipTest生成eclipse项目，执行到一半时，提示下面的报错：</p>
+<font color="red">‘protoc –version’ did not return a version -&gt; [Help 1]</font>
+
+<p>意思也就是是找不到protoc命令，安装protocolbuffer后重试，又提示错误：</p>
+<font color="red">protoc version is ‘libprotoc 2.6.1′, expected version is ’2.5.0′</font>
+
+<p>看上去是protocolbuffer版本问题，hadoop需要的版本是2.5.0，而系统安装的是2.6.1，查了很多资料，都是说protocolbuffer版本太低后来升到2.5的，而我这是2.6.1的版本，难不成还得降回去，不至于吧。因此，猜测这个版本限制是在pom.xml中写死的，于是grep了一下，发现果然在hadoop-project/pom.xml中配置了编译时使用的pb版本。</p>
+<font color="red">\<protobuf.version>2.5.0\</protobuf.version></font>
+
+<p>把以上配置项改为2.6.1，再重新执行生成eclipse项目的命令就OK了。</p>
+<h2 id="导入eclipse及打包"><a href="#导入eclipse及打包" class="headerlink" title="导入eclipse及打包"></a>导入eclipse及打包</h2><p>生成eclipse项目后，从eclipse里import existing project into workspace，选择hadoop-2.7.0-src目录，就会把所有代码模块导入eclipse了。接下来就可以看代码并修改了，比如增加一些日志信息等。</p>
+<p>代码修改完毕后，可以再打出一个新的hadoop-distribution包来验证代码修改效果。</p>
+<p>在hadoop-2.7.0-src目录下执行命令：<font color="red">mvn package -Pdist -Ptar -Pdocs -skipTests </font></p>
+<p>等上漫长的一段时间，编译成功后，可以到hadoop-dist/target下找到新的jar包。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150518-hadoop%E7%BC%96%E8%AF%91%E6%89%93%E5%8C%85/1.png" alt=""></p>
+<h2 id="补充说明"><a href="#补充说明" class="headerlink" title="补充说明"></a>补充说明</h2><p>编译过程需要从maven中央仓库下载大量依赖包，我使用的是oschina的库。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">&lt;mirror&gt;</div><div class="line">  &lt;id&gt;CN&lt;/id&gt;</div><div class="line">  &lt;name&gt;OSChina Central&lt;/name&gt;</div><div class="line">  &lt;url&gt;http://maven.oschina.net/content/groups/public/&lt;/url&gt;</div><div class="line">  &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;</div><div class="line">&lt;/mirror&gt;</div><div class="line">  &lt;profile&gt;</div><div class="line">	&lt;id&gt;oschina&lt;/id&gt;</div><div class="line">	&lt;repositories&gt;</div><div class="line">		&lt;repository&gt;</div><div class="line">			&lt;id&gt;nexus&lt;/id&gt;</div><div class="line">			&lt;name&gt;local private nexus&lt;/name&gt;</div><div class="line">			&lt;url&gt;http://maven.oschina.net/content/groups/public/&lt;/url&gt;</div><div class="line">			&lt;releases&gt;</div><div class="line">				&lt;enabled&gt;true&lt;/enabled&gt;</div><div class="line">			&lt;/releases&gt;</div><div class="line">			&lt;snapshots&gt;</div><div class="line">				&lt;enabled&gt;false&lt;/enabled&gt;</div><div class="line">			&lt;/snapshots&gt;</div><div class="line">		&lt;/repository&gt;</div><div class="line">	&lt;/repositories&gt;</div><div class="line">	&lt;pluginRepositories&gt;</div><div class="line">		&lt;pluginRepository&gt;</div><div class="line">			&lt;id&gt;nexus&lt;/id&gt;</div><div class="line">			&lt;name&gt;local private nexus&lt;/name&gt;</div><div class="line">			&lt;url&gt;http://maven.oschina.net/content/groups/public/&lt;/url&gt;</div><div class="line">			&lt;releases&gt;</div><div class="line">				&lt;enabled&gt;true&lt;/enabled&gt;</div><div class="line">			&lt;/releases&gt;</div><div class="line">			&lt;snapshots&gt;</div><div class="line">				&lt;enabled&gt;false&lt;/enabled&gt;</div><div class="line">			&lt;/snapshots&gt;</div><div class="line">		&lt;/pluginRepository&gt;</div><div class="line">	&lt;/pluginRepositories&gt;</div><div class="line">  &lt;/profile&gt;</div></pre></td></tr></table></figure>]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[使用hexo+gitpage搭建博客]]></title>
       <url>http://maohong.github.io/2014/09/02/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/</url>
       <content type="html"><![CDATA[<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>系统：mac osx<br>软件：Node.js，npm，git，hexo<br>具体安装以及git与github打通的配置就不详述了，可以google到各种方法。  </p>
@@ -435,6 +465,30 @@
 <p>通过查看官方文档，建议在高并发环境下使用MultiThreadedHttpConnectionManager来管理httpclient，因此，我们将httpclient改为单例后，tcp连接数回复正常水平。</p>
 <p>通过管理httpclient的代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> HttpClient <span class="title">initHttpClient</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    HttpConnectionManagerParams params = <span class="keyword">new</span> HttpConnectionManagerParams();</div><div class="line">    <span class="comment">//指定向每个host发起的最大连接数，默认是2，太少了</span></div><div class="line">    params.setDefaultMaxConnectionsPerHost(<span class="number">1000</span>);</div><div class="line">    <span class="comment">//指定总共发起的最大连接数，默认是20，太少了</span></div><div class="line">    params.setMaxTotalConnections(<span class="number">5000</span>);</div><div class="line">    <span class="comment">//连接超时时间-10s</span></div><div class="line">    params.setConnectionTimeout(<span class="number">60</span>*<span class="number">1000</span>);</div><div class="line">    <span class="comment">//读取数据超时时间-60s</span></div><div class="line">    params.setSoTimeout(<span class="number">60</span>*<span class="number">1000</span>);</div><div class="line"> </div><div class="line">    MultiThreadedHttpConnectionManager manager = <span class="keyword">new</span> MultiThreadedHttpConnectionManager();</div><div class="line">    manager.setParams(params);</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> HttpClient(manager);</div><div class="line">&#125;</div></pre></td></tr></table></figure>]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[前后端的CharacterEncoding不一致导致提交的表单数据丢失问题]]></title>
+      <url>http://maohong.github.io/2014/03/20/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/</url>
+      <content type="html"><![CDATA[<p>最近在开发分布式任务调度系统的web端时，遇到一个坑，记录如下：</p>
+<p>在页面上新增和修改任务，提交后，任务的属性在后端怎么都接收不到，但是在另一个协同开发的同学那边本地调试就OK，在我的本地和公共开发环境都不行，这不合理啊。。。。。</p>
+<p>排查了很多地方，js、setter等等，一直没发现问题在哪。跟负责前端的同学交流了下，发现前端post的数据确实是修改过的，也就是后端接收有问题。</p>
+<p>于是把最新版本和历史版本对比，发现最新版本新增了一个LogFilter，用于记录pagedelay的，仔细一看，logFilter里面是</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">request.setCharacterEncoding(“UTF-<span class="number">8</span>″);</div><div class="line">response.setContentType(“text/html;charset=UTF-<span class="number">8</span>″);</div></pre></td></tr></table></figure>
+<p>但页面上是GBK编码，所以导致数据在这个filter中编码出错，造成数据丢失，后端接收到的数据为null。</p>
+<font color="red">解决方法：</font>
+
+<p>把logFilter里的UTF-8改为GBK，就一切正常了。</p>
+<font color="red">疑问：</font>
+
+<ol>
+<li><p>为何历史本没问题呢，因为历史版本中的logFilter配在struts2Filter之后，请求根本走不到logFilter里去。。。。</p>
+</li>
+<li><p>为何协同开发的同学本地调试没问题呢，那是因为他把web.xml里的LogFilter的filtermapping注掉了。。。。</p>
+</li>
+</ol>
+<p>好一个歪萝卜大烂坑。。。</p>
+]]></content>
     </entry>
     
     <entry>

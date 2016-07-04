@@ -1200,6 +1200,158 @@
             
               
                 
+                <a class="post-title-link" href="/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/" itemprop="url">
+                  mac系统下hadoop-2.7源码编译、导入eclipse及打包
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-05-18T10:00:44+08:00" content="2015-05-18">
+              2015-05-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/开源组件/" itemprop="url" rel="index">
+                    <span itemprop="name">开源组件</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/" class="leancloud_visitors" data-flag-title="mac系统下hadoop-2.7源码编译、导入eclipse及打包">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="编译环境要求"><a href="#编译环境要求" class="headerlink" title="编译环境要求"></a>编译环境要求</h2><blockquote>
+<p>JDK1.7+<br>MAVEN 3.0以上版本<br>如果需要编译native code，还需要CMake 2.6、Zlib devel、openssl devel（mac下一般安装了xcode后应该都会有这些包）。</p>
+</blockquote>
+<h2 id="编译方法"><a href="#编译方法" class="headerlink" title="编译方法"></a>编译方法</h2><p>解压源码包hadoop-2.7.0-src.tar.gz，iterm下进入文件夹hadoop-2.7.0-src，然后根据需要执行相应的mvn命令就可以了。</p>
+<blockquote>
+<p>仅编译：mvn compile<br>打包生成jar：mvn package<br>生成eclipse项目：eclipse:eclipse -DskipTests，加上-DskipTests可跳过test阶段。</p>
+</blockquote>
+<p>期间遇到几个问题，记录如下。</p>
+<h2 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h2><p>先执行mvn eclipse:eclipse -DskipTest生成eclipse项目，执行到一半时，提示下面的报错：</p>
+<font color="red">‘protoc –version’ did not return a version -&gt; [Help 1]</font>
+
+<p>意思也就是是找不到protoc命令，安装protocolbuffer后重试，又提示错误：</p>
+<font color="red">protoc version is ‘libprotoc 2.6.1′, expected version is ’2.5.0′</font>
+
+<p>看上去是protocolbuffer版本问题，hadoop需要的版本是2.5.0，而系统安装的是2.6.1，查了很多资料，都是说protocolbuffer版本太低后来升到2.5的，而我这是2.6.1的版本，难不成还得降回去，不至于吧。因此，猜测这个版本限制是在pom.xml中写死的，于是grep了一下，发现果然在hadoop-project/pom.xml中配置了编译时使用的pb版本。</p>
+<font color="red">\<protobuf.version>2.5.0\</protobuf.version></font>
+
+<p>把以上配置项改为2.6.1，再重新执行生成eclipse项目的命令就OK了。</p>
+<h2 id="导入eclipse及打包"><a href="#导入eclipse及打包" class="headerlink" title="导入eclipse及打包"></a>导入eclipse及打包</h2><p>生成eclipse项目后，从eclipse里import existing project into workspace，选择hadoop-2.7.0-src目录，就会把所有代码模块导入eclipse了。接下来就可以看代码并修改了，比如增加一些日志信息等。</p>
+<p>代码修改完毕后，可以再打出一个新的hadoop-distribution包来验证代码修改效果。</p>
+<p>在hadoop-2.7.0-src目录下执行命令：<font color="red">mvn package -Pdist -Ptar -Pdocs -skipTests </font></p>
+<p>等上漫长的一段时间，编译成功后，可以到hadoop-dist/target下找到新的jar包。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150518-hadoop%E7%BC%96%E8%AF%91%E6%89%93%E5%8C%85/1.png" alt=""></p>
+<h2 id="补充说明"><a href="#补充说明" class="headerlink" title="补充说明"></a>补充说明</h2><p>编译过程需要从maven中央仓库下载大量依赖包，我使用的是oschina的库。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">&lt;mirror&gt;</div><div class="line">  &lt;id&gt;CN&lt;/id&gt;</div><div class="line">  &lt;name&gt;OSChina Central&lt;/name&gt;</div><div class="line">  &lt;url&gt;http://maven.oschina.net/content/groups/public/&lt;/url&gt;</div><div class="line">  &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;</div><div class="line">&lt;/mirror&gt;</div><div class="line">  &lt;profile&gt;</div><div class="line">	&lt;id&gt;oschina&lt;/id&gt;</div><div class="line">	&lt;repositories&gt;</div><div class="line">		&lt;repository&gt;</div><div class="line">			&lt;id&gt;nexus&lt;/id&gt;</div><div class="line">			&lt;name&gt;local private nexus&lt;/name&gt;</div><div class="line">			&lt;url&gt;http://maven.oschina.net/content/groups/public/&lt;/url&gt;</div><div class="line">			&lt;releases&gt;</div><div class="line">				&lt;enabled&gt;true&lt;/enabled&gt;</div><div class="line">			&lt;/releases&gt;</div><div class="line">			&lt;snapshots&gt;</div><div class="line">				&lt;enabled&gt;false&lt;/enabled&gt;</div><div class="line">			&lt;/snapshots&gt;</div><div class="line">		&lt;/repository&gt;</div><div class="line">	&lt;/repositories&gt;</div><div class="line">	&lt;pluginRepositories&gt;</div><div class="line">		&lt;pluginRepository&gt;</div><div class="line">			&lt;id&gt;nexus&lt;/id&gt;</div><div class="line">			&lt;name&gt;local private nexus&lt;/name&gt;</div><div class="line">			&lt;url&gt;http://maven.oschina.net/content/groups/public/&lt;/url&gt;</div><div class="line">			&lt;releases&gt;</div><div class="line">				&lt;enabled&gt;true&lt;/enabled&gt;</div><div class="line">			&lt;/releases&gt;</div><div class="line">			&lt;snapshots&gt;</div><div class="line">				&lt;enabled&gt;false&lt;/enabled&gt;</div><div class="line">			&lt;/snapshots&gt;</div><div class="line">		&lt;/pluginRepository&gt;</div><div class="line">	&lt;/pluginRepositories&gt;</div><div class="line">  &lt;/profile&gt;</div></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2014/09/02/使用hexo-gitpage搭建博客/" itemprop="url">
                   使用hexo+gitpage搭建博客
                 </a>
@@ -1755,117 +1907,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2013/03/07/使用shell切割文件/" itemprop="url">
-                  使用shell切割文件
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2013-03-07T13:49:44+08:00" content="2013-03-07">
-              2013-03-07
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2013/03/07/使用shell切割文件/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2013/03/07/使用shell切割文件/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2013/03/07/使用shell切割文件/" class="leancloud_visitors" data-flag-title="使用shell切割文件">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近工作中需要使用shell，从远程rsync数据过来预处理后提交到hdfs中，再调用pig脚本在hadoop集群上处理数据，完了fs -get下来结果文件并进行进一步处理，再推送给其他系统使用。其间需要将pig作业的结果文件合并并且均分为10个文件推送给远程服务器上的应用加载。因为结果文件比较大，远程应用拿到结果文件后使用多线程加载，所以需均分为10个小文件。虽然mr作业出来的文件结果也是part-00000、part-00001，但若pig脚本中不指定reduce任务数，产生的结果文件个数是3个，而且下下来之后需要进行重命名。与其这样还不如自己处理。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">rm -rf $TODAY_ALL_INDUSKEY</div><div class="line">	for allName in `find $TODAY_ALL_TMP_DIR -name "part-*"`</div><div class="line">		do</div><div class="line">			INFO "Processing result file" $allName</div><div class="line">			cat $allName &gt;&gt; $TODAY_ALL_INDUSKEY   #把结果文件重定向到一个文件</div><div class="line">	done</div><div class="line"></div><div class="line">	ALL_INDUSKEY_FILE_NUM=10    #拆分的文件数量</div><div class="line">	ALL_KEY_LINES=0             #结果文件行数</div><div class="line">	INFO "Split $TODAY_ALL_INDUSKEY into $ALL_INDUSKEY_FILE_NUM files"</div><div class="line">	for str in `wc -l $TODAY_ALL_INDUSKEY`;	do</div><div class="line">		t=`expr match $str "[1-9][0-9]*$"`;</div><div class="line">		if [ $t -gt 0 ]; then</div><div class="line">			ALL_KEY_LINES=$str         #获取结果文件行数</div><div class="line">			INFO "Line of $TODAY_ALL_INDUSKEY is $ALL_KEY_LINES"</div><div class="line">		fi</div><div class="line">	done</div><div class="line">	if [ $ALL_KEY_LINES -ne 0 ]; then</div><div class="line">		tmpLine=`echo "scale=2;$ALL_KEY_LINES/$ALL_INDUSKEY_FILE_NUM"|bc`    #每个小文件的行数，保留两位小数</div><div class="line">		INFO "$ALL_KEY_LINES/$ALL_INDUSKEY_FILE_NUM=$tmpLine"</div><div class="line">		subFileLines=`echo $(($&#123;tmpLine//.*/+1&#125;))`        #向上取整</div><div class="line">		INFO "Per subfile lines:$subFileLines"</div><div class="line">		split -l $subFileLines -a 1 -d $TODAY_ALL_INDUSKEY $TODAY_ALL_INDUSKEY"_"      #拆分文件</div><div class="line">	fi</div><div class="line"></div><div class="line">	if [ -f $TODAY_ALL_INDUSKEY ]; then</div><div class="line">		touch $TODAY_ALL_INDUSKEY.done       #创建done文件</div><div class="line">		rm -rf $TODAY_ALL_TMP_DIR</div><div class="line">		INFO "Process result file dir $TODAY_ALL_TMP_DIR done!"</div><div class="line">	fi</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1911,7 +1952,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-count">15</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1928,7 +1969,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-count">29</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
