@@ -105,7 +105,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell2.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell3.png">
-<meta property="og:updated_time" content="2016-07-03T15:19:46.000Z">
+<meta property="og:updated_time" content="2016-07-04T15:52:28.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Shell中的IFS分隔符使用">
 <meta name="twitter:description" content="在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。
@@ -385,10 +385,14 @@
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell.png" alt=""></p>
 <p>我需要拿到文件中<font color="blue">第三列为1</font>的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。 </p>
 <p><strong>脚本如下：</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">for line in `awk -F&quot;\3&quot; &apos;&#123;if($3==1) print $0&#125;&apos; datafile`</div><div class="line">    do</div><div class="line">        echo $line</div><div class="line">done</div></pre></td></tr></table></figure>
-<p><strong>结果如下：</strong><br><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell2.png" alt=""><br>本来是想要逐行打印出来的，可结果却不是我想要的，究其原因，是因为在shell的for循环中，列出集合的item时，默认是以<space>或<tab>或<newline>为分隔符，我们的数据文件中有空格，因此它就以空格分割打印了。<br>可以通过显式设置IFS的值来达到我们要的效果，修改后的脚本如下：  </newline></tab></space></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">oldifs=$IFS</div><div class="line">IFS=$&apos;\n&apos;    #change seperator to &apos;\n&apos; to get a line</div><div class="line">for line in `awk -F&quot;\3&quot; &apos;&#123;if($3==1) print $0&#125;&apos; datafile`</div><div class="line">    do</div><div class="line">        echo $line</div><div class="line">done</div><div class="line">IFS=$oldifs #reset seperator</div></pre></td></tr></table></figure>
-<p>通过先保存当前的IFS变量的值到一个临时变量，再显式设置为我们想要的行分隔符$’\n’，然后在for循环结束后，再重置IFS的值即可。<br><strong>结果如下：</strong><br><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell3.png" alt="">  </p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">for line in `awk -F"\3" '&#123;if($3==1) print $0&#125;' datafile`</div><div class="line">    do</div><div class="line">        echo $line</div><div class="line">done</div></pre></td></tr></table></figure>
+<p><strong>结果如下：</strong>  </p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell2.png" alt=""> </p>
+<p>本来是想要逐行打印出来的，可结果却不是我想要的，究其原因，是因为在shell的for循环中，列出集合的item时，默认是以<space>或<tab>或<newline>为分隔符，我们的数据文件中有空格，因此它就以空格分割打印了。</newline></tab></space></p>
+<p>可以通过显式设置IFS的值来达到我们要的效果，修改后的脚本如下：  </p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">oldifs=$IFS</div><div class="line">IFS=$'\n'    #change seperator to '\n' to get a line</div><div class="line">for line in `awk -F"\3" '&#123;if($3==1) print $0&#125;' datafile`</div><div class="line">    do</div><div class="line">        echo $line</div><div class="line">done</div><div class="line">IFS=$oldifs #reset seperator</div></pre></td></tr></table></figure>
+<p>通过先保存当前的IFS变量的值到一个临时变量，再显式设置为我们想要的行分隔符$’\n’，然后在for循环结束后，再重置IFS的值即可。  </p>
+<p><strong>结果如下：</strong><br><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell3.png" alt="">  </p>
 
       
     </div>
@@ -427,8 +431,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2014/06/01/redis服务端连接断开问题诊断/" rel="prev" title="redis服务端连接断开问题诊断">
-                redis服务端连接断开问题诊断 <i class="fa fa-chevron-right"></i>
+              <a href="/2013/03/07/使用shell切割文件/" rel="prev" title="使用shell切割文件">
+                使用shell切割文件 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -510,7 +514,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-count">13</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -518,7 +522,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -527,7 +531,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">26</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
