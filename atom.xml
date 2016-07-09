@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://maohong.github.io/"/>
-  <updated>2016-07-08T16:20:30.000Z</updated>
+  <updated>2016-07-09T08:35:32.000Z</updated>
   <id>http://maohong.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://maohong.github.io/2016/07/08/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/"/>
     <id>http://maohong.github.io/2016/07/08/kafka-0-10-0启动过程分析/</id>
     <published>2016-07-08T14:46:18.000Z</published>
-    <updated>2016-07-08T16:20:30.000Z</updated>
+    <updated>2016-07-09T08:35:32.000Z</updated>
     
     <content type="html">&lt;p&gt;kafka-0.10.0是官方出的最新稳定版本，提供了大量新的feature，具体可见&lt;a href=&quot;http://www.iteblog.com/archives/1677&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;这里&lt;/a&gt;，本文主要分析kafka-0.10-0的源码结构和启动过程。&lt;/p&gt;
 &lt;h2 id=&quot;源码结构&quot;&gt;&lt;a href=&quot;#源码结构&quot; class=&quot;headerlink&quot; title=&quot;源码结构&quot;&gt;&lt;/a&gt;源码结构&lt;/h2&gt;&lt;p&gt;kafka-0.10.0的源码可以从github上fork一份，在源码目录下执行./gradlew idea生成idea项目，然后导入idea即可。这中间需要使用gradle进行依赖包的下载，导入后可以看到其源码结构如下图所示：&lt;/p&gt;
@@ -56,6 +56,13 @@
 &lt;/ol&gt;
 &lt;p&gt;第二部分主要是辅助模块的启动，代码如下：&lt;/p&gt;
 &lt;figure class=&quot;highlight scala&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;20&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;21&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;22&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;23&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;24&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;25&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;26&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;27&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;28&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;29&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;30&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;31&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;32&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;33&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;34&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;35&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;36&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;37&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;38&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;type&quot;&gt;Mx4jLoader&lt;/span&gt;.maybeLoad()&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/* start dynamic config manager */&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;dynamicConfigHandlers = &lt;span class=&quot;type&quot;&gt;Map&lt;/span&gt;[&lt;span class=&quot;type&quot;&gt;String&lt;/span&gt;, &lt;span class=&quot;type&quot;&gt;ConfigHandler&lt;/span&gt;](&lt;span class=&quot;type&quot;&gt;ConfigType&lt;/span&gt;.&lt;span class=&quot;type&quot;&gt;Topic&lt;/span&gt; -&amp;gt; &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;type&quot;&gt;TopicConfigHandler&lt;/span&gt;(logManager, config),&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;                                                   &lt;span class=&quot;type&quot;&gt;ConfigType&lt;/span&gt;.&lt;span class=&quot;type&quot;&gt;Client&lt;/span&gt; -&amp;gt; &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;type&quot;&gt;ClientIdConfigHandler&lt;/span&gt;(apis.quotaManagers))&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// Apply all existing client configs to the ClientIdConfigHandler to bootstrap the overrides&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// &lt;span class=&quot;doctag&quot;&gt;TODO:&lt;/span&gt; Move this logic to DynamicConfigManager&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;type&quot;&gt;AdminUtils&lt;/span&gt;.fetchAllEntityConfigs(zkUtils, &lt;span class=&quot;type&quot;&gt;ConfigType&lt;/span&gt;.&lt;span class=&quot;type&quot;&gt;Client&lt;/span&gt;).foreach &amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt; (clientId, properties) =&amp;gt; dynamicConfigHandlers(&lt;span class=&quot;type&quot;&gt;ConfigType&lt;/span&gt;.&lt;span class=&quot;type&quot;&gt;Client&lt;/span&gt;).processConfigChanges(clientId, properties)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// Create the config manager. start listening to notifications&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;dynamicConfigManager = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;type&quot;&gt;DynamicConfigManager&lt;/span&gt;(zkUtils, dynamicConfigHandlers)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;dynamicConfigManager.startup()&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/* tell everyone we are alive */&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;val&lt;/span&gt; listeners = config.advertisedListeners.map &amp;#123;&lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt;(protocol, endpoint) =&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (endpoint.port == &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    (protocol, &lt;span class=&quot;type&quot;&gt;EndPoint&lt;/span&gt;(endpoint.host, socketServer.boundPort(protocol), endpoint.protocolType))&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    (protocol, endpoint)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;kafkaHealthcheck = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;type&quot;&gt;KafkaHealthcheck&lt;/span&gt;(config.brokerId, listeners, zkUtils, config.rack,&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  config.interBrokerProtocolVersion)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;kafkaHealthcheck.startup()&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// Now that the broker id is successfully registered via KafkaHealthcheck, checkpoint it&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;checkpointBrokerId(config.brokerId)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/* register broker metrics */&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;registerStats()&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;shutdownLatch = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;type&quot;&gt;CountDownLatch&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;startupComplete.set(&lt;span class=&quot;literal&quot;&gt;true&lt;/span&gt;)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;isStartingUp.set(&lt;span class=&quot;literal&quot;&gt;false&lt;/span&gt;)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;type&quot;&gt;AppInfoParser&lt;/span&gt;.registerAppInfo(jmxPrefix, config.brokerId.toString)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;info(&lt;span class=&quot;string&quot;&gt;&quot;started&quot;&lt;/span&gt;)&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ol&gt;
+&lt;li&gt;启动jmx，通过参数kafka_mx4jenable控制是否启用jmx，默认为false。&lt;/li&gt;
+&lt;li&gt;初始化TopicConfigHandler和ClientIdConfigHandler，前者用于处理zk上的topic配置变更信息，后者用于zk上的clientId配置变更信息。&lt;/li&gt;
+&lt;li&gt;启动DynamicConfigManager，通过动态配置管理器，监听zk上的配置节点变化，并根据具体变化的配置信息调用TopicConfigHandler或ClientIdConfigHandler更新配置。&lt;/li&gt;
+&lt;li&gt;启动KafkaHealthcheck，用于在zk上注册当前broker节点信息，以便节点退出时其他broker和consumer能监听到，目前的节点健康度判断比较简单，只是单纯的看zk上的节点是否存在。&lt;/li&gt;
+&lt;li&gt;最后，在本地对当前broker做个checkpoint，并注册jmx bean信息&lt;/li&gt;
+&lt;/ol&gt;
 </content>
     
     <summary type="html">
@@ -769,9 +776,9 @@
     
       <category term="zookeeper" scheme="http://maohong.github.io/tags/zookeeper/"/>
     
-      <category term="分布式协调" scheme="http://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
-    
       <category term="分布式应用" scheme="http://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+    
+      <category term="分布式协调" scheme="http://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
     
   </entry>
   
@@ -1322,9 +1329,9 @@
     
       <category term="zookeeper" scheme="http://maohong.github.io/tags/zookeeper/"/>
     
-      <category term="横向扩展" scheme="http://maohong.github.io/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
-    
       <category term="分布式协调" scheme="http://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
+    
+      <category term="横向扩展" scheme="http://maohong.github.io/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
     
   </entry>
   
