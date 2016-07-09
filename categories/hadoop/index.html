@@ -277,6 +277,62 @@
 
       <h1 class="post-title">
         
+            <a class="post-title-link" href="/2015/06/06/hadoop-yarn中ResourceManager的服务模块/" itemprop="url">
+              
+                <span itemprop="name">hadoop-yarn中ResourceManager的服务模块</span>
+              
+            </a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2015-06-06T13:10:10+08:00"
+              content="2015-06-06" >
+          06-06
+        </time>
+      </div>
+
+    </header>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h1 class="post-title">
+        
+            <a class="post-title-link" href="/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/" itemprop="url">
+              
+                <span itemprop="name">mac系统下hadoop-2.7源码编译、导入eclipse及打包</span>
+              
+            </a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2015-05-18T10:00:44+08:00"
+              content="2015-05-18" >
+          05-18
+        </time>
+      </div>
+
+    </header>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h1 class="post-title">
+        
             <a class="post-title-link" href="/2013/01/21/将Hadoop-RPC框架应用于多节点任务调度/" itemprop="url">
               
                 <span itemprop="name">将Hadoop RPC框架应用于多节点任务调度</span>
@@ -348,7 +404,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -792,37 +848,6 @@
             newcounter.save(null, {
               success: function(newcounter) {
                 var $element = $(document.getElementById(url));
-                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
-              },
-              error: function(newcounter, error) {
-                console.log('Failed to create');
-              }
-            });
-          }
-        },
-        error: function(error) {
-          console.log('Error:' + error.code + " " + error.message);
-        }
-      });
-    }
-
-    $(function() {
-      var Counter = AV.Object.extend("Counter");
-      if ($('.leancloud_visitors').length == 1) {
-        addCount(Counter);
-      } else if ($('.post-title-link').length > 1) {
-        showTime(Counter);
-      }
-    });
-  </script>
-
-
-
-  
-
-</body>
-</html>
-         var $element = $(document.getElementById(url));
                 $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
               },
               error: function(newcounter, error) {

@@ -422,7 +422,7 @@
     <link href="http://maohong.github.io/2015/06/06/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/"/>
     <id>http://maohong.github.io/2015/06/06/hadoop-yarn中ResourceManager的服务模块/</id>
     <published>2015-06-06T05:10:10.000Z</published>
-    <updated>2016-07-04T15:25:44.000Z</updated>
+    <updated>2016-07-09T13:07:22.000Z</updated>
     
     <content type="html">&lt;h2 id=&quot;Yarn简述&quot;&gt;&lt;a href=&quot;#Yarn简述&quot; class=&quot;headerlink&quot; title=&quot;Yarn简述&quot;&gt;&lt;/a&gt;Yarn简述&lt;/h2&gt;&lt;p&gt;Hadoop2.0引入了yarn（Yet Another Resource Negotiator）资源管理框架。1.0中的MapReduce计算框架变为运行在yarn上的一种application。&lt;/p&gt;
 &lt;p&gt;Yarn依然采用了master/slave结构，master是ResourceManager，负责整个集群的资源管理和调度，并且支持HA，slave是NodeManager，负责管理各子节点上的资源和任务。每个MapReduce作业提交给ResourceManager并被接受后，ResourceManager会通知某个NodeManager启动一个ApplicationMaster管理此作业的生命周期。&lt;/p&gt;
@@ -595,7 +595,7 @@
     
     </summary>
     
-      <category term="hadoop" scheme="http://maohong.github.io/categories/hadoop/"/>
+      <category term="Hadoop" scheme="http://maohong.github.io/categories/Hadoop/"/>
     
     
       <category term="hadoop" scheme="http://maohong.github.io/tags/hadoop/"/>
@@ -609,7 +609,7 @@
     <link href="http://maohong.github.io/2015/05/18/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/"/>
     <id>http://maohong.github.io/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/</id>
     <published>2015-05-18T02:00:44.000Z</published>
-    <updated>2016-07-09T08:38:00.000Z</updated>
+    <updated>2016-07-09T13:07:36.000Z</updated>
     
     <content type="html">&lt;h2 id=&quot;编译环境要求&quot;&gt;&lt;a href=&quot;#编译环境要求&quot; class=&quot;headerlink&quot; title=&quot;编译环境要求&quot;&gt;&lt;/a&gt;编译环境要求&lt;/h2&gt;&lt;blockquote&gt;
 &lt;p&gt;JDK1.7+&lt;br&gt;MAVEN 3.0以上版本&lt;br&gt;如果需要编译native code，还需要CMake 2.6、Zlib devel、openssl devel（mac下一般安装了xcode后应该都会有这些包）。&lt;/p&gt;
@@ -644,7 +644,7 @@
     
     </summary>
     
-      <category term="hadoop" scheme="http://maohong.github.io/categories/hadoop/"/>
+      <category term="Hadoop" scheme="http://maohong.github.io/categories/Hadoop/"/>
     
     
       <category term="hadoop" scheme="http://maohong.github.io/tags/hadoop/"/>
