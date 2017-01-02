@@ -19,6 +19,7 @@
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/1.png" alt=""></p>
 <p>导入后，idea会自动根据pom.xml下载相关依赖包，部分依赖包如果下载不到，需要手动添加。完成后，可以看到project的module如下图所示：</p>
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/2.png" alt=""></p>
+<a id="more"></a>
 <p>这时候，通过idea就可以直接跟踪看源码了，但直接运行storm-starter中的例子还是会报错并提示有些类找不到，经查看是clojure的代码还未编译出class文件。可以在源码目录下执行mvn compile进行编译。</p>
 <h2 id="使用idea调试源码"><a href="#使用idea调试源码" class="headerlink" title="使用idea调试源码"></a>使用idea调试源码</h2><p>编译完成后，可以直接启动storm-starter中的例子运行。期间可能出现找不到类，检查classpath，依赖包的scope由provided改为compile。</p>
 <p>在源代码中加断点，run或者debug即可。</p>
