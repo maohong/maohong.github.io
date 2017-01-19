@@ -104,11 +104,11 @@
         
         <tag>hadoop</tag>
          
+        <tag>分布式应用</tag>
+         
         <tag>RPC</tag>
          
         <tag>任务调度</tag>
-         
-        <tag>分布式应用</tag>
          
          
            
@@ -130,9 +130,9 @@
         
         <tag>zookeeper</tag>
          
-        <tag>横向扩展</tag>
-         
         <tag>分布式协调</tag>
+         
+        <tag>横向扩展</tag>
          
          
            
@@ -268,9 +268,9 @@
         
         <tag>zookeeper</tag>
          
-        <tag>分布式协调</tag>
-         
         <tag>分布式应用</tag>
+         
+        <tag>分布式协调</tag>
          
          
            
