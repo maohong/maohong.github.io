@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Hong&#39;s tech blog</title>
   <icon>https://maohong.github.io/icon.png</icon>
-  <subtitle>Big Data, High Performance, High Availability and Scalable Architecture</subtitle>
+  <subtitle>High Performance, High Availability and Scalable Architecture, ML, AI and Big Data</subtitle>
   <link href="https://maohong.github.io/atom.xml" rel="self"/>
   
   <link href="https://maohong.github.io/"/>
