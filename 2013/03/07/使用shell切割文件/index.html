@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hans">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
@@ -27,7 +27,7 @@
 <meta property="og:url" content="https://maohong.github.io/2013/03/07/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/index.html">
 <meta property="og:site_name" content="Hong&#39;s tech blog">
 <meta property="og:description" content="最近工作中需要使用shell，从远程rsync数据过来预处理后提交到hdfs中，再调用pig脚本在hadoop集群上处理数据，完了fs -get下来结果文件并进行进一步处理，再推送给其他系统使用。其间需要将pig作业的结果文件合并并且均分为10个文件推送给远程服务器上的应用加载。因为结果文件比较大，远程应用拿到结果文件后使用多线程加载，所以需均分为10个小文件。虽然mr作业出来的文件结果也是par">
-<meta property="og:locale">
+<meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2013-03-07T05:49:44.000Z">
 <meta property="article:modified_time" content="2025-03-03T09:38:38.053Z">
 <meta property="article:author" content="Hong">
@@ -39,7 +39,7 @@
 <link rel="canonical" href="https://maohong.github.io/2013/03/07/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-Hans","comments":true,"permalink":"https://maohong.github.io/2013/03/07/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/","path":"2013/03/07/使用shell切割文件/","title":"使用shell切割文件"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://maohong.github.io/2013/03/07/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/","path":"2013/03/07/使用shell切割文件/","title":"使用shell切割文件"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>使用shell切割文件 | Hong's tech blog</title>
@@ -205,7 +205,7 @@
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-Hans">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
     <link itemprop="mainEntityOfPage" href="https://maohong.github.io/2013/03/07/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
