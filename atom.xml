@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Hong&#39;s tech blog</title>
   <icon>https://maohong.github.io/icon.png</icon>
-  <subtitle>分布式系统，大数据，高性能高可用可扩展技术架构</subtitle>
+  <subtitle>Big Data, High Performance, High Availability and Scalable Architecture</subtitle>
   <link href="https://maohong.github.io/atom.xml" rel="self"/>
   
   <link href="https://maohong.github.io/"/>
@@ -364,9 +364,9 @@
     
     <category term="zookeeper" scheme="https://maohong.github.io/tags/zookeeper/"/>
     
-    <category term="分布式协调" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
-    
     <category term="分布式应用" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+    
+    <category term="分布式协调" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
     
   </entry>
   
@@ -530,9 +530,9 @@
     
     <category term="zookeeper" scheme="https://maohong.github.io/tags/zookeeper/"/>
     
-    <category term="横向扩展" scheme="https://maohong.github.io/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
-    
     <category term="分布式协调" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
+    
+    <category term="横向扩展" scheme="https://maohong.github.io/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
     
   </entry>
   
