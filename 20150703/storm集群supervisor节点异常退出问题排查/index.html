@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="问题出现测试storm集群为0.9.4版本，前段时间出现supervisor进程挂掉，而其上work进程仍然运行的诡异情况，通过日志看到supervisor进程挂掉之前出现以下异常：  问题排查过程很明显，是commons-io包的FileUtils工具类抛出的异常，原因是在调用commons-io包的FileUtils工具类做move directory操作时，目的文件夹已存在。 查看调用代码（">
 <meta property="og:type" content="article">
@@ -69,7 +69,11 @@
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
-<link rel="alternate" href="/atom.xml" title="Hong's tech blog" type="application/atom+xml">
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Hong's tech blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
@@ -454,7 +458,7 @@
   <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.3.0/pdfobject.min.js","integrity":"sha256-JJZNsid68vnh3/zyj0lY9BN5ynxVX/12XgOa1TlaYN0="},"url":"/lib/pdf/web/viewer.html"}</script>
   <script src="/js/third-party/tags/pdf.js"></script>
 
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.min.js","integrity":"sha256-G8ouPAnw4zzMbnAenHnVz6h9XpKbNdOkrqTh7AadyHs="}}</script>
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"8.8.4","theme":{"light":"default","dark":"dark"},"options":{"startOnLoad":true,"securityLevel":true,"flowchart":{"useMaxWidth":true},"sequenceDiagram":{"actorFontWeight":"normal","actorFontSize":14,"noteFontWeight":"normal","noteFontSize":14,"messageFontWeight":"normal","messageFontSize":16},"gantt":{"titleTopMargin":25,"barHeight":20,"barGap":4,"topPadding":50,"sidePadding":75,"gridLineStartPadding":35,"fontSize":11,"fontFamily":"\"Open-Sans\", \"sans-serif\"","numberSectionStyles":4,"axisFormat":"%Y-%m-%d"}},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.min.js","integrity":"sha256-G8ouPAnw4zzMbnAenHnVz6h9XpKbNdOkrqTh7AadyHs="}}</script>
   <script src="/js/third-party/tags/mermaid.js"></script>
 
 
@@ -471,7 +475,7 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"maohong","repo":"maohong.github.io","client_id":"Ov23liD6qq3X8MrUSIb5","client_secret":"fdaa8d261d2e4b9c07d3acdf12090c6dddebeda2","admin_user":"maohong","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","enable_reactions":true,"perPage":10,"pagerDirection":"last","createIssueManually":false,"distractionFreeMode":true,"enableHotKey":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"d6c20800ec2f600b7d3e7e7d1feb0de5"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"maohong","repo":"maohong.github.io","client_id":"Ov23liD6qq3X8MrUSIb5","client_secret":"fdaa8d261d2e4b9c07d3acdf12090c6dddebeda2","admin_user":"maohong","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"auto","enable_reactions":true,"perPage":10,"pagerDirection":"last","createIssueManually":false,"distractionFreeMode":true,"enableHotKey":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"d6c20800ec2f600b7d3e7e7d1feb0de5"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
   <!-- Google tag (gtag.js) -->
