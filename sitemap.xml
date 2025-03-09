@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://maohong.github.io/tags/</loc>
+    <loc>https://maohong.github.io/tags/index.html</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -56,7 +56,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/archives/</loc>
+    <loc>https://maohong.github.io/about/index.html</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -65,7 +65,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/about/</loc>
+    <loc>https://maohong.github.io/books/index.html</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -74,7 +74,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/books/</loc>
+    <loc>https://maohong.github.io/archives/index.html</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -83,16 +83,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/categories/</loc>
-    
-    <lastmod>2025-03-03</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://maohong.github.io/2015/11/05/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/</loc>
+    <loc>https://maohong.github.io/categories/index.html</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -102,6 +93,15 @@
   
   <url>
     <loc>https://maohong.github.io/2015/06/06/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/</loc>
+    
+    <lastmod>2025-03-03</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://maohong.github.io/2015/11/05/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -200,7 +200,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/404</loc>
+    <loc>https://maohong.github.io/404.html</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -239,6 +239,13 @@
   </url>
   
   <url>
+    <loc>https://maohong.github.io/tags/hadoop/</loc>
+    <lastmod>2025-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://maohong.github.io/tags/storm/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
@@ -247,13 +254,6 @@
   
   <url>
     <loc>https://maohong.github.io/tags/%E5%AE%9E%E6%97%B6%E8%AE%A1%E7%AE%97/</loc>
-    <lastmod>2025-03-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://maohong.github.io/tags/hadoop/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -451,14 +451,14 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/categories/Storm/</loc>
+    <loc>https://maohong.github.io/categories/Hadoop/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://maohong.github.io/categories/Hadoop/</loc>
+    <loc>https://maohong.github.io/categories/Storm/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
