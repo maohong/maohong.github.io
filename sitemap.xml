@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://maohong.github.io/books/index.html</loc>
+    
+    <lastmod>2025-03-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://maohong.github.io/about/index.html</loc>
     
     <lastmod>2025-03-09</lastmod>
@@ -47,6 +56,15 @@
   </url>
   
   <url>
+    <loc>https://maohong.github.io/2012/11/13/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/</loc>
+    
+    <lastmod>2025-03-03</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://maohong.github.io/2014/05/13/%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/</loc>
     
     <lastmod>2025-03-03</lastmod>
@@ -65,25 +83,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/2012/11/13/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/</loc>
-    
-    <lastmod>2025-03-03</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://maohong.github.io/archives/index.html</loc>
-    
-    <lastmod>2025-03-03</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://maohong.github.io/books/index.html</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -110,7 +110,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/2015/06/06/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/</loc>
+    <loc>https://maohong.github.io/2016/07/08/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -119,7 +119,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/2016/07/08/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</loc>
+    <loc>https://maohong.github.io/2015/06/06/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -137,7 +137,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/2014/06/01/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/</loc>
+    <loc>https://maohong.github.io/2013/01/29/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -146,7 +146,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/2013/01/29/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/</loc>
+    <loc>https://maohong.github.io/2014/06/01/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/</loc>
     
     <lastmod>2025-03-03</lastmod>
     
@@ -253,13 +253,6 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/tags/hadoop/</loc>
-    <lastmod>2025-03-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://maohong.github.io/tags/kafka/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
@@ -274,7 +267,21 @@
   </url>
   
   <url>
+    <loc>https://maohong.github.io/tags/hadoop/</loc>
+    <lastmod>2025-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://maohong.github.io/tags/eclipse/</loc>
+    <lastmod>2025-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maohong.github.io/tags/shell/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -289,13 +296,6 @@
   
   <url>
     <loc>https://maohong.github.io/tags/%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80/</loc>
-    <lastmod>2025-03-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://maohong.github.io/tags/shell/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -407,7 +407,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/</loc>
+    <loc>https://maohong.github.io/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -415,6 +415,13 @@
   
   <url>
     <loc>https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/</loc>
+    <lastmod>2025-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -429,13 +436,6 @@
   
   <url>
     <loc>https://maohong.github.io/tags/%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/</loc>
-    <lastmod>2025-03-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://maohong.github.io/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -458,13 +458,6 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/categories/Hadoop/</loc>
-    <lastmod>2025-03-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://maohong.github.io/categories/Kafka/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
@@ -472,7 +465,7 @@
   </url>
   
   <url>
-    <loc>https://maohong.github.io/categories/Redis/</loc>
+    <loc>https://maohong.github.io/categories/Hadoop/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -480,6 +473,13 @@
   
   <url>
     <loc>https://maohong.github.io/categories/Shell/</loc>
+    <lastmod>2025-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maohong.github.io/categories/Redis/</loc>
     <lastmod>2025-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
