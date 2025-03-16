@@ -6,7 +6,7 @@
   <link href="https://maohong.github.io/atom.xml" rel="self"/>
   
   <link href="https://maohong.github.io/"/>
-  <updated>2025-03-09T14:33:45.558Z</updated>
+  <updated>2025-03-16T15:42:50.291Z</updated>
   <id>https://maohong.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>AI Agents: Architecture, Key Components, and How to Build One</title>
+    <link href="https://maohong.github.io/20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/"/>
+    <id>https://maohong.github.io/20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/</id>
+    <published>2025-03-16T15:25:20.000Z</published>
+    <updated>2025-03-16T15:42:50.291Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;Artificial Intelligence (AI) has evolved dramatically in recent years, moving beyond simple algorithms and predictive models towards sophisticated entities known as AI agents. AI agents are autonomous programs capable of perceiving their environment, reasoning about it, making decisions, and acting to achieve specific goals. In this blog post, I will explore what AI agents are, their architecture, key components, and provide a clear guide on how we can build one.&lt;/p&gt;
+&lt;h2 id=&quot;What-is-an-AI-Agent&quot;&gt;&lt;a href=&quot;#What-is-an-AI-Agent&quot; class=&quot;headerlink&quot; title=&quot;What is an AI Agent?&quot;&gt;&lt;/a&gt;What is an AI Agent?&lt;/h2&gt;&lt;p&gt;An AI agent is a system that autonomously interacts with an environment to achieve predefined goals. The concept of an AI agent originates from the field of artificial intelligence, particularly reinforcement learning, and is widely applicable in various areas including autonomous driving, robotics, virtual assistants, gaming, financial trading, and more.&lt;/p&gt;
+&lt;h2 id=&quot;Characteristics-of-AI-Agents&quot;&gt;&lt;a href=&quot;#Characteristics-of-AI-Agents&quot; class=&quot;headerlink&quot; title=&quot;Characteristics of AI Agents&quot;&gt;&lt;/a&gt;Characteristics of AI Agents&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Autonomy&lt;/strong&gt;: Can independently make decisions.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Perception&lt;/strong&gt;: Able to perceive and interpret environmental inputs.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Reasoning and Decision-Making&lt;/strong&gt;: Uses algorithms to analyze information and determine the best course of action.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Adaptability&lt;/strong&gt;: Learns and adapts from past experiences to improve future actions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;Architecture-of-an-AI-Agent&quot;&gt;&lt;a href=&quot;#Architecture-of-an-AI-Agent&quot; class=&quot;headerlink&quot; title=&quot;Architecture of an AI Agent&quot;&gt;&lt;/a&gt;Architecture of an AI Agent&lt;/h2&gt;&lt;p&gt;An AI agent typically consists of four main components forming its core architecture:&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="AI" scheme="https://maohong.github.io/tags/AI/"/>
+    
+  </entry>
   
   <entry>
     <title>Storm源码编译及本地调试方法</title>

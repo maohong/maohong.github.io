@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://maohong.github.io/20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/</loc>
+    <lastmod>2025-03-16</lastmod>
+  </url>
+  <url>
     <loc>https://maohong.github.io/20121113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/</loc>
     <lastmod>2025-03-16</lastmod>
   </url>
@@ -49,10 +53,6 @@
     <lastmod>2025-03-03</lastmod>
   </url>
   <url>
-    <loc>https://maohong.github.io/20150703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/</loc>
-    <lastmod>2025-03-03</lastmod>
-  </url>
-  <url>
     <loc>https://maohong.github.io/20150622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</loc>
     <lastmod>2025-03-03</lastmod>
   </url>
@@ -62,6 +62,10 @@
   </url>
   <url>
     <loc>https://maohong.github.io/20140328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/</loc>
+    <lastmod>2025-03-03</lastmod>
+  </url>
+  <url>
+    <loc>https://maohong.github.io/20150703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/</loc>
     <lastmod>2025-03-03</lastmod>
   </url>
   <url>

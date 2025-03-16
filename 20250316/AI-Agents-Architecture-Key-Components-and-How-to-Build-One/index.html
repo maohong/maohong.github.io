@@ -21,40 +21,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="问题描述在测试spark on yarn时，发现一些内存分配上的问题，具体如下。 在$SPARK_HOME&#x2F;conf&#x2F;spark-env.sh中配置如下参数：  SPARK_EXECUTOR_INSTANCES&#x3D;4            在yarn集群中启动的executor进程数 SPARK_EXECUTOR_MEMORY&#x3D;2G">
+    <meta name="description" content="Artificial Intelligence (AI) has evolved dramatically in recent years, moving beyond simple algorithms and predictive models towards sophisticated entities known as AI agents. AI agents are autonomous">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spark on yarn的内存分配问题">
-<meta property="og:url" content="https://maohong.github.io/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:title" content="AI Agents: Architecture, Key Components, and How to Build One">
+<meta property="og:url" content="https://maohong.github.io/20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/index.html">
 <meta property="og:site_name" content="Hong&#39;s Notes">
-<meta property="og:description" content="问题描述在测试spark on yarn时，发现一些内存分配上的问题，具体如下。 在$SPARK_HOME&#x2F;conf&#x2F;spark-env.sh中配置如下参数：  SPARK_EXECUTOR_INSTANCES&#x3D;4            在yarn集群中启动的executor进程数 SPARK_EXECUTOR_MEMORY&#x3D;2G">
+<meta property="og:description" content="Artificial Intelligence (AI) has evolved dramatically in recent years, moving beyond simple algorithms and predictive models towards sophisticated entities known as AI agents. AI agents are autonomous">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-1.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-2.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-3.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-4.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-5.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-6.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-7.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-8.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-9.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-10.png">
-<meta property="article:published_time" content="2015-08-11T05:23:13.000Z">
-<meta property="article:modified_time" content="2025-03-03T09:38:38.051Z">
+<meta property="article:published_time" content="2025-03-16T15:25:20.000Z">
+<meta property="article:modified_time" content="2025-03-16T15:42:50.291Z">
 <meta property="article:author" content="Hong">
-<meta property="article:tag" content="spark">
-<meta property="article:tag" content="yarn">
-<meta property="article:tag" content="内存分配">
+<meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-1.png">
 
 
-<link rel="canonical" href="https://maohong.github.io/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/">
+<link rel="canonical" href="https://maohong.github.io/20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://maohong.github.io/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/","path":"20150811/Spark-on-yarn的内存分配问题/","title":"Spark on yarn的内存分配问题"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://maohong.github.io/20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/","path":"20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/","title":"AI Agents: Architecture, Key Components, and How to Build One"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Spark on yarn的内存分配问题 | Hong's Notes</title>
+<title>AI Agents: Architecture, Key Components, and How to Build One | Hong's Notes</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YQVQS4CLD"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-4YQVQS4CLD","only_pageview":false,"measure_protocol_api_secret":null}</script>
@@ -162,7 +149,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">问题解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">3.</span> <span class="nav-text">验证</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-an-AI-Agent"><span class="nav-number">1.</span> <span class="nav-text">What is an AI Agent?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Characteristics-of-AI-Agents"><span class="nav-number">2.</span> <span class="nav-text">Characteristics of AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Architecture-of-an-AI-Agent"><span class="nav-number">3.</span> <span class="nav-text">Architecture of an AI Agent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Key-Components-of-AI-Agents"><span class="nav-number">4.</span> <span class="nav-text">Key Components of AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-Build-an-AI-Agent"><span class="nav-number">5.</span> <span class="nav-text">How to Build an AI Agent</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-1-Define-the-Goal-and-Environment"><span class="nav-number">5.0.1.</span> <span class="nav-text">Step 1: Define the Goal and Environment</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-2-Design-the-Perception-Module"><span class="nav-number">5.0.2.</span> <span class="nav-text">Step 2: Design the Perception Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-3-Develop-the-Reasoning-and-Decision-Making-Module"><span class="nav-number">5.0.3.</span> <span class="nav-text">Step 3: Develop the Reasoning and Decision-Making Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-4-Construct-the-Action-Module"><span class="nav-number">5.0.4.</span> <span class="nav-text">Step 4: Construct the Action Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-5-Implement-the-Learning-Module"><span class="nav-number">5.0.5.</span> <span class="nav-text">Step 5: Implement the Learning Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-6-Test-and-Iterate"><span class="nav-number">5.0.6.</span> <span class="nav-text">Step 6: Test and Iterate</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tools-and-Frameworks-for-Building-AI-Agents"><span class="nav-number">6.</span> <span class="nav-text">Tools and Frameworks for Building AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Real-World-Examples-of-AI-Agents"><span class="nav-number">7.</span> <span class="nav-text">Real-World Examples of AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Common-Challenges-and-Solutions"><span class="nav-number">8.</span> <span class="nav-text">Common Challenges and Solutions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">9.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -226,7 +213,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -239,12 +226,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Spark on yarn的内存分配问题 | Hong's Notes">
+      <meta itemprop="name" content="AI Agents: Architecture, Key Components, and How to Build One | Hong's Notes">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Spark on yarn的内存分配问题
+          AI Agents: Architecture, Key Components, and How to Build One
         </h1>
 
         <div class="post-meta-container">
@@ -254,24 +241,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2015-08-11 13:23:13" itemprop="dateCreated datePublished" datetime="2015-08-11T13:23:13+08:00">2015-08-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-03 17:38:38" itemprop="dateModified" datetime="2025-03-03T17:38:38+08:00">2025-03-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Spark/" itemprop="url" rel="index"><span itemprop="name">Spark</span></a>
-        </span>
+      <time title="Created: 2025-03-16 23:25:20 / Modified: 23:42:50" itemprop="dateCreated datePublished" datetime="2025-03-16T23:25:20+08:00">2025-03-16</time>
     </span>
 
   
@@ -288,7 +260,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>1.1k</span>
+      <span>1k</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -305,63 +277,103 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在测试spark on yarn时，发现一些内存分配上的问题，具体如下。</p>
-<p>在$SPARK_HOME&#x2F;conf&#x2F;spark-env.sh中配置如下参数：</p>
-<blockquote>
-<p>SPARK_EXECUTOR_INSTANCES&#x3D;4            <em>在yarn集群中启动的executor进程数</em></p>
-<p>SPARK_EXECUTOR_MEMORY&#x3D;2G              <em>为每个executor进程分配的内存大小</em></p>
-<p>SPARK_DRIVER_MEMORY&#x3D;1G                <em>为spark-driver进程分配的内存大小</em></p>
-</blockquote>
-<p>执行$SPARK_HOME&#x2F;bin&#x2F;spark-sql –master yarn，按yarn-client模式启动spark-sql交互命令行（即driver程序运行在本地，而非yarn的container中），日志显示的关于AppMaster和Executor的内存信息如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-1.png"></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-2.png"></p>
-<p>日志显示，AppMaster的内存是896MB，其中包含了384MB的memoryOverhead；启动了5个executor，第一个的可用内存是530.3MB，其余每个Executor的可用内存是1060.3MB。</p>
-<p>到yarnUI看下资源使用情况，共启动了5个container，占用内存13G，其中一台NodeManager启动了2个container，占用内存4G（1个AppMaster占1G、另一个占3G），另外3台各启了1个container，每个占用3G内存。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-3.png"></p>
-<p>再到sparkUI看下executors的情况，这里有5个executor，其中driver是运行在执行spark-sql命令的本地服务器上，另外4个是运行在yarn集群中。Driver的可用storage memory为530.3MB，另外4个都是1060.3MB（与日志信息一致）。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-4.png"></p>
-<p>那么问题来了：</p>
-<ol>
-<li><p>Yarn为container分配的最小内存由yarn.scheduler.minimum-allocation-mb参数决定，默认是1G，从yarnUI中看确实如此，可为何spark的日志里显示AppMaster的实际内存是896-384&#x3D;512MB呢？384MB是怎么算出来的？</p>
-</li>
-<li><p>spark配置文件里指定了每个executor的内存为2G，为何日志和sparkUI上显示的是1060.3MB？</p>
-</li>
-<li><p>driver的内存配置为1G，为何sparkUI里显示的是530.3MB呢？</p>
-</li>
-<li><p>为何yarn中每个container分配的内存是3G，而不是executor需要的2G呢？</p>
-</li>
-</ol>
-<h2 id="问题解析"><a href="#问题解析" class="headerlink" title="问题解析"></a>问题解析</h2><p>进过一番调研，发现这里有些概念容易混淆，整理如下，序号对应上面的问题：</p>
+    <div class="post-body" itemprop="articleBody"><p>Artificial Intelligence (AI) has evolved dramatically in recent years, moving beyond simple algorithms and predictive models towards sophisticated entities known as AI agents. AI agents are autonomous programs capable of perceiving their environment, reasoning about it, making decisions, and acting to achieve specific goals. In this blog post, I will explore what AI agents are, their architecture, key components, and provide a clear guide on how we can build one.</p>
+<h2 id="What-is-an-AI-Agent"><a href="#What-is-an-AI-Agent" class="headerlink" title="What is an AI Agent?"></a>What is an AI Agent?</h2><p>An AI agent is a system that autonomously interacts with an environment to achieve predefined goals. The concept of an AI agent originates from the field of artificial intelligence, particularly reinforcement learning, and is widely applicable in various areas including autonomous driving, robotics, virtual assistants, gaming, financial trading, and more.</p>
+<h2 id="Characteristics-of-AI-Agents"><a href="#Characteristics-of-AI-Agents" class="headerlink" title="Characteristics of AI Agents"></a>Characteristics of AI Agents</h2><ul>
+<li><strong>Autonomy</strong>: Can independently make decisions.</li>
+<li><strong>Perception</strong>: Able to perceive and interpret environmental inputs.</li>
+<li><strong>Reasoning and Decision-Making</strong>: Uses algorithms to analyze information and determine the best course of action.</li>
+<li><strong>Adaptability</strong>: Learns and adapts from past experiences to improve future actions.</li>
+</ul>
+<h2 id="Architecture-of-an-AI-Agent"><a href="#Architecture-of-an-AI-Agent" class="headerlink" title="Architecture of an AI Agent"></a>Architecture of an AI Agent</h2><p>An AI agent typically consists of four main components forming its core architecture:</p>
 <span id="more"></span>
-<p>(1) spark的yarn-client向ResourceManager申请提交作业&#x2F;启动AppMaster时，会判断是否是集群模式，如果是集群模式，则AppMaster的内存大小与driver内存大小一致，否则由spark.yarn.am.memory决定，这个参数的默认值是512MB。我们使用的是yarn-client模式，所以实际内存是512MB。</p>
-<p><font color='red'>384MB是spark-client为appMaster额外申请的内存</font>，计算方法如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-5.png"></p>
-<p>即，默认从参数读取（集群模式从spark.yarn.driver.memoryOverhead参数读，否则从spark.yarn.am.memoryOverhead参数读），若没配此参数，则从AppMaster的内存*一定系数和默认最小overhead中取较大值。</p>
-<p>在spark-1.4.1版本中，MEMORY_OVERHEAD_FACTOR的默认值为0.10（之前是0.07），MEMORY_OVERHEAD_MIN默认为384，我们没有指定spark.yarn.driver.memoryOverhead和spark.yarn.am.memoryOverhead，而amMemory&#x3D;512M（由spark.yarn.am.memory决定），因此memoryOverhead为max(512*0.10, 384)&#x3D;384MB。</p>
-<p>Executor的memoryOverhead计算方法与此一样，只是不区分是否集群模式，都默认由spark.yarn.executor.memoryOverhead配置。</p>
-<p>(2) <font color='red'>日志和sparkUI上显示的是executor内部用于缓存计算结果的内存空间，并不是executor所拥有的全部内存</font>。这部分内存是由以下公式计算：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-6.png"></p>
-<p>Runtime.getRuntime.maxMemory按2048MB算，storage memory大小为1105.92MB，sparkUI显示的略小于此值，是正常的。</p>
-<p>(3) 与上述第2点一样，storage memory的大小略小于1024<em>0.9</em>0.6&#x3D;552.96MB</p>
-<p>(4) 前面提到spark会为container额外申请一部分内存（memoryOverhead），因此，实际为container提交申请的内存大小是2048 + max(2048*0.10, 384) &#x3D; 2432MB，而<font color='red'>yarn在做资源分配时会做资源规整化，即应用程序申请的资源量一定是最小可申请资源量的整数倍（向上取整）</font>，最小可申请内存量由yarn.scheduler.minimum-allocation-mb指定，因此，会为container分配3G内存。</p>
-<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>为了验证上述规则，继续修改配置参数：</p>
-<blockquote>
-<p>SPARK_EXECUTOR_INSTANCES&#x3D;4          <em>在yarn集群中启动的executor进程数</em></p>
-<p>SPARK_EXECUTOR_MEMORY&#x3D;4G            <em>为每个executor进程分配的内存大小</em></p>
-<p>SPARK_DRIVER_MEMORY&#x3D;3G              <em>为spark-driver进程分配的内存大小</em></p>
-</blockquote>
-<p>并在启动spark-sql时指定spark.yarn.am.memory参数：</p>
-<p><strong>bin&#x2F;spark-sql –master yarn –conf spark.yarn.am.memory&#x3D;1024m</strong></p>
-<p>再看日志信息：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-7.png"></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-8.png"></p>
-<p>yarnUI状态：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-9.png"></p>
-<p>sparkUI的executors信息：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-10.png"></p>
-<p>可见，AppMaster的实际内存为1024M（1408-384），而其在yarn中的container内存大小为2G（1408大于1G，yarn按资源规整化原则为其分配2G）。</p>
-<p>同理，driver的storage memory空间为3G*0.9*0.6&#x3D;1.62G，executor的storage memory空间为4G*0.9*0.6&#x3D;2.16G，executor所在container占用5G内存（4096+max(4096*0.10,384)&#x3D; 4505.6，大于4G， yarn按资源规整化原则为其分配5G）。</p>
-<p>Yarn集群的内存总占用空间为2+5*4&#x3D;22G。</p>
+
+<p><strong>1. Perception Module</strong></p>
+<p>This module collects and processes data from the agent’s environment using sensors, user inputs, or APIs. It translates raw data into structured information usable by the agent.</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Camera and LiDAR sensors in self-driving cars</li>
+<li>Text or voice inputs in virtual assistants</li>
+</ul>
+<p><strong>2. Reasoning Module</strong></p>
+<p>The reasoning component processes information received from the perception module and determines the best possible action. This usually involves various AI techniques such as rule-based systems, planning algorithms, or machine learning (ML) models.</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Path planning algorithms for robots</li>
+<li>Deep reinforcement learning for game-playing agents</li>
+</ul>
+<p><strong>3. Action Module</strong></p>
+<p>Once the reasoning module decides an action, the action module executes it within the environment. Actions can be physical (e.g., moving a robotic arm) or virtual (e.g., sending a response in a chat interface).</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Controlling actuators in robotic systems</li>
+<li>Generating text or speech responses in conversational agents</li>
+</ul>
+<p><strong>4. Learning Module</strong></p>
+<p>This module allows the AI agent to improve performance over time by learning from past experiences or interactions. Reinforcement learning, supervised learning, and unsupervised learning methods are commonly employed here.</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Reinforcement learning in gaming environments</li>
+<li>Adaptive recommendation systems</li>
+</ul>
+<h2 id="Key-Components-of-AI-Agents"><a href="#Key-Components-of-AI-Agents" class="headerlink" title="Key Components of AI Agents"></a>Key Components of AI Agents</h2><p>A deeper dive into AI agent architecture reveals several fundamental components essential for their functioning:</p>
+<p><strong>Environment</strong></p>
+<ul>
+<li>Defines the external conditions or contexts in which the agent operates.</li>
+<li>Environments can be fully observable (complete information) or partially observable (incomplete information).</li>
+</ul>
+<p>Sensors</p>
+<p>Tools or interfaces the agent uses to perceive its environment.</p>
+<p>Examples include cameras, microphones, text input systems, or API data feeds.</p>
+<p>Actuators</p>
+<p>Mechanisms through which the agent executes actions.</p>
+<p>Examples are motors in robots, chat interfaces in virtual agents, and transaction execution systems in financial agents.</p>
+<p>Policy</p>
+<p>Defines how the agent decides what action to take based on its current state.</p>
+<p>Can be rule-based, or learned through machine learning (especially reinforcement learning).</p>
+<p>Reward Function</p>
+<p>A metric used to measure the success or effectiveness of actions taken by the agent.</p>
+<p>Reinforcement learning agents heavily rely on reward functions for optimizing decisions.</p>
+<p>State Representation</p>
+<p>Encodes information about the environment relevant for making decisions.</p>
+<p>Typically modeled through structured data, graphs, embeddings, or neural network activations.</p>
+<h2 id="How-to-Build-an-AI-Agent"><a href="#How-to-Build-an-AI-Agent" class="headerlink" title="How to Build an AI Agent"></a>How to Build an AI Agent</h2><p>Here’s a step-by-step guide on building an AI agent:</p>
+<h4 id="Step-1-Define-the-Goal-and-Environment"><a href="#Step-1-Define-the-Goal-and-Environment" class="headerlink" title="Step 1: Define the Goal and Environment"></a>Step 1: Define the Goal and Environment</h4><p>Clearly specify the objectives the AI agent should achieve.</p>
+<p>Understand the environment: Is it static or dynamic? Observable or partially observable?</p>
+<p><strong>Example:</strong></p>
+<ul>
+<li>Goal: Build an AI agent for automated stock trading.</li>
+<li>Environment: Financial market data, historical prices, news sentiment.</li>
+</ul>
+<h4 id="Step-2-Design-the-Perception-Module"><a href="#Step-2-Design-the-Perception-Module" class="headerlink" title="Step 2: Design the Perception Module"></a>Step 2: Design the Perception Module</h4><p>Identify and integrate necessary sensors or data streams.<br>Implement preprocessing pipelines for data collection and interpretation.</p>
+<p><strong>Example:</strong></p>
+<p>Market data feeds and sentiment analysis tools as sensors.</p>
+<p>Data normalization, feature extraction.</p>
+<h4 id="Step-3-Develop-the-Reasoning-and-Decision-Making-Module"><a href="#Step-3-Develop-the-Reasoning-and-Decision-Making-Module" class="headerlink" title="Step 3: Develop the Reasoning and Decision-Making Module"></a>Step 3: Develop the Reasoning and Decision-Making Module</h4><p>Select an appropriate AI algorithm or combination (rule-based logic, reinforcement learning, deep learning).<br>Implement algorithms to evaluate state data and determine optimal actions.</p>
+<p><strong>Example:</strong><br>Deep reinforcement learning algorithms (like Deep Q-Networks) for trading decisions.</p>
+<h4 id="Step-4-Construct-the-Action-Module"><a href="#Step-4-Construct-the-Action-Module" class="headerlink" title="Step 4: Construct the Action Module"></a>Step 4: Construct the Action Module</h4><p>Ensure actions can be effectively executed within the environment.<br>Implement action mechanisms compatible with the environment’s capabilities.</p>
+<p><strong>Example:</strong></p>
+<p>Automated API trading systems executing buy and sell orders.</p>
+<h4 id="Step-5-Implement-the-Learning-Module"><a href="#Step-5-Implement-the-Learning-Module" class="headerlink" title="Step 5: Implement the Learning Module"></a>Step 5: Implement the Learning Module</h4><p>Choose suitable machine learning frameworks or algorithms for ongoing learning.</p>
+<p>Train and iterate on models using historical and real-time data.</p>
+<p><strong>Example:</strong></p>
+<p>Reinforcement learning frameworks (OpenAI Gym, RLlib, Stable-Baselines3).</p>
+<h4 id="Step-6-Test-and-Iterate"><a href="#Step-6-Test-and-Iterate" class="headerlink" title="Step 6: Test and Iterate"></a>Step 6: Test and Iterate</h4><p>Continuously test the AI agent in controlled environments.</p>
+<p>Adjust perception, reasoning, and learning components based on performance outcomes.</p>
+<h2 id="Tools-and-Frameworks-for-Building-AI-Agents"><a href="#Tools-and-Frameworks-for-Building-AI-Agents" class="headerlink" title="Tools and Frameworks for Building AI Agents"></a>Tools and Frameworks for Building AI Agents</h2><p>Several tools simplify the development of AI agents:</p>
+<ul>
+<li>OpenAI Gym: Provides standardized environments for developing and benchmarking reinforcement learning agents.</li>
+<li>TensorFlow &amp; PyTorch: Powerful frameworks for building neural networks and learning modules.</li>
+<li>Unity ML-Agents: Platform for training intelligent agents in simulated environments.</li>
+<li>RLlib: A scalable reinforcement learning library built on Ray, suitable for large-scale training and deployment.</li>
+</ul>
+<h2 id="Real-World-Examples-of-AI-Agents"><a href="#Real-World-Examples-of-AI-Agents" class="headerlink" title="Real-World Examples of AI Agents"></a>Real-World Examples of AI Agents</h2><p>Autonomous Vehicles (e.g., Tesla Autopilot): Continuously perceiving surroundings through sensors, making real-time driving decisions, and adapting to new scenarios.</p>
+<p>Virtual Assistants (e.g., Siri, Alexa): Understanding user commands and questions, performing reasoning tasks, and executing appropriate responses.</p>
+<p>AI Trading Bots: Analyzing market data and news sentiment, making investment decisions, and executing trades autonomously.</p>
+<h2 id="Common-Challenges-and-Solutions"><a href="#Common-Challenges-and-Solutions" class="headerlink" title="Common Challenges and Solutions"></a>Common Challenges and Solutions</h2><p>Data Scarcity: Solutions include data augmentation, simulation environments, or transfer learning.</p>
+<p>Model Explainability: Use interpretable models or post-hoc explanation tools like SHAP or LIME.</p>
+<p>Computational Complexity: Leverage cloud computing resources, distributed computing, or hardware accelerators (GPUs&#x2F;TPUs).</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>AI agents represent a powerful evolution in AI technologies, combining perception, reasoning, decision-making, and learning into autonomous systems capable of navigating complex environments. Understanding their architecture and components is crucial for developing efficient agents. By following structured steps, leveraging modern frameworks, and addressing common challenges, developers can create robust and adaptive AI agents that effectively achieve their intended goals. The continuous advancement of AI agents promises transformative impacts across industries, unlocking new capabilities and driving innovation forward.</p>
 
     </div>
 
@@ -379,7 +391,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>Post link: </strong>
-      <a href="https://maohong.github.io/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/" title="Spark on yarn的内存分配问题">https://maohong.github.io/20150811/Spark-on-yarn的内存分配问题/</a>
+      <a href="https://maohong.github.io/20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/" title="AI Agents: Architecture, Key Components, and How to Build One">https://maohong.github.io/20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/</a>
   </li>
   <li class="post-copyright-license">
       <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.
@@ -388,9 +400,7 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/spark/" rel="tag"># spark</a>
-              <a href="/tags/yarn/" rel="tag"># yarn</a>
-              <a href="/tags/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/" rel="tag"># 内存分配</a>
+              <a href="/tags/AI/" rel="tag"># AI</a>
           </div>
 
         
@@ -404,14 +414,11 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/20150703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" rel="prev" title="storm集群supervisor节点异常退出问题排查">
-                  <i class="fa fa-angle-left"></i> storm集群supervisor节点异常退出问题排查
+                <a href="/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/" rel="prev" title="Storm源码编译及本地调试方法">
+                  <i class="fa fa-angle-left"></i> Storm源码编译及本地调试方法
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/20151105/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/" rel="next" title="Storm的消息可靠处理机制">
-                  Storm的消息可靠处理机制 <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>
