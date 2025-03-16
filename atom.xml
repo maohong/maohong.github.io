@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Hong&#39;s Notes</title>
+  <icon>https://maohong.github.io/icon.png</icon>
+  <subtitle>High Performance, High Availability and Scalable Architecture, ML, AI and Big Data</subtitle>
+  <link href="https://maohong.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://maohong.github.io/"/>
+  <updated>2025-03-09T14:33:45.558Z</updated>
+  <id>https://maohong.github.io/</id>
+  
+  <author>
+    <name>Hong</name>
+    <email>hmao.tech@gmail.com</email>
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Storm源码编译及本地调试方法</title>
+    <link href="https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/"/>
+    <id>https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/</id>
+    <published>2016-07-13T15:53:12.000Z</published>
+    <updated>2025-03-09T14:33:45.558Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;基础环境&quot;&gt;&lt;a href=&quot;#基础环境&quot; class=&quot;headerlink&quot; title=&quot;基础环境&quot;&gt;&lt;/a&gt;基础环境&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;IDE开发环境：intelliJIdea&lt;/li&gt;
+&lt;li&gt;JDK1.7  64bit&lt;/li&gt;
+&lt;li&gt;intelliJIdea安装maven插件，配置好仓库源&lt;/li&gt;
+&lt;li&gt;intelliJIdea安装clojure插件Cursive（需要注册并获取一个license，否则只能使用30天）&lt;/li&gt;
+&lt;li&gt;如果需要自己创建clojure项目进行开发，需要安装leiningen，&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cDovL2xlaW5pbmdlbi5vcmcv&quot;&gt;下载地址&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;源码获取&quot;&gt;&lt;a href=&quot;#源码获取&quot; class=&quot;headerlink&quot; title=&quot;源码获取&quot;&gt;&lt;/a&gt;源码获取&lt;/h2&gt;&lt;p&gt;从github checkout代码到本地即可，&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cHM6Ly9naXRodWIuY29tL2FwYWNoZS9zdG9ybS5naXQ=&quot;&gt;https://github.com/apache/storm.git&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;我这里编译的是我们目前正在用的0.10.0版本的代码。&lt;/p&gt;
+&lt;h2 id=&quot;导入idea及编译&quot;&gt;&lt;a href=&quot;#导入idea及编译&quot; class=&quot;headerlink&quot; title=&quot;导入idea及编译&quot;&gt;&lt;/a&gt;导入idea及编译&lt;/h2&gt;&lt;p&gt;打开idea，新建project，从源码导入，如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/1.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;导入后，idea会自动根据pom.xml下载相关依赖包，部分依赖包如果下载不到，需要手动添加。完成后，可以看到project的module如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/2.png&quot;&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Storm" scheme="https://maohong.github.io/categories/Storm/"/>
+    
+    
+    <category term="storm" scheme="https://maohong.github.io/tags/storm/"/>
+    
+    <category term="源码编译" scheme="https://maohong.github.io/tags/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/"/>
+    
+    <category term="本地调试" scheme="https://maohong.github.io/tags/%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>kafka-0.10.0启动过程分析</title>
+    <link href="https://maohong.github.io/20160708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/"/>
+    <id>https://maohong.github.io/20160708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</id>
+    <published>2016-07-08T14:46:18.000Z</published>
+    <updated>2025-03-03T09:38:38.052Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;kafka-0.10.0是官方出的最新稳定版本，提供了大量新的feature，具体可见&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cDovL3d3dy5pdGVibG9nLmNvbS9hcmNoaXZlcy8xNjc3&quot;&gt;这里&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;，本文主要分析kafka-0.10-0的源码结构和启动过程。&lt;/p&gt;
+&lt;h2 id=&quot;源码结构&quot;&gt;&lt;a href=&quot;#源码结构&quot; class=&quot;headerlink&quot; title=&quot;源码结构&quot;&gt;&lt;/a&gt;源码结构&lt;/h2&gt;&lt;p&gt;kafka-0.10.0的源码可以从github上fork一份，在源码目录下执行.&amp;#x2F;gradlew idea生成idea项目，然后导入idea即可。这中间需要使用gradle进行依赖包的下载，导入后可以看到其源码结构如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20160708-kafka0.10.0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/1.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;包括几大重要模块：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;clients主要是kafka-client相关的代码，包括consumer、producer，还包括一些公共逻辑，如授权认证、序列化等。&lt;/li&gt;
+&lt;li&gt;connect主要是kafka-connect模块的代码逻辑，Kafka connect是0.9版本增加的特性,支持创建和管理数据流管道。通过它可以将大数据从其它系统导入到Kafka中，也可以从Kafka中导出到其它系统，比如数据库、elastic search等。&lt;/li&gt;
+&lt;li&gt;core模块是kafka的核心部分，主要包括broker的实现逻辑、producer和consumer的javaapi等。&lt;/li&gt;
+&lt;li&gt;streams模块主要是kafka-streaming的实现，提供了一整套描述常见流操作的高级语言API（比如 joining, filtering以及aggregation等），我们可以基于此开发流处理应用程序。&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    <category term="Kafka" scheme="https://maohong.github.io/categories/Kafka/"/>
+    
+    
+    <category term="kafka" scheme="https://maohong.github.io/tags/kafka/"/>
+    
+    <category term="源码分析" scheme="https://maohong.github.io/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Storm的消息可靠处理机制</title>
+    <link href="https://maohong.github.io/20151105/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/"/>
+    <id>https://maohong.github.io/20151105/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/</id>
+    <published>2015-11-05T12:51:50.000Z</published>
+    <updated>2025-03-03T09:38:38.052Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;提交进入Storm运行的topology实际上是一个有向无环图（DAG），其中的节点是由spout和bolt组成，边则可以理解为消息从一个节点到传输到另一个节点的过程。对于spout产生的tuple，只有在topology上处理完毕后，才认为这个tuple被storm可靠处理。&lt;/p&gt;
+&lt;p&gt;Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，我们在写一个topology程序时，若需要保证spout产生的消息的可靠处理，需要做到两点：&lt;/p&gt;
+&lt;p&gt;第一是spout&amp;#x2F;bolt每生成一个新的tuple都告诉storm一下（其中spout发出的tuple有个id叫rootId），从而让storm能够追踪rootId和每个衍生tuple的处理状态。&lt;/p&gt;
+&lt;p&gt;第二是每个tuple被下游bolt处理完毕后，无论处理成功或失败，也再告诉storm一下，从而让storm知道是否需要spout重新发送rootId。&lt;/p&gt;
+&lt;p&gt;做了这两件事，storm就能知道这个tuple是否被处理完毕。如果是处理成功了的，就说明最初从spout发出的tuple（rootId）已在topology中处理完毕，无需spout重新发送。如果是处理失败的，storm则会告知spout重新发送rootId这个tuple。&lt;/p&gt;
+&lt;h2 id=&quot;在程序中实现消息可靠处理&quot;&gt;&lt;a href=&quot;#在程序中实现消息可靠处理&quot; class=&quot;headerlink&quot; title=&quot;在程序中实现消息可靠处理&quot;&gt;&lt;/a&gt;在程序中实现消息可靠处理&lt;/h2&gt;&lt;p&gt;那在写一个topology时，我们该如何做上面提到的两件事呢？&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Storm" scheme="https://maohong.github.io/categories/Storm/"/>
+    
+    
+    <category term="storm" scheme="https://maohong.github.io/tags/storm/"/>
+    
+    <category term="实时计算" scheme="https://maohong.github.io/tags/%E5%AE%9E%E6%97%B6%E8%AE%A1%E7%AE%97/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Spark on yarn的内存分配问题</title>
+    <link href="https://maohong.github.io/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/"/>
+    <id>https://maohong.github.io/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/</id>
+    <published>2015-08-11T05:23:13.000Z</published>
+    <updated>2025-03-03T09:38:38.051Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;问题描述&quot;&gt;&lt;a href=&quot;#问题描述&quot; class=&quot;headerlink&quot; title=&quot;问题描述&quot;&gt;&lt;/a&gt;问题描述&lt;/h2&gt;&lt;p&gt;在测试spark on yarn时，发现一些内存分配上的问题，具体如下。&lt;/p&gt;
+&lt;p&gt;在$SPARK_HOME&amp;#x2F;conf&amp;#x2F;spark-env.sh中配置如下参数：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;SPARK_EXECUTOR_INSTANCES&amp;#x3D;4            &lt;em&gt;在yarn集群中启动的executor进程数&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;SPARK_EXECUTOR_MEMORY&amp;#x3D;2G              &lt;em&gt;为每个executor进程分配的内存大小&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;SPARK_DRIVER_MEMORY&amp;#x3D;1G                &lt;em&gt;为spark-driver进程分配的内存大小&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;执行$SPARK_HOME&amp;#x2F;bin&amp;#x2F;spark-sql –master yarn，按yarn-client模式启动spark-sql交互命令行（即driver程序运行在本地，而非yarn的container中），日志显示的关于AppMaster和Executor的内存信息如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-1.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-2.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;日志显示，AppMaster的内存是896MB，其中包含了384MB的memoryOverhead；启动了5个executor，第一个的可用内存是530.3MB，其余每个Executor的可用内存是1060.3MB。&lt;/p&gt;
+&lt;p&gt;到yarnUI看下资源使用情况，共启动了5个container，占用内存13G，其中一台NodeManager启动了2个container，占用内存4G（1个AppMaster占1G、另一个占3G），另外3台各启了1个container，每个占用3G内存。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-3.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;再到sparkUI看下executors的情况，这里有5个executor，其中driver是运行在执行spark-sql命令的本地服务器上，另外4个是运行在yarn集群中。Driver的可用storage memory为530.3MB，另外4个都是1060.3MB（与日志信息一致）。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-4.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;那么问题来了：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Yarn为container分配的最小内存由yarn.scheduler.minimum-allocation-mb参数决定，默认是1G，从yarnUI中看确实如此，可为何spark的日志里显示AppMaster的实际内存是896-384&amp;#x3D;512MB呢？384MB是怎么算出来的？&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;spark配置文件里指定了每个executor的内存为2G，为何日志和sparkUI上显示的是1060.3MB？&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;driver的内存配置为1G，为何sparkUI里显示的是530.3MB呢？&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;为何yarn中每个container分配的内存是3G，而不是executor需要的2G呢？&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;问题解析&quot;&gt;&lt;a href=&quot;#问题解析&quot; class=&quot;headerlink&quot; title=&quot;问题解析&quot;&gt;&lt;/a&gt;问题解析&lt;/h2&gt;&lt;p&gt;进过一番调研，发现这里有些概念容易混淆，整理如下，序号对应上面的问题：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Spark" scheme="https://maohong.github.io/categories/Spark/"/>
+    
+    
+    <category term="spark" scheme="https://maohong.github.io/tags/spark/"/>
+    
+    <category term="yarn" scheme="https://maohong.github.io/tags/yarn/"/>
+    
+    <category term="内存分配" scheme="https://maohong.github.io/tags/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>storm集群supervisor节点异常退出问题排查</title>
+    <link href="https://maohong.github.io/20150703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/"/>
+    <id>https://maohong.github.io/20150703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/</id>
+    <published>2015-07-03T12:48:50.000Z</published>
+    <updated>2025-03-03T09:38:38.052Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;问题出现&quot;&gt;&lt;a href=&quot;#问题出现&quot; class=&quot;headerlink&quot; title=&quot;问题出现&quot;&gt;&lt;/a&gt;问题出现&lt;/h2&gt;&lt;p&gt;测试storm集群为0.9.4版本，前段时间出现supervisor进程挂掉，而其上work进程仍然运行的诡异情况，通过日志看到supervisor进程挂掉之前出现以下异常：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/1.png&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;问题排查过程&quot;&gt;&lt;a href=&quot;#问题排查过程&quot; class=&quot;headerlink&quot; title=&quot;问题排查过程&quot;&gt;&lt;/a&gt;问题排查过程&lt;/h2&gt;&lt;p&gt;很明显，是commons-io包的FileUtils工具类抛出的异常，原因是在调用commons-io包的FileUtils工具类做move directory操作时，目的文件夹已存在。&lt;/p&gt;
+&lt;p&gt;查看调用代码（supervisor.clj的第374行），是调用download-storm-code方法从nimbus下载topology的代码，并且download-storm-code方法中做代码下载前加了锁避免并发写文件。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/2.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/3.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;果然，这里没有判断stormroot文件夹是否已存在，是个bug，具体可见这个issue：&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cHM6Ly9pc3N1ZXMuYXBhY2hlLm9yZy9qaXJhL2Jyb3dzZS9TVE9STS04MDU=&quot;&gt;https://issues.apache.org/jira/browse/STORM-805&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;。&lt;/p&gt;
+&lt;p&gt;这个问题在0.9.5版本中随着STORM-130一起修复了，代码如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/4.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;但这里有三个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;在调用download-storm-code方法前，代码中已做判断是否已下载topology代码，若已下载就不会调用download-storm-code方法了。为何进入这个方法后，做move directory操作时，代码却已经下载好了呢？&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;storm的历史发布版本有很多，为何0.9.4版本里会出现这个不该出现的问题，0.9.4相对老的版本是不是做了什么修改？&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;为何抛出异常后，supervisor进程就这么直接退出了？太弱了吧。。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Storm" scheme="https://maohong.github.io/categories/Storm/"/>
+    
+    
+    <category term="storm" scheme="https://maohong.github.io/tags/storm/"/>
+    
+    <category term="supervisor" scheme="https://maohong.github.io/tags/supervisor/"/>
+    
+    <category term="异常排查" scheme="https://maohong.github.io/tags/%E5%BC%82%E5%B8%B8%E6%8E%92%E6%9F%A5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>交换空间使用率过高问题分析</title>
+    <link href="https://maohong.github.io/20150622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    <id>https://maohong.github.io/20150622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</id>
+    <published>2015-06-22T02:02:04.000Z</published>
+    <updated>2025-03-03T09:38:38.052Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;问题现象&quot;&gt;&lt;a href=&quot;#问题现象&quot; class=&quot;headerlink&quot; title=&quot;问题现象&quot;&gt;&lt;/a&gt;问题现象&lt;/h2&gt;&lt;p&gt;线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。&lt;/p&gt;
+&lt;p&gt;首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空间。但究竟是什么原因引起物理内存不足呢？因为Jvm堆大小是固定的，所以推断是因堆外内存占用空间较大引起。&lt;/p&gt;
+&lt;p&gt;于是，使用jmap -histo:live &lt;pid&gt;把进程中的对象信息dump出来，dump信息如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/2.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;确实发现存在大量DirectByteBuffer对象，这说明内存中确实有大量引用了堆外内存的对象没有被回收！&lt;/p&gt;
+&lt;p&gt;同时，内存中也对应存在着大量的sun.misc.Cleaner和java.nio.DirectByteBuffer$Deallocator对象。这两个类是用于回收堆外内存的。Cleaner对象是在DirectByteBuffer的构造函数中创建，其中封装了回收堆外内存的逻辑，Cleaner执行clean资源的操作是通过启动Deallocator线程实现的，这个线程把DirectByteBuffer对象引用的堆外内存做回收。&lt;/p&gt;
+&lt;p&gt; 那么问题来了：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;为什么DirectByteBuffer对象没有被回收？&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;怎么做才能让DirectByteBuffer对象能被及时回收？&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;问题分析&quot;&gt;&lt;a href=&quot;#问题分析&quot; class=&quot;headerlink&quot; title=&quot;问题分析&quot;&gt;&lt;/a&gt;问题分析&lt;/h2&gt;</summary>
+    
+    
+    
+    <category term="问题分析" scheme="https://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="swap分区" scheme="https://maohong.github.io/tags/swap%E5%88%86%E5%8C%BA/"/>
+    
+    <category term="问题分析" scheme="https://maohong.github.io/tags/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    
+    <category term="jvm调优" scheme="https://maohong.github.io/tags/jvm%E8%B0%83%E4%BC%98/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>hadoop-yarn中ResourceManager的服务模块</title>
+    <link href="https://maohong.github.io/20150606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/"/>
+    <id>https://maohong.github.io/20150606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/</id>
+    <published>2015-06-06T05:10:10.000Z</published>
+    <updated>2025-03-03T09:38:38.052Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;Yarn简述&quot;&gt;&lt;a href=&quot;#Yarn简述&quot; class=&quot;headerlink&quot; title=&quot;Yarn简述&quot;&gt;&lt;/a&gt;Yarn简述&lt;/h2&gt;&lt;p&gt;Hadoop2.0引入了yarn（Yet Another Resource</summary>
+        
+      
+    
+    
+    
+    <category term="Hadoop" scheme="https://maohong.github.io/categories/Hadoop/"/>
+    
+    
+    <category term="yarn" scheme="https://maohong.github.io/tags/yarn/"/>
+    
+    <category term="hadoop" scheme="https://maohong.github.io/tags/hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>mac系统下hadoop-2.7源码编译、导入eclipse及打包</title>
+    <link href="https://maohong.github.io/20150518/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/"/>
+    <id>https://maohong.github.io/20150518/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/</id>
+    <published>2015-05-18T02:00:44.000Z</published>
+    <updated>2025-03-03T09:38:38.052Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;编译环境要求&quot;&gt;&lt;a href=&quot;#编译环境要求&quot; class=&quot;headerlink&quot; title=&quot;编译环境要求&quot;&gt;&lt;/a&gt;编译环境要求&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;JDK1.7+&lt;br&gt;MAVEN 3.0以上版本&lt;br&gt;如果需要编译native</summary>
+        
+      
+    
+    
+    
+    <category term="Hadoop" scheme="https://maohong.github.io/categories/Hadoop/"/>
+    
+    
+    <category term="hadoop" scheme="https://maohong.github.io/tags/hadoop/"/>
+    
+    <category term="eclipse" scheme="https://maohong.github.io/tags/eclipse/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用hexo+gitpage搭建博客</title>
+    <link href="https://maohong.github.io/20140902/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
+    <id>https://maohong.github.io/20140902/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/</id>
+    <published>2014-09-02T11:50:40.000Z</published>
+    <updated>2025-03-03T09:38:38.052Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;环境准备&quot;&gt;&lt;a href=&quot;#环境准备&quot; class=&quot;headerlink&quot; title=&quot;环境准备&quot;&gt;&lt;/a&gt;环境准备&lt;/h2&gt;&lt;p&gt;系统：mac</summary>
+        
+      
+    
+    
+    
+    <category term="工具" scheme="https://maohong.github.io/categories/%E5%B7%A5%E5%85%B7/"/>
+    
+    
+    <category term="hexo" scheme="https://maohong.github.io/tags/hexo/"/>
+    
+    <category term="gitpage" scheme="https://maohong.github.io/tags/gitpage/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>redis服务端连接断开问题诊断</title>
+    <link href="https://maohong.github.io/20140601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/"/>
+    <id>https://maohong.github.io/20140601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/</id>
+    <published>2014-06-01T13:29:28.000Z</published>
+    <updated>2025-03-03T09:38:38.052Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;问题现象&quot;&gt;&lt;a href=&quot;#问题现象&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="Redis" scheme="https://maohong.github.io/categories/Redis/"/>
+    
+    
+    <category term="redis" scheme="https://maohong.github.io/tags/redis/"/>
+    
+    <category term="连接断开" scheme="https://maohong.github.io/tags/%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>基于zookeeper的分布式独占锁实现</title>
+    <link href="https://maohong.github.io/20140513/%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/"/>
+    <id>https://maohong.github.io/20140513/%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/</id>
+    <published>2014-05-13T13:05:01.000Z</published>
+    <updated>2025-03-03T09:38:38.053Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="分布式应用" scheme="https://maohong.github.io/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+    
+    
+    <category term="zookeeper" scheme="https://maohong.github.io/tags/zookeeper/"/>
+    
+    <category term="分布式协调" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
+    
+    <category term="分布式应用" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用httpclient引起的tcp连接数超高问题</title>
+    <link href="https://maohong.github.io/20140328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/"/>
+    <id>https://maohong.github.io/20140328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/</id>
+    <published>2014-03-28T09:44:58.000Z</published>
+    <updated>2025-03-03T09:38:38.052Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;组内的一个系统新上线了通过图片url上传图片到图片存储平台的功能。其中使用了httpclient，通过向图片存储平台发送MultipartPostMethod上传图片。当业务量较大时，10个处理线程满负荷运行，上传图片时，发现应用系统服务器的tcp连接数陡然升高，&lt;font</summary>
+        
+      
+    
+    
+    
+    <category term="问题分析" scheme="https://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="httpclient" scheme="https://maohong.github.io/tags/httpclient/"/>
+    
+    <category term="tcp连接数" scheme="https://maohong.github.io/tags/tcp%E8%BF%9E%E6%8E%A5%E6%95%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>前后端的CharacterEncoding不一致导致提交的表单数据丢失问题</title>
+    <link href="https://maohong.github.io/20140320/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/"/>
+    <id>https://maohong.github.io/20140320/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/</id>
+    <published>2014-03-20T03:09:03.000Z</published>
+    <updated>2025-03-03T09:38:38.053Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;最近在开发分布式任务调度系统的web端时，遇到一个坑，记录如下：&lt;/p&gt;
+&lt;p&gt;在页面上新增和修改任务，提交后，任务的属性在后端怎么都接收不到，但是在另一个协同开发的同学那边本地调试就OK，在我的本地和公共开发环境都不行，这不合理啊。。。。。&lt;/p&gt;
+&lt;p&gt;排查了很多地方，</summary>
+        
+      
+    
+    
+    
+    <category term="问题分析" scheme="https://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="web开发" scheme="https://maohong.github.io/tags/web%E5%BC%80%E5%8F%91/"/>
+    
+    <category term="java" scheme="https://maohong.github.io/tags/java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用shell切割文件</title>
+    <link href="https://maohong.github.io/20130307/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/"/>
+    <id>https://maohong.github.io/20130307/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/</id>
+    <published>2013-03-07T05:49:44.000Z</published>
+    <updated>2025-03-03T09:38:38.053Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;最近工作中需要使用shell，从远程rsync数据过来预处理后提交到hdfs中，再调用pig脚本在hadoop集群上处理数据，完了fs</summary>
+        
+      
+    
+    
+    
+    
+    <category term="shell" scheme="https://maohong.github.io/tags/shell/"/>
+    
+    <category term="linux" scheme="https://maohong.github.io/tags/linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Shell中的IFS分隔符使用</title>
+    <link href="https://maohong.github.io/20130129/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/"/>
+    <id>https://maohong.github.io/20130129/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/</id>
+    <published>2013-01-29T12:41:54.000Z</published>
+    <updated>2025-03-03T09:38:38.052Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。&lt;/p&gt;
+&lt;p&gt;工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘&#92;3′分割，如下(终端下’&#92;3′显示为方块)：&lt;/p&gt;
+&lt;p&gt;&lt;img</summary>
+        
+      
+    
+    
+    
+    <category term="Shell" scheme="https://maohong.github.io/categories/Shell/"/>
+    
+    
+    <category term="shell" scheme="https://maohong.github.io/tags/shell/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>将Hadoop RPC框架应用于多节点任务调度</title>
+    <link href="https://maohong.github.io/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/"/>
+    <id>https://maohong.github.io/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/</id>
+    <published>2013-01-21T12:53:38.000Z</published>
+    <updated>2025-03-03T09:38:38.053Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前hadoop RPC的数据序列化是通过实现自己定义的Writable接口实现，而从hadoop 2.0开始，数据的序列化工作交给了ProtocolBuffer去做。关于Hadoop RPC的实现原理已经有很多文章进行了详细的介绍（&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cDovL3dlaXhpYW9sdS5pdGV5ZS5jb20vYmxvZy8xNTA0ODk4&quot;&gt;源码级强力分析hadoop的RPC机制&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;，&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cDovL3lhbmJvaGFwcHkuc2luYWFwcC5jb20vP3A9MTEw&quot;&gt;Hadoop基于Protocol Buffer的RPC实现代码分析-Server端&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;，&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cDovL3lhbmJvaGFwcHkuc2luYWFwcC5jb20vP3A9MTE1&quot;&gt;带有HA功能的Hadoop Client端RPC实现原理与代码分析&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;），这里就不在赘述了。下面就直接引入问题和方案吧。  &lt;/p&gt;
+&lt;h2 id=&quot;问题&quot;&gt;&lt;a href=&quot;#问题&quot; class=&quot;headerlink&quot; title=&quot;问题&quot;&gt;&lt;/a&gt;问题&lt;/h2&gt;&lt;p&gt;工作中经常需要在定时任务系统上写一些定时任务，随着业务规模的增长和扩大，需要定时处理的任务越来越多，任务之间的执行间隔越来越小，某一时间段内（比如0点、整点或半点）执行的任务会越来越密集，只在一台机器上执行这些任务的话，会出现较大的风险：  &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;任务并发度较高时，单机的系统资源将成为瓶颈  &lt;/li&gt;
+&lt;li&gt;如果一个任务的运行占用了整个机器的大部分资源，比如sql查询耗费巨大内存和CPU资源，将直接影响其他任务的运行  &lt;/li&gt;
+&lt;li&gt;任务失败后，如果仍然在同一台节点自动重新执行，失败率较高  &lt;/li&gt;
+&lt;li&gt;机器宕机后，必须第一时间重启机器或重新部署定时任务系统，所有任务都不能按时执行  &lt;/li&gt;
+&lt;li&gt;等等&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;方案&quot;&gt;&lt;a href=&quot;#方案&quot; class=&quot;headerlink&quot; title=&quot;方案&quot;&gt;&lt;/a&gt;方案&lt;/h2&gt;&lt;p&gt;可想而知的是，可以通过将定时任务系统进行分布式改造，使用多个节点执行任务，将任务分发到不同节点上进行处理，并且完善失败重试机制，从而提高系统稳定性，实现任务系统的高可靠。&lt;br&gt;既然是在多个节点之间分发任务，肯定得有个任务的管理者(主节点)，在我们现有的系统中，也就是一套可以部署定时任务的web系统，任务代码更新后，部署好这套web系统，即可通过web页面设置定时任务并且进行调度(在单个节点上执行)。执行任务的节点(子节点)有多个以后，如何分发任务到子节点呢，我们可以把任务的信息封装成一个bean，通过RPC发布给子节点，子节点通过这个任务bean获得任务信息，并在指定的时刻执行任务。同时，子节点可以通过与主节点的心跳通信将节点状态和执行任务的情况告诉主节点。&lt;br&gt;这样其实就与hadoop mapreduce分发任务有点相似了，呵呵，这里主节点与子节点之间的通信，我们就可以通过Hadoop RPC框架来实现了，不同的是，我们分发的任务是定时任务，发布任务时需要将任务的定时信息一并发给子节点。  &lt;/p&gt;
+&lt;h2 id=&quot;实现&quot;&gt;&lt;a href=&quot;#实现&quot; class=&quot;headerlink&quot; title=&quot;实现&quot;&gt;&lt;/a&gt;实现&lt;/h2&gt;&lt;p&gt;单点的定时任务系统是基于Quartz的，在分布式环境下，可以继续基于Quartz进行改造，任务的定时信息可以通过Quartz中的JobDetail和Trigger对象来描述并封装，加上任务执行的入口类信息，再通过RPC由主节点发给子节点。子节点收到封装好的任务信息对象后，再构造JobDetail和Trigger，设置好启动时间后，通过入口类启动任务。下面是一个简单的demo。  &lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Hadoop" scheme="https://maohong.github.io/categories/Hadoop/"/>
+    
+    
+    <category term="hadoop" scheme="https://maohong.github.io/tags/hadoop/"/>
+    
+    <category term="分布式应用" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+    
+    <category term="RPC" scheme="https://maohong.github.io/tags/RPC/"/>
+    
+    <category term="任务调度" scheme="https://maohong.github.io/tags/%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用zookeeper协调多服务器的任务处理</title>
+    <link href="https://maohong.github.io/20121113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/"/>
+    <id>https://maohong.github.io/20121113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/</id>
+    <published>2012-11-13T08:16:43.000Z</published>
+    <updated>2025-03-03T09:38:38.053Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;h2 id=&quot;Zookeeper是hadoop的子项目，是google的chubby的开源实现，是一个针对大规模分布式系统的可靠的分布式协调系统。Zookeeper一般部署在一个集群上，通过在集群间维护一个数据树，使得连接到集群的client能够获得统一的数据信息，比如系统公共配置信息、节点存活状态等等。因此，在互联网公司中，zookeeper被广泛运用于统一配置管理、名字服务、分布式同步等。问题&quot;&gt;&lt;a href=&quot;#Zookeeper是hadoop的子项目，是google的chubby的开源实现，是一个针对大规模分布式系统的可靠的分布式协调系统。Zookeeper一般部署在一个集群上，通过在集群间维护一个数据树，使得连接到集群的client能够获得统一的数据信息，比如系统公共配置信息、节点存活状态等等。因此，在互联网公司中，zookeeper被广泛运用于统一配置管理、名字服务、分布式同步等。问题&quot; class=&quot;headerlink&quot; title=&quot;Zookeeper是hadoop的子项目，是google的chubby的开源实现，是一个针对大规模分布式系统的可靠的分布式协调系统。Zookeeper一般部署在一个集群上，通过在集群间维护一个数据树，使得连接到集群的client能够获得统一的数据信息，比如系统公共配置信息、节点存活状态等等。因此，在互联网公司中，zookeeper被广泛运用于统一配置管理、名字服务、分布式同步等。问题&quot;&gt;&lt;/a&gt;&lt;strong&gt;Zookeeper&lt;/strong&gt;是hadoop的子项目，是google的chubby的开源实现，是一个针对大规模分布式系统的可靠的分布式协调系统。Zookeeper一般部署在一个集群上，通过在集群间维护一个数据树，使得连接到集群的client能够获得统一的数据信息，比如系统公共配置信息、节点存活状态等等。因此，在互联网公司中，zookeeper被广泛运用于统一配置管理、名字服务、分布式同步等。&lt;br&gt;问题&lt;/h2&gt;&lt;h2 id=&quot;我们看下这样一种场景：前台系统每时每刻都生成大量数据，这些原生数据由后台系统处理完毕后再作他用，我们暂且不谈这些数据的存储形式，只关注如何能够尽可能高效的处理。举个例子，前台系统可能是微博的前端发布系统、搜索引擎上的广告投放系统，或者是任务发布系统，后台系统则可能是对微博和广告信息的审查系统，比如用户发的微博如果包含近期敏感信息则不予显示，若是任务，后台系统则负责处理任务具体的执行。若数据量和任务量较小，单节点的后台系统或许可以处理得过来，但是如果数据量和任务量很大（比如新浪微博，龙年正月初一0点0分0秒，共有32312条微博同时发布），单节点的后台系统肯定吃不消，这时候，可想而知的是多节点同时处理前台过来的数据。最简单的方法是，按消息id对后台节点数取模（msgid-server-num-mod），每个后台节点取自己那份数据进行处理，这就需要每个节点都知晓当前有多少个后台节点以及本节点所应取的mod数。但是，当某个节点宕机时，这个节点所应处理的数据无法被继续处理了，势必会造成阻塞，除非重新配置各节点上的参数，将节点数server-num减1，并修改各节点取数据的mod数。毋庸置疑，这样非常麻烦！如果能够将这种配置信息（实际上是数据在节点间分配的控制信息）统一管理起来，在配置信息发生变化时，各个后台节点能够及时知晓其变化，就可以避免上述情况的发生。因此，采用多节点处理数据时，有两个问题：1-避免多个节点重复处理同一条数据，否则造成资源浪费。2-不能有数据被遗漏处理，尤其是在有后台节点down掉的时候。也就是说，采用多节点同时处理数据时，需要将数据隔离开，分别给不同的节点处理，而且在有节点宕机的情况下，所有数据也必须可以无误的被其他可用节点处理。如何做到这一点呢，使用zookeeper吧！解决方案&quot;&gt;&lt;a href=&quot;#我们看下这样一种场景：前台系统每时每刻都生成大量数据，这些原生数据由后台系统处理完毕后再作他用，我们暂且不谈这些数据的存储形式，只关注如何能够尽可能高效的处理。举个例子，前台系统可能是微博的前端发布系统、搜索引擎上的广告投放系统，或者是任务发布系统，后台系统则可能是对微博和广告信息的审查系统，比如用户发的微博如果包含近期敏感信息则不予显示，若是任务，后台系统则负责处理任务具体的执行。若数据量和任务量较小，单节点的后台系统或许可以处理得过来，但是如果数据量和任务量很大（比如新浪微博，龙年正月初一0点0分0秒，共有32312条微博同时发布），单节点的后台系统肯定吃不消，这时候，可想而知的是多节点同时处理前台过来的数据。最简单的方法是，按消息id对后台节点数取模（msgid-server-num-mod），每个后台节点取自己那份数据进行处理，这就需要每个节点都知晓当前有多少个后台节点以及本节点所应取的mod数。但是，当某个节点宕机时，这个节点所应处理的数据无法被继续处理了，势必会造成阻塞，除非重新配置各节点上的参数，将节点数server-num减1，并修改各节点取数据的mod数。毋庸置疑，这样非常麻烦！如果能够将这种配置信息（实际上是数据在节点间分配的控制信息）统一管理起来，在配置信息发生变化时，各个后台节点能够及时知晓其变化，就可以避免上述情况的发生。因此，采用多节点处理数据时，有两个问题：1-避免多个节点重复处理同一条数据，否则造成资源浪费。2-不能有数据被遗漏处理，尤其是在有后台节点down掉的时候。也就是说，采用多节点同时处理数据时，需要将数据隔离开，分别给不同的节点处理，而且在有节点宕机的情况下，所有数据也必须可以无误的被其他可用节点处理。如何做到这一点呢，使用zookeeper吧！解决方案&quot; class=&quot;headerlink&quot; title=&quot;我们看下这样一种场景：前台系统每时每刻都生成大量数据，这些原生数据由后台系统处理完毕后再作他用，我们暂且不谈这些数据的存储形式，只关注如何能够尽可能高效的处理。举个例子，前台系统可能是微博的前端发布系统、搜索引擎上的广告投放系统，或者是任务发布系统，后台系统则可能是对微博和广告信息的审查系统，比如用户发的微博如果包含近期敏感信息则不予显示，若是任务，后台系统则负责处理任务具体的执行。若数据量和任务量较小，单节点的后台系统或许可以处理得过来，但是如果数据量和任务量很大（比如新浪微博，龙年正月初一0点0分0秒，共有32312条微博同时发布），单节点的后台系统肯定吃不消，这时候，可想而知的是多节点同时处理前台过来的数据。最简单的方法是，按消息id对后台节点数取模（msgid%server_num&amp;#x3D;mod），每个后台节点取自己那份数据进行处理，这就需要每个节点都知晓当前有多少个后台节点以及本节点所应取的mod数。但是，当某个节点宕机时，这个节点所应处理的数据无法被继续处理了，势必会造成阻塞，除非重新配置各节点上的参数，将节点数server_num减1，并修改各节点取数据的mod数。毋庸置疑，这样非常麻烦！如果能够将这种配置信息（实际上是数据在节点间分配的控制信息）统一管理起来，在配置信息发生变化时，各个后台节点能够及时知晓其变化，就可以避免上述情况的发生。因此，采用多节点处理数据时，有两个问题：1.避免多个节点重复处理同一条数据，否则造成资源浪费。2.不能有数据被遗漏处理，尤其是在有后台节点down掉的时候。也就是说，采用多节点同时处理数据时，需要将数据隔离开，分别给不同的节点处理，而且在有节点宕机的情况下，所有数据也必须可以无误的被其他可用节点处理。如何做到这一点呢，使用zookeeper吧！解决方案&quot;&gt;&lt;/a&gt;我们看下这样一种场景：&lt;br&gt;前台系统每时每刻都生成大量数据，这些原生数据由后台系统处理完毕后再作他用，我们暂且不谈这些数据的存储形式，只关注如何能够尽可能高效的处理。举个例子，前台系统可能是微博的前端发布系统、搜索引擎上的广告投放系统，或者是任务发布系统，后台系统则可能是对微博和广告信息的审查系统，比如用户发的微博如果包含近期敏感信息则不予显示，若是任务，后台系统则负责处理任务具体的执行。&lt;br&gt;若数据量和任务量较小，单节点的后台系统或许可以处理得过来，但是如果数据量和任务量很大（比如新浪微博，龙年正月初一0点0分0秒，共有32312条微博同时发布），单节点的后台系统肯定吃不消，这时候，可想而知的是多节点同时处理前台过来的数据。&lt;br&gt;最简单的方法是，按消息id对后台节点数取模（msgid%server_num&amp;#x3D;mod），每个后台节点取自己那份数据进行处理，这就需要每个节点都知晓当前有多少个后台节点以及本节点所应取的mod数。但是，当某个节点宕机时，这个节点所应处理的数据无法被继续处理了，势必会造成阻塞，除非重新配置各节点上的参数，将节点数server_num减1，并修改各节点取数据的mod数。&lt;br&gt;毋庸置疑，这样非常麻烦！如果能够将这种配置信息（实际上是数据在节点间分配的控制信息）统一管理起来，在配置信息发生变化时，各个后台节点能够及时知晓其变化，就可以避免上述情况的发生。&lt;br&gt;因此，采用多节点处理数据时，有两个问题：&lt;br&gt;1.避免多个节点重复处理同一条数据，否则造成资源浪费。&lt;br&gt;2.不能有数据被遗漏处理，尤其是在有后台节点down掉的时候。&lt;br&gt;也就是说，采用多节点同时处理数据时，需要将数据隔离开，分别给不同的节点处理，而且在有节点宕机的情况下，所有数据也必须可以无误的被其他可用节点处理。如何做到这一点呢，使用zookeeper吧！&lt;br&gt;</summary>
+    
+    
+    
+    <category term="分布式应用" scheme="https://maohong.github.io/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+    
+    
+    <category term="zookeeper" scheme="https://maohong.github.io/tags/zookeeper/"/>
+    
+    <category term="横向扩展" scheme="https://maohong.github.io/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
+    
+    <category term="分布式协调" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
+    
+  </entry>
+  
+</feed>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+  <meta name="google-site-verification" content="2gwXBUi9DEN5bqLdqlaiKGqJzQYOvyQNd7jvJSb0IEg">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Source+Code+Pro:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Yarn简述Hadoop2.0引入了yarn（Yet Another Resource Negotiator）资源管理框架。1.0中的MapReduce计算框架变为运行在yarn上的一种application。 Yarn依然采用了master&#x2F;slave结构，master是ResourceManager，负责整个集群的资源管理和调度，并且支持HA，slave是NodeManager，负责">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hadoop-yarn中ResourceManager的服务模块">
+<meta property="og:url" content="https://maohong.github.io/20150606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/index.html">
+<meta property="og:site_name" content="Hong&#39;s Notes">
+<meta property="og:description" content="Yarn简述Hadoop2.0引入了yarn（Yet Another Resource Negotiator）资源管理框架。1.0中的MapReduce计算框架变为运行在yarn上的一种application。 Yarn依然采用了master&#x2F;slave结构，master是ResourceManager，负责整个集群的资源管理和调度，并且支持HA，slave是NodeManager，负责">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150606ResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/1.png">
+<meta property="article:published_time" content="2015-06-06T05:10:10.000Z">
+<meta property="article:modified_time" content="2025-03-03T09:38:38.052Z">
+<meta property="article:author" content="Hong">
+<meta property="article:tag" content="yarn">
+<meta property="article:tag" content="hadoop">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150606ResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/1.png">
+
+
+<link rel="canonical" href="https://maohong.github.io/20150606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://maohong.github.io/20150606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/","path":"20150606/hadoop-yarn中ResourceManager的服务模块/","title":"hadoop-yarn中ResourceManager的服务模块"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>hadoop-yarn中ResourceManager的服务模块 | Hong's Notes</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YQVQS4CLD"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-4YQVQS4CLD","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hong's Notes</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">High Performance, High Availability and Scalable Architecture, ML, AI and Big Data</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-books"><a href="/books/" rel="section"><i class="fa fa-book fa-fw"></i>Books</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Yarn%E7%AE%80%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">Yarn简述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ResourceManager%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E5%88%92%E5%88%86"><span class="nav-number">2.</span> <span class="nav-text">ResourceManager中的模块划分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%84%E6%A8%A1%E5%9D%97%E4%B8%AD%E7%9A%84%E6%9C%8D%E5%8A%A1%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.</span> <span class="nav-text">各模块中的服务介绍</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Hong"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Hong</p>
+  <div class="site-description" itemprop="description">Overthinking only lead to problems, actions lead to answers.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL21hb2hvbmc=" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;maohong"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cubGlua2VkaW4uY29tL2luL2hvbmdtYW84Nw==" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;hongmao87"><i class="fab fa-linkedin fa-fw"></i>LinkedIn</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20150606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="hadoop-yarn中ResourceManager的服务模块 | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          hadoop-yarn中ResourceManager的服务模块
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2015-06-06 13:10:10" itemprop="dateCreated datePublished" datetime="2015-06-06T13:10:10+08:00">2015-06-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-03-03 17:38:38" itemprop="dateModified" datetime="2025-03-03T17:38:38+08:00">2025-03-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Hadoop/" itemprop="url" rel="index"><span itemprop="name">Hadoop</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>4 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Yarn简述"><a href="#Yarn简述" class="headerlink" title="Yarn简述"></a>Yarn简述</h2><p>Hadoop2.0引入了yarn（Yet Another Resource Negotiator）资源管理框架。1.0中的MapReduce计算框架变为运行在yarn上的一种application。</p>
+<p>Yarn依然采用了master&#x2F;slave结构，master是ResourceManager，负责整个集群的资源管理和调度，并且支持HA，slave是NodeManager，负责管理各子节点上的资源和任务。每个MapReduce作业提交给ResourceManager并被接受后，ResourceManager会通知某个NodeManager启动一个ApplicationMaster管理此作业的生命周期。</p>
+<h2 id="ResourceManager中的模块划分"><a href="#ResourceManager中的模块划分" class="headerlink" title="ResourceManager中的模块划分"></a>ResourceManager中的模块划分</h2><p>Yarn中的大多数服务都是带状态的service实现，并通过事件驱动机制实现服务的状态转换和服务之间的交互。ResourceManager是yarn的核心组件，与NodeManager、ApplicationMaster、Client都有交互，提供了非常多的功能，下面基于hadoop2.7版本的实现，梳理一下ResourceManager中的重要service组件及其功能。</p>
+<p>ResourceManager中按功能划分的service模块如下图所示。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150606ResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/1.png"></p>
+<p>ResourceManager中核心模块主要包括客户端交互模块、NodeManager管理模块、ApplicationMaster管理模块、Application管理模块、安全管理模块、以及资源管理模块（调度、预留）等。</p>
+<h2 id="各模块中的服务介绍"><a href="#各模块中的服务介绍" class="headerlink" title="各模块中的服务介绍"></a>各模块中的服务介绍</h2><p><strong>客户端交互模块：</strong></p>
+<ul>
+<li><p>AdminService</p>
+<ul>
+<li>管理员可通过此接口管理集群，如更新节点、更新ACL、更新队列等。内部有个EmbeddedElectorService，如果RM启用了自动HA，则通过这个service做leader election。</li>
+</ul>
+</li>
+<li><p>ClientRMService</p>
+<ul>
+<li>负责为客户端提供服务，是ApplicationClientProtocol协议的服务端。负责处理来自客户端的RPC请求，包括提交app、查询app运行状态、终止app等。</li>
+</ul>
+</li>
+<li><p>Webapp</p>
+<ul>
+<li>提供web页面服务，展示集群状态和资源使用情况。</li>
+</ul>
+</li>
+</ul>
+<p><strong>NodeManager管理模块</strong></p>
+<ul>
+<li><p>NMLivelinessMonitor</p>
+<ul>
+<li>用于监控NM是否存活，若NM在一定时间内（默认10分钟）未上报心跳，则认为其挂了。</li>
+</ul>
+</li>
+<li><p>NodesListManager</p>
+<ul>
+<li>负责维护节点列表，并动态加载白名单（yarn.resourcemanager.nodes.include-path）和黑名单（yarn.resourcemanager.nodes.exlude-path）节点。</li>
+</ul>
+</li>
+<li><p>RMNodeLabelsManager</p>
+<ul>
+<li>负责节点的标签管理。</li>
+</ul>
+</li>
+<li><p>ResourceTrackerService</p>
+<ul>
+<li>负责与NodeManager通信，处理来自NodeManager的请求，包括注册NodeManager和节点心跳两种。接口定义在ResourceTracker中。</li>
+</ul>
+</li>
+</ul>
+<p><strong>ApplicationMaster管理模块</strong></p>
+<ul>
+<li><p>AMLivelinessMonitor：两个实例</p>
+<ul>
+<li>用于监控ApplicationMaster是否正常，如果在指定时间内（默认10分钟）未收到AM的心跳，则认为其死掉了。</li>
+</ul>
+</li>
+<li><p>ApplicationMasterLauncher</p>
+<ul>
+<li>负责通知某个NodeManager启动或销毁ApplicationMaster。在app请求被接受后，与某个NodeManager通信，告知其为此app启动相应的ApplicationMaster。若app运行结束或被kill，则通知app所在NodeManager销毁ApplicationMaster。其内部也维护了一个阻塞队列，并有一个后台线程异步处理提交进来的启动ApplicationMaster的请求。</li>
+</ul>
+</li>
+<li><p>ApplicationMasterService</p>
+<ul>
+<li>负责与ApplicationMaster通信，是ApplicationMasterProtocol协议的服务端，ApplicationMaster在NodeManager上启动后通过此协议向ResourceManager注册自己，运行过程中向ResourceManager发送心跳，以及app运行结束后告知RM自己所在的container可以被释放了。</li>
+</ul>
+</li>
+</ul>
+<p><strong>Application管理模块</strong></p>
+<ul>
+<li><p>RMAppManager</p>
+<ul>
+<li>ResourceManager接受客户端提交的app后，会通过RMAppManager来触发启动app的事件RMAppEventType.START，具体启动app的工作由RMAppImpl实现。</li>
+</ul>
+</li>
+<li><p>ApplicationACLsManager</p>
+<ul>
+<li>负责app权限控制，包括查看和修改权限。</li>
+</ul>
+</li>
+<li><p>ContainerAllocationExpirer</p>
+<ul>
+<li>用于监听NodeManager上是否正常启动了分配给ApplicationMaster的container，若在指定时间未启动（默认10分钟），ResourceManager会强制回收该container。</li>
+</ul>
+</li>
+<li><p>RMApplicationHistoryWriter</p>
+<ul>
+<li>负责异步持久化Application运行中的相关日志，主要是Container、Application、ApplicationAttempt在启动和结束时的日志信息。</li>
+</ul>
+</li>
+</ul>
+<p><strong>安全管理模块</strong></p>
+<ul>
+<li>RMSecretManagerService<ul>
+<li>负责管理各种通信密钥，包括：<ul>
+<li>RM与NM通信的NMTokenSecretManagerInRM</li>
+<li>RM与container通信的RMContainerTokenSecretManager</li>
+<li>客户端与AM通信的ClientToAMTokenSecretManagerInRM</li>
+<li>AM与RM通信的AMRMTokenSecretManager</li>
+<li>DelegationTokenRenewer</li>
+<li>启用了安全时，负责定时更新认证token。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>资源管理模块</strong></p>
+<ul>
+<li><p>ResourceScheduler</p>
+<ul>
+<li>资源调度器，可通过yarn.resourcemanager.scheduler.class指定，ResourceManager默认使用的是org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler。</li>
+</ul>
+</li>
+<li><p>SchedulerEventDispatcher</p>
+<ul>
+<li>用于处理SchedulerEventType类型的事件，其内部维护了一个存储SchedulerEvent的阻塞队列，并由一个后台线程从队列中取出资源请求事件，再调用ResourceScheduler进行处理。</li>
+</ul>
+</li>
+<li><p>ReservationSystem</p>
+<ul>
+<li>资源预留系统，对应的实现有CapacityReservationSystem和FairReservationSystem。</li>
+</ul>
+</li>
+</ul>
+<p>此外，SystemMetricsPublisher负责发布RM的系统统计信息。AsyncDispatcher是中央事件处理分发器，ResourceManager启动时，通过它绑定了几种类型的事件的处理器，包括SchedulerEventType、RMAppEventType、ApplicationAttempt、RMAppAttemptEventType、RMNodeEventType、RMAppManagerEventType、AMLaunchEventType等。</p>
+<p>上述各service在ResourceManager中的启动顺序为：</p>
+<ol>
+<li><p>AsyncDispatcher</p>
+</li>
+<li><p>AdminService</p>
+</li>
+<li><p>RMActiveServices：是个CompositeService（即service列表，ResourceManager本身就是一个CompositeService），用于管理ResourceManager中的“活动”服务（必须在active的ResourceManager上启动的服务，启用HA时，备份ResourceManager上不启动这些服务），包括以下（按启动顺序）：</p>
+<ul>
+<li><p>RMSecretManagerService</p>
+</li>
+<li><p>ContainerAllocationExpirer</p>
+</li>
+<li><p>AMLivelinessMonitor</p>
+</li>
+<li><p>RMNodeLabelsManager</p>
+</li>
+<li><p>RMApplicationHistoryWriter</p>
+</li>
+<li><p>SystemMetricsPublisher</p>
+</li>
+<li><p>NodesListManager</p>
+</li>
+<li><p>ResourceScheduler</p>
+</li>
+<li><p>SchedulerEventDispatcher</p>
+</li>
+<li><p>NMLivelinessMonitor</p>
+</li>
+<li><p>ResourceTrackerService</p>
+</li>
+<li><p>ApplicationMasterService</p>
+</li>
+<li><p>ClientRMService</p>
+</li>
+<li><p>ApplicationMasterLauncher</p>
+</li>
+<li><p>DelegationTokenRenewer</p>
+</li>
+</ul>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Hong
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://maohong.github.io/20150606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/" title="hadoop-yarn中ResourceManager的服务模块">https://maohong.github.io/20150606/hadoop-yarn中ResourceManager的服务模块/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/yarn/" rel="tag"># yarn</a>
+              <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+          </div>
+
+        
+  <div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_dd" target="_blank" rel="noopener" href="https://www.addtoany.com/share"></a>
+      <a class="a2a_button_facebook"></a>
+      <a class="a2a_button_twitter"></a>
+      <a class="a2a_button_linkedin"></a>
+      <a class="a2a_button_wechat"></a>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/20150518/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/" rel="prev" title="mac系统下hadoop-2.7源码编译、导入eclipse及打包">
+                  <i class="fa fa-angle-left"></i> mac系统下hadoop-2.7源码编译、导入eclipse及打包
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/20150622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" rel="next" title="交换空间使用率过高问题分析">
+                  交换空间使用率过高问题分析 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Hong</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="Word count total">27k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">1:36</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL21hb2hvbmc=" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.3.0/pdfobject.min.js","integrity":"sha256-JJZNsid68vnh3/zyj0lY9BN5ynxVX/12XgOa1TlaYN0="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="/js/third-party/tags/pdf.js"></script>
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"8.8.4","theme":{"light":"default","dark":"dark"},"options":{"startOnLoad":true,"securityLevel":true,"flowchart":{"useMaxWidth":true},"sequenceDiagram":{"actorFontWeight":"normal","actorFontSize":14,"noteFontWeight":"normal","noteFontSize":14,"messageFontWeight":"normal","messageFontSize":16},"gantt":{"titleTopMargin":25,"barHeight":20,"barGap":4,"topPadding":50,"sidePadding":75,"gridLineStartPadding":35,"fontSize":11,"fontFamily":"\"Open-Sans\", \"sans-serif\"","numberSectionStyles":4,"axisFormat":"%Y-%m-%d"}},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.min.js","integrity":"sha256-G8ouPAnw4zzMbnAenHnVz6h9XpKbNdOkrqTh7AadyHs="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  <script src="/js/third-party/addtoany.js"></script>
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"maohong/maohong.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YQVQS4CLD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-4YQVQS4CLD');
+  </script>
+</body>
+</html>

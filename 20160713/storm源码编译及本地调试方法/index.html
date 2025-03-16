@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+  <meta name="google-site-verification" content="2gwXBUi9DEN5bqLdqlaiKGqJzQYOvyQNd7jvJSb0IEg">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Source+Code+Pro:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="基础环境 IDE开发环境：intelliJIdea JDK1.7  64bit intelliJIdea安装maven插件，配置好仓库源 intelliJIdea安装clojure插件Cursive（需要注册并获取一个license，否则只能使用30天） 如果需要自己创建clojure项目进行开发，需要安装leiningen，下载地址  源码获取从github checkout代码到本地即可，ht">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Storm源码编译及本地调试方法">
+<meta property="og:url" content="https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="Hong&#39;s Notes">
+<meta property="og:description" content="基础环境 IDE开发环境：intelliJIdea JDK1.7  64bit intelliJIdea安装maven插件，配置好仓库源 intelliJIdea安装clojure插件Cursive（需要注册并获取一个license，否则只能使用30天） 如果需要自己创建clojure项目进行开发，需要安装leiningen，下载地址  源码获取从github checkout代码到本地即可，ht">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/2.png">
+<meta property="article:published_time" content="2016-07-13T15:53:12.000Z">
+<meta property="article:modified_time" content="2025-03-09T14:33:45.558Z">
+<meta property="article:author" content="Hong">
+<meta property="article:tag" content="storm">
+<meta property="article:tag" content="源码编译">
+<meta property="article:tag" content="本地调试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/1.png">
+
+
+<link rel="canonical" href="https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/","path":"20160713/storm源码编译及本地调试方法/","title":"Storm源码编译及本地调试方法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Storm源码编译及本地调试方法 | Hong's Notes</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YQVQS4CLD"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-4YQVQS4CLD","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hong's Notes</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">High Performance, High Availability and Scalable Architecture, ML, AI and Big Data</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-books"><a href="/books/" rel="section"><i class="fa fa-book fa-fw"></i>Books</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">基础环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E8%8E%B7%E5%8F%96"><span class="nav-number">2.</span> <span class="nav-text">源码获取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5idea%E5%8F%8A%E7%BC%96%E8%AF%91"><span class="nav-number">3.</span> <span class="nav-text">导入idea及编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8idea%E8%B0%83%E8%AF%95%E6%BA%90%E7%A0%81"><span class="nav-number">4.</span> <span class="nav-text">使用idea调试源码</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Hong"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Hong</p>
+  <div class="site-description" itemprop="description">Overthinking only lead to problems, actions lead to answers.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL21hb2hvbmc=" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;maohong"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cubGlua2VkaW4uY29tL2luL2hvbmdtYW84Nw==" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;hongmao87"><i class="fab fa-linkedin fa-fw"></i>LinkedIn</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Storm源码编译及本地调试方法 | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Storm源码编译及本地调试方法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2016-07-13 23:53:12" itemprop="dateCreated datePublished" datetime="2016-07-13T23:53:12+08:00">2016-07-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-03-09 22:33:45" itemprop="dateModified" datetime="2025-03-09T22:33:45+08:00">2025-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Storm/" itemprop="url" rel="index"><span itemprop="name">Storm</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>3.3k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>12 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="基础环境"><a href="#基础环境" class="headerlink" title="基础环境"></a>基础环境</h2><ul>
+<li>IDE开发环境：intelliJIdea</li>
+<li>JDK1.7  64bit</li>
+<li>intelliJIdea安装maven插件，配置好仓库源</li>
+<li>intelliJIdea安装clojure插件Cursive（需要注册并获取一个license，否则只能使用30天）</li>
+<li>如果需要自己创建clojure项目进行开发，需要安装leiningen，<span class="exturl" data-url="aHR0cDovL2xlaW5pbmdlbi5vcmcv">下载地址<i class="fa fa-external-link-alt"></i></span></li>
+</ul>
+<h2 id="源码获取"><a href="#源码获取" class="headerlink" title="源码获取"></a>源码获取</h2><p>从github checkout代码到本地即可，<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2FwYWNoZS9zdG9ybS5naXQ=">https://github.com/apache/storm.git<i class="fa fa-external-link-alt"></i></span></p>
+<p>我这里编译的是我们目前正在用的0.10.0版本的代码。</p>
+<h2 id="导入idea及编译"><a href="#导入idea及编译" class="headerlink" title="导入idea及编译"></a>导入idea及编译</h2><p>打开idea，新建project，从源码导入，如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/1.png"></p>
+<p>导入后，idea会自动根据pom.xml下载相关依赖包，部分依赖包如果下载不到，需要手动添加。完成后，可以看到project的module如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/2.png"></p>
+<span id="more"></span>
+
+<p>这时候，通过idea就可以直接跟踪看源码了，但直接运行storm-starter中的例子还是会报错并提示有些类找不到，经查看是clojure的代码还未编译出class文件。可以在源码目录下执行mvn compile进行编译。</p>
+<h2 id="使用idea调试源码"><a href="#使用idea调试源码" class="headerlink" title="使用idea调试源码"></a>使用idea调试源码</h2><p>编译完成后，可以直接启动storm-starter中的例子运行。期间可能出现找不到类，检查classpath，依赖包的scope由provided改为compile。</p>
+<p>在源代码中加断点，run或者debug即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br></pre></td><td class="code"><pre><span class="line">&gt; 2739 [main] INFO  b.s.u.Utils - Using defaults.yaml from resources</span><br><span class="line">&gt; 4546 [main] INFO  b.s.u.Utils - Using defaults.yaml from resources</span><br><span class="line">&gt; 5218 [main] INFO  b.s.zookeeper - Starting inprocess zookeeper at port 2000 and dir /var/folders/c0/0bgvmbb10jz1609_1xjqdsj00000gn/T//eeb57be9-5478-4fa9-ab31-6dfce38e7695</span><br><span class="line">&gt; 5243 [main] INFO  b.s.u.Utils - Using defaults.yaml from resources</span><br><span class="line">&gt; 5340 [main] INFO  b.s.d.nimbus - Starting Nimbus with conf &#123;&quot;topology.builtin.metrics.bucket.size.secs&quot; 60, ......</span><br><span class="line">&gt; 5342 [main] INFO  b.s.d.nimbus - Using default scheduler</span><br><span class="line">&gt; 5360 [main] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 5457 [main] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 5529 [main-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 5531 [main-EventThread] INFO  b.s.zookeeper - Zookeeper state update: :connected:none</span><br><span class="line">&gt; 6569 [main] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 6569 [main] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 6574 [main-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 6605 [main] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 6605 [main] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 6609 [main-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 6609 [main-EventThread] INFO  b.s.zookeeper - Zookeeper state update: :connected:none</span><br><span class="line">&gt; 6617 [main] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 6618 [main] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 6620 [main] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 6621 [main] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 6623 [main-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 6625 [main-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 6649 [main-EventThread] INFO  b.s.zookeeper - Zookeeper state update: :connected:none</span><br><span class="line">&gt; 6652 [main] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 6653 [main] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 6657 [main-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 6671 [main] INFO  b.s.d.supervisor - Starting Supervisor with conf &#123;&quot;topology.builtin.metrics.bucket.size.secs&quot; 60, ......</span><br><span class="line">&gt; 6693 [main] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 6694 [main] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 6697 [main-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 6697 [main-EventThread] INFO  b.s.zookeeper - Zookeeper state update: :connected:none</span><br><span class="line">&gt; 6700 [main] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 6701 [main] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 6704 [main-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 6722 [main] INFO  b.s.d.supervisor - Starting supervisor with id 913c90f6-3f78-4646-8998-aa901ae3c360 at host localhost</span><br><span class="line">&gt; 6725 [main] INFO  b.s.d.supervisor - Starting Supervisor with conf &#123;&quot;topology.builtin.metrics.bucket.size.secs&quot; 60, .....</span><br><span class="line">&gt; 6732 [main] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 6732 [main] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 6736 [main-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 6736 [main-EventThread] INFO  b.s.zookeeper - Zookeeper state update: :connected:none</span><br><span class="line">&gt; 6740 [main] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 6741 [main] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 6744 [main-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 6753 [main] INFO  b.s.d.supervisor - Starting supervisor with id 49c35a73-7500-4ea4-aaa2-4b1c1f231fd4 at host localhost</span><br><span class="line">&gt; 7035 [main] INFO  b.s.d.nimbus - [req 1] Access from:  principal: op:submitTopology</span><br><span class="line">&gt; 7113 [main] INFO  b.s.d.nimbus - Received topology submission for wordCounter with conf &#123;&quot;topology.max.task.parallelism&quot; nil, &quot;topology.submitter.principal&quot; &quot;&quot;, &quot;topology.acker.executors&quot; nil, &quot;topology.max.spout.pending&quot; 20, &quot;storm.zookeeper.superACL&quot; nil, &quot;topology.users&quot; (), &quot;topology.submitter.user&quot; &quot;&quot;, &quot;topology.kryo.register&quot; &#123;&quot;storm.trident.topology.TransactionAttempt&quot; nil, &quot;storm.trident.spout.RichSpoutBatchId&quot; &quot;storm.trident.spout.RichSpoutBatchIdSerializer&quot;&#125;, &quot;topology.kryo.decorators&quot; (), &quot;storm.id&quot; &quot;wordCounter-1-1468420782&quot;, &quot;topology.name&quot; &quot;wordCounter&quot;&#125;</span><br><span class="line">&gt; 7123 [main] INFO  b.s.d.nimbus - nimbus file location:/var/folders/c0/0bgvmbb10jz1609_1xjqdsj00000gn/T//333ed6da-9ef5-4781-bd82-4f315facd4a8/nimbus/stormdist/wordCounter-1-1468420782</span><br><span class="line">&gt; 7152 [main] INFO  b.s.d.nimbus - Activating wordCounter: wordCounter-1-1468420782</span><br><span class="line">&gt; 7346 [main] INFO  b.s.s.EvenScheduler - Available slots: ([&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1028] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1029] [&quot;913c90f6-3f78-4646-8998-aa901ae3c360&quot; 1024] [&quot;913c90f6-3f78-4646-8998-aa901ae3c360&quot; 1025] [&quot;913c90f6-3f78-4646-8998-aa901ae3c360&quot; 1026])</span><br><span class="line">&gt; 7398 [main] INFO  b.s.d.nimbus - Setting new assignment for topology id wordCounter-1-1468420782: #backtype.storm.daemon.common.Assignment&#123;:master-code-dir &quot;/var/folders/c0/0bgvmbb10jz1609_1xjqdsj00000gn/T//333ed6da-9ef5-4781-bd82-4f315facd4a8/nimbus/stormdist/wordCounter-1-1468420782&quot;, :node-&gt;host &#123;&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; &quot;localhost&quot;&#125;, :executor-&gt;node+port &#123;[8 8] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [12 12] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [2 2] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [7 7] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [22 22] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [3 3] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [24 24] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [1 1] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [18 18] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [6 6] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [20 20] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [9 9] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [23 23] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [11 11] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [16 16] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [13 13] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [19 19] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [21 21] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [5 5] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [26 26] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [10 10] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [14 14] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [4 4] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [15 15] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [25 25] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027], [17 17] [&quot;49c35a73-7500-4ea4-aaa2-4b1c1f231fd4&quot; 1027]&#125;, :executor-&gt;start-time-secs &#123;[8 8] 1468420782, [12 12] 1468420782, [2 2] 1468420782, [7 7] 1468420782, [22 22] 1468420782, [3 3] 1468420782, [24 24] 1468420782, [1 1] 1468420782, [18 18] 1468420782, [6 6] 1468420782, [20 20] 1468420782, [9 9] 1468420782, [23 23] 1468420782, [11 11] 1468420782, [16 16] 1468420782, [13 13] 1468420782, [19 19] 1468420782, [21 21] 1468420782, [5 5] 1468420782, [26 26] 1468420782, [10 10] 1468420782, [14 14] 1468420782, [4 4] 1468420782, [15 15] 1468420782, [25 25] 1468420782, [17 17] 1468420782&#125;&#125;</span><br><span class="line">&gt; 7751 [Thread-7] INFO  b.s.d.supervisor - Extracting resources from jar at /Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home/lib/ant-javafx.jar to /var/folders/c0/0bgvmbb10jz1609_1xjqdsj00000gn/T//29645b09-90e9-4b9a-a657-60c418f92841/supervisor/stormdist/wordCounter-1-1468420782/resources</span><br><span class="line">&gt; 7788 [Thread-8] INFO  b.s.d.supervisor - Launching worker with assignment &#123;:storm-id &quot;wordCounter-1-1468420782&quot;, :executors [[8 8] [12 12] [2 2] [7 7] [22 22] [3 3] [24 24] [1 1] [18 18] [6 6] [20 20] [9 9] [23 23] [11 11] [16 16] [13 13] [19 19] [21 21] [5 5] [26 26] [10 10] [14 14] [4 4] [15 15] [25 25] [17 17]]&#125; for this supervisor 49c35a73-7500-4ea4-aaa2-4b1c1f231fd4 on port 1027 with id 9dd8aeac-1cd6-467a-a84c-2637d0825d99</span><br><span class="line">&gt; 7791 [Thread-8] INFO  b.s.d.worker - Launching worker for wordCounter-1-1468420782 on 49c35a73-7500-4ea4-aaa2-4b1c1f231fd4:1027 with id 9dd8aeac-1cd6-467a-a84c-2637d0825d99 and conf &#123;&quot;topology.builtin.metrics.bucket.size.secs&quot; 60, ......</span><br><span class="line">&gt; 7793 [Thread-8] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 7794 [Thread-8] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 7798 [Thread-8-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 7798 [Thread-8-EventThread] INFO  b.s.zookeeper - Zookeeper state update: :connected:none</span><br><span class="line">&gt; 7801 [Thread-8] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 7802 [Thread-8] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 7805 [Thread-8-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 7809 [Thread-8] INFO  b.s.s.a.AuthUtils - Got AutoCreds []</span><br><span class="line">&gt; 7811 [Thread-8] INFO  b.s.d.worker - Reading Assignments.</span><br><span class="line">&gt; 7881 [Thread-8] INFO  b.s.d.worker - Launching receive-thread for 49c35a73-7500-4ea4-aaa2-4b1c1f231fd4:1027</span><br><span class="line">&gt; 7884 [Thread-9-worker-receiver-thread-0] INFO  b.s.m.loader - Starting receive-thread: [stormId: wordCounter-1-1468420782, port: 1027, thread-id: 0 ]</span><br><span class="line">&gt; 8261 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[8 8]</span><br><span class="line">&gt; 8285 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[8 8]</span><br><span class="line">&gt; 8300 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[8 8]</span><br><span class="line">&gt; 8311 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[12 12]</span><br><span class="line">&gt; 8329 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[12 12]</span><br><span class="line">&gt; 8331 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[12 12]</span><br><span class="line">&gt; 8340 [Thread-8] INFO  b.s.d.executor - Loading executor $spoutcoord-spout0:[2 2]</span><br><span class="line">&gt; 8343 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks $spoutcoord-spout0:[2 2]</span><br><span class="line">&gt; 8346 [Thread-8] INFO  b.s.d.executor - Finished loading executor $spoutcoord-spout0:[2 2]</span><br><span class="line">&gt; 8355 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[7 7]</span><br><span class="line">&gt; 8372 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[7 7]</span><br><span class="line">&gt; 8375 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[7 7]</span><br><span class="line">&gt; 8381 [Thread-8] INFO  b.s.d.executor - Loading executor b-3:[22 22]</span><br><span class="line">&gt; 8401 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-3:[22 22]</span><br><span class="line">&gt; 8404 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-3:[22 22]</span><br><span class="line">&gt; 8412 [Thread-8] INFO  b.s.d.executor - Loading executor __acker:[3 3]</span><br><span class="line">&gt; 8414 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks __acker:[3 3]</span><br><span class="line">&gt; 8424 [Thread-8] INFO  b.s.d.executor - Timeouts disabled for executor __acker:[3 3]</span><br><span class="line">&gt; 8425 [Thread-8] INFO  b.s.d.executor - Finished loading executor __acker:[3 3]</span><br><span class="line">&gt; 8443 [Thread-8] INFO  b.s.d.executor - Loading executor b-5:[24 24]</span><br><span class="line">&gt; 8465 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-5:[24 24]</span><br><span class="line">&gt; 8467 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-5:[24 24]</span><br><span class="line">&gt; 8530 [Thread-8] INFO  b.s.d.executor - Loading executor $mastercoord-bg0:[1 1]</span><br><span class="line">&gt; 8539 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks $mastercoord-bg0:[1 1]</span><br><span class="line">&gt; 8576 [Thread-8] INFO  b.s.d.executor - Finished loading executor $mastercoord-bg0:[1 1]</span><br><span class="line">&gt; 8603 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[18 18]</span><br><span class="line">&gt; 8633 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[18 18]</span><br><span class="line">&gt; 8635 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[18 18]</span><br><span class="line">&gt; 8646 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[6 6]</span><br><span class="line">&gt; 8681 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[6 6]</span><br><span class="line">&gt; 8683 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[6 6]</span><br><span class="line">&gt; 8719 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[20 20]</span><br><span class="line">&gt; 8757 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[20 20]</span><br><span class="line">&gt; 8763 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[20 20]</span><br><span class="line">&gt; 8782 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[9 9]</span><br><span class="line">&gt; 8808 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[9 9]</span><br><span class="line">&gt; 8818 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[9 9]</span><br><span class="line">&gt; 8828 [Thread-8] INFO  b.s.d.executor - Loading executor b-4:[23 23]</span><br><span class="line">&gt; 8847 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-4:[23 23]</span><br><span class="line">&gt; 8851 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-4:[23 23]</span><br><span class="line">&gt; 8858 [refresh-active-timer] INFO  b.s.d.worker - All connections are ready for worker 49c35a73-7500-4ea4-aaa2-4b1c1f231fd4:1027 with id 9dd8aeac-1cd6-467a-a84c-2637d0825d99</span><br><span class="line">&gt; 8864 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[11 11]</span><br><span class="line">&gt; 8877 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[11 11]</span><br><span class="line">&gt; 8879 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[11 11]</span><br><span class="line">&gt; 8886 [Thread-8] INFO  b.s.d.executor - Loading executor __system:[-1 -1]</span><br><span class="line">&gt; 8887 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks __system:[-1 -1]</span><br><span class="line">&gt; 8890 [Thread-8] INFO  b.s.d.executor - Finished loading executor __system:[-1 -1]</span><br><span class="line">&gt; 8914 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[16 16]</span><br><span class="line">&gt; 9052 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[16 16]</span><br><span class="line">&gt; 9055 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[16 16]</span><br><span class="line">&gt; 9070 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[13 13]</span><br><span class="line">&gt; 9081 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[13 13]</span><br><span class="line">&gt; 9089 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[13 13]</span><br><span class="line">&gt; 9116 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[19 19]</span><br><span class="line">&gt; 9129 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[19 19]</span><br><span class="line">&gt; 9132 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[19 19]</span><br><span class="line">&gt; 9148 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[21 21]</span><br><span class="line">&gt; 9160 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[21 21]</span><br><span class="line">&gt; 9163 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[21 21]</span><br><span class="line">&gt; 9178 [Thread-8] INFO  b.s.d.executor - Loading executor b-1:[5 5]</span><br><span class="line">&gt; 9192 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-1:[5 5]</span><br><span class="line">&gt; 9194 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-1:[5 5]</span><br><span class="line">&gt; 9204 [Thread-8] INFO  b.s.d.executor - Loading executor spout1:[26 26]</span><br><span class="line">&gt; 9205 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks spout1:[26 26]</span><br><span class="line">&gt; 9208 [Thread-8] INFO  b.s.d.executor - Finished loading executor spout1:[26 26]</span><br><span class="line">&gt; 9220 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[10 10]</span><br><span class="line">&gt; 9226 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[10 10]</span><br><span class="line">&gt; 9228 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[10 10]</span><br><span class="line">&gt; 9234 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[14 14]</span><br><span class="line">&gt; 9237 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[14 14]</span><br><span class="line">&gt; 9239 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[14 14]</span><br><span class="line">&gt; 9244 [Thread-8] INFO  b.s.d.executor - Loading executor b-0:[4 4]</span><br><span class="line">&gt; 9248 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-0:[4 4]</span><br><span class="line">&gt; 9249 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-0:[4 4]</span><br><span class="line">&gt; 9255 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[15 15]</span><br><span class="line">&gt; 9260 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[15 15]</span><br><span class="line">&gt; 9261 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[15 15]</span><br><span class="line">&gt; 9273 [Thread-8] INFO  b.s.d.executor - Loading executor spout0:[25 25]</span><br><span class="line">&gt; 9275 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks spout0:[25 25]</span><br><span class="line">&gt; 9277 [Thread-8] INFO  b.s.d.executor - Finished loading executor spout0:[25 25]</span><br><span class="line">&gt; 9284 [Thread-8] INFO  b.s.d.executor - Loading executor b-2:[17 17]</span><br><span class="line">&gt; 9289 [Thread-8] INFO  b.s.d.executor - Loaded executor tasks b-2:[17 17]</span><br><span class="line">&gt; 9291 [Thread-8] INFO  b.s.d.executor - Finished loading executor b-2:[17 17]</span><br><span class="line">&gt; 9298 [Thread-8] INFO  b.s.d.worker - Worker has topology config &#123;&quot;topology.builtin.metrics.bucket.size.secs&quot; 60, ......</span><br><span class="line">&gt; 9298 [Thread-8] INFO  b.s.d.worker - Worker 9dd8aeac-1cd6-467a-a84c-2637d0825d99 for storm wordCounter-1-1468420782 on 49c35a73-7500-4ea4-aaa2-4b1c1f231fd4:1027 has finished loading</span><br><span class="line">&gt; 9298 [Thread-8] INFO  b.s.config - SET worker-user 9dd8aeac-1cd6-467a-a84c-2637d0825d99</span><br><span class="line">&gt; 9875 [Thread-27-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(18)</span><br><span class="line">&gt; 9882 [Thread-35-b-4] INFO  b.s.d.executor - Preparing bolt b-4:(23)</span><br><span class="line">&gt; 9882 [Thread-41-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(16)</span><br><span class="line">&gt; 9883 [Thread-13-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(12)</span><br><span class="line">&gt; 9883 [Thread-59-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(15)</span><br><span class="line">&gt; 9883 [Thread-47-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(21)</span><br><span class="line">&gt; 9893 [Thread-35-b-4] INFO  b.s.d.executor - Prepared bolt b-4:(23)</span><br><span class="line">&gt; 9896 [Thread-47-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(21)</span><br><span class="line">&gt; 9896 [Thread-59-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(15)</span><br><span class="line">&gt; 9896 [Thread-27-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(18)</span><br><span class="line">&gt; 9896 [Thread-13-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(12)</span><br><span class="line">&gt; 9896 [Thread-41-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(16)</span><br><span class="line">&gt; 9898 [Thread-31-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(20)</span><br><span class="line">&gt; 9898 [Thread-15-$spoutcoord-spout0] INFO  b.s.d.executor - Preparing bolt $spoutcoord-spout0:(2)</span><br><span class="line">&gt; 9899 [Thread-61-spout0] INFO  b.s.d.executor - Preparing bolt spout0:(25)</span><br><span class="line">&gt; 9900 [Thread-15-$spoutcoord-spout0] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 9900 [Thread-61-spout0] INFO  b.s.d.executor - Prepared bolt spout0:(25)</span><br><span class="line">&gt; 9901 [Thread-15-$spoutcoord-spout0] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 9901 [Thread-31-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(20)</span><br><span class="line">&gt; 9907 [Thread-15-$spoutcoord-spout0-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 9908 [Thread-43-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(13)</span><br><span class="line">&gt; 9908 [Thread-37-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(11)</span><br><span class="line">&gt; 9908 [Thread-63-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(17)</span><br><span class="line">&gt; 9910 [Thread-43-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(13)</span><br><span class="line">&gt; 9910 [Thread-37-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(11)</span><br><span class="line">&gt; 9911 [Thread-63-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(17)</span><br><span class="line">&gt; 9918 [Thread-49-b-1] INFO  b.s.d.executor - Preparing bolt b-1:(5)</span><br><span class="line">&gt; 9918 [Thread-39-__system] INFO  b.s.d.executor - Preparing bolt __system:(-1)</span><br><span class="line">&gt; 9918 [Thread-29-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(6)</span><br><span class="line">&gt; 9920 [Thread-49-b-1] INFO  b.s.d.executor - Prepared bolt b-1:(5)</span><br><span class="line">&gt; 9920 [Thread-29-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(6)</span><br><span class="line">&gt; 9921 [Thread-15-$spoutcoord-spout0] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 9922 [Thread-15-$spoutcoord-spout0] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 9924 [Thread-39-__system] INFO  b.s.d.executor - Prepared bolt __system:(-1)</span><br><span class="line">&gt; 9929 [Thread-51-spout1] INFO  b.s.d.executor - Opening spout spout1:(26)</span><br><span class="line">&gt; 9929 [Thread-25-$mastercoord-bg0] INFO  b.s.d.executor - Opening spout $mastercoord-bg0:(1)</span><br><span class="line">&gt; 9929 [Thread-15-$spoutcoord-spout0-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 9938 [Thread-51-spout1] INFO  b.s.d.executor - Opened spout spout1:(26)</span><br><span class="line">&gt; 9937 [Thread-25-$mastercoord-bg0] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 9940 [Thread-25-$mastercoord-bg0] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 9940 [Thread-33-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(9)</span><br><span class="line">&gt; 9942 [Thread-51-spout1] INFO  b.s.d.executor - Activating spout spout1:(26)</span><br><span class="line">&gt; 9942 [Thread-33-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(9)</span><br><span class="line">&gt; 9947 [Thread-53-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(10)</span><br><span class="line">&gt; 9950 [Thread-53-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(10)</span><br><span class="line">&gt; 9956 [Thread-11-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(8)</span><br><span class="line">&gt; 9956 [Thread-45-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(19)</span><br><span class="line">&gt; 9957 [Thread-23-b-5] INFO  b.s.d.executor - Preparing bolt b-5:(24)</span><br><span class="line">&gt; 9958 [Thread-23-b-5] INFO  b.s.d.executor - Prepared bolt b-5:(24)</span><br><span class="line">&gt; 9958 [Thread-11-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(8)</span><br><span class="line">&gt; 9958 [Thread-17-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(7)</span><br><span class="line">&gt; 9959 [Thread-55-b-2] INFO  b.s.d.executor - Preparing bolt b-2:(14)</span><br><span class="line">&gt; 9959 [Thread-19-b-3] INFO  b.s.d.executor - Preparing bolt b-3:(22)</span><br><span class="line">&gt; 9960 [Thread-19-b-3] INFO  b.s.d.executor - Prepared bolt b-3:(22)</span><br><span class="line">&gt; 9960 [Thread-25-$mastercoord-bg0-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; 9960 [Thread-17-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(7)</span><br><span class="line">&gt; 9962 [Thread-45-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(19)</span><br><span class="line">&gt; 9963 [Thread-55-b-2] INFO  b.s.d.executor - Prepared bolt b-2:(14)</span><br><span class="line">&gt; 9964 [Thread-57-b-0] INFO  b.s.d.executor - Preparing bolt b-0:(4)</span><br><span class="line">&gt; 9964 [Thread-21-__acker] INFO  b.s.d.executor - Preparing bolt __acker:(3)</span><br><span class="line">&gt; 9965 [Thread-57-b-0] INFO  b.s.d.executor - Prepared bolt b-0:(4)</span><br><span class="line">&gt; 9966 [Thread-21-__acker] INFO  b.s.d.executor - Prepared bolt __acker:(3)</span><br><span class="line">&gt; 9969 [Thread-15-$spoutcoord-spout0] INFO  b.s.d.executor - Prepared bolt $spoutcoord-spout0:(2)</span><br><span class="line">&gt; 9971 [Thread-25-$mastercoord-bg0] INFO  b.s.u.StormBoundedExponentialBackoffRetry - The baseSleepTimeMs [1000] the maxSleepTimeMs [30000] the maxRetries [5]</span><br><span class="line">&gt; 9972 [Thread-25-$mastercoord-bg0] INFO  o.a.c.f.i.CuratorFrameworkImpl - Starting</span><br><span class="line">&gt; 9984 [Thread-25-$mastercoord-bg0-EventThread] INFO  o.a.c.f.s.ConnectionStateManager - State change: CONNECTED</span><br><span class="line">&gt; DRPC RESULT: [[0]]</span><br><span class="line">&gt; 9988 [Thread-25-$mastercoord-bg0] INFO  b.s.d.executor - Opened spout $mastercoord-bg0:(1)</span><br><span class="line">&gt; 9988 [Thread-25-$mastercoord-bg0] INFO  b.s.d.executor - Activating spout $mastercoord-bg0:(1)</span><br><span class="line">&gt; DRPC RESULT: [[60]]</span><br><span class="line">&gt; DRPC RESULT: [[120]]</span><br><span class="line">&gt; DRPC RESULT: [[179]]</span><br><span class="line">&gt; DRPC RESULT: [[239]]</span><br><span class="line">&gt; DRPC RESULT: [[299]]</span><br><span class="line">&gt; DRPC RESULT: [[359]]</span><br><span class="line">&gt; DRPC RESULT: [[414]]</span><br><span class="line">&gt; DRPC RESULT: [[474]]</span><br><span class="line">&gt; DRPC RESULT: [[534]]</span><br><span class="line">&gt; DRPC RESULT: [[593]]</span><br><span class="line">&gt; DRPC RESULT: [[653]]</span><br><span class="line">&gt; DRPC RESULT: [[713]]</span><br><span class="line">&gt; DRPC RESULT: [[768]]</span><br><span class="line">&gt;</span><br><span class="line">&gt; Process finished with exit code 130</span><br></pre></td></tr></table></figure>
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Hong
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/" title="Storm源码编译及本地调试方法">https://maohong.github.io/20160713/storm源码编译及本地调试方法/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/storm/" rel="tag"># storm</a>
+              <a href="/tags/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" rel="tag"># 源码编译</a>
+              <a href="/tags/%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95/" rel="tag"># 本地调试</a>
+          </div>
+
+        
+  <div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_dd" target="_blank" rel="noopener" href="https://www.addtoany.com/share"></a>
+      <a class="a2a_button_facebook"></a>
+      <a class="a2a_button_twitter"></a>
+      <a class="a2a_button_linkedin"></a>
+      <a class="a2a_button_wechat"></a>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/20160708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/" rel="prev" title="kafka-0.10.0启动过程分析">
+                  <i class="fa fa-angle-left"></i> kafka-0.10.0启动过程分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Hong</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="Word count total">27k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">1:36</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL21hb2hvbmc=" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.3.0/pdfobject.min.js","integrity":"sha256-JJZNsid68vnh3/zyj0lY9BN5ynxVX/12XgOa1TlaYN0="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="/js/third-party/tags/pdf.js"></script>
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"8.8.4","theme":{"light":"default","dark":"dark"},"options":{"startOnLoad":true,"securityLevel":true,"flowchart":{"useMaxWidth":true},"sequenceDiagram":{"actorFontWeight":"normal","actorFontSize":14,"noteFontWeight":"normal","noteFontSize":14,"messageFontWeight":"normal","messageFontSize":16},"gantt":{"titleTopMargin":25,"barHeight":20,"barGap":4,"topPadding":50,"sidePadding":75,"gridLineStartPadding":35,"fontSize":11,"fontFamily":"\"Open-Sans\", \"sans-serif\"","numberSectionStyles":4,"axisFormat":"%Y-%m-%d"}},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.min.js","integrity":"sha256-G8ouPAnw4zzMbnAenHnVz6h9XpKbNdOkrqTh7AadyHs="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  <script src="/js/third-party/addtoany.js"></script>
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"maohong/maohong.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YQVQS4CLD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-4YQVQS4CLD');
+  </script>
+</body>
+</html>
