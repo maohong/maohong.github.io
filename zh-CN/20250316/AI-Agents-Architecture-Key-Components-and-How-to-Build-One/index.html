@@ -61,7 +61,9 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
+<!-- hexo injector head_end end -->
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
@@ -149,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-an-AI-Agent"><span class="nav-number">1.</span> <span class="nav-text">What is an AI Agent?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Characteristics-of-AI-Agents"><span class="nav-number">2.</span> <span class="nav-text">Characteristics of AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Architecture-of-an-AI-Agent"><span class="nav-number">3.</span> <span class="nav-text">Architecture of an AI Agent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Key-Components-of-AI-Agents"><span class="nav-number">4.</span> <span class="nav-text">Key Components of AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-Build-an-AI-Agent"><span class="nav-number">5.</span> <span class="nav-text">How to Build an AI Agent</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-1-Define-the-Goal-and-Environment"><span class="nav-number">5.0.1.</span> <span class="nav-text">Step 1: Define the Goal and Environment</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-2-Design-the-Perception-Module"><span class="nav-number">5.0.2.</span> <span class="nav-text">Step 2: Design the Perception Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-3-Develop-the-Reasoning-and-Decision-Making-Module"><span class="nav-number">5.0.3.</span> <span class="nav-text">Step 3: Develop the Reasoning and Decision-Making Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-4-Construct-the-Action-Module"><span class="nav-number">5.0.4.</span> <span class="nav-text">Step 4: Construct the Action Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-5-Implement-the-Learning-Module"><span class="nav-number">5.0.5.</span> <span class="nav-text">Step 5: Implement the Learning Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-6-Test-and-Iterate"><span class="nav-number">5.0.6.</span> <span class="nav-text">Step 6: Test and Iterate</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tools-and-Frameworks-for-Building-AI-Agents"><span class="nav-number">6.</span> <span class="nav-text">Tools and Frameworks for Building AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Real-World-Examples-of-AI-Agents"><span class="nav-number">7.</span> <span class="nav-text">Real-World Examples of AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Common-Challenges-and-Solutions"><span class="nav-number">8.</span> <span class="nav-text">Common Challenges and Solutions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">9.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#what-is-an-ai-agent"><span class="nav-number">1.</span> <span class="nav-text"> What is an AI Agent?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#characteristics-of-ai-agents"><span class="nav-number">2.</span> <span class="nav-text"> Characteristics of AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#architecture-of-an-ai-agent"><span class="nav-number">3.</span> <span class="nav-text"> Architecture of an AI Agent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#key-components-of-ai-agents"><span class="nav-number">4.</span> <span class="nav-text"> Key Components of AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#how-to-build-an-ai-agent"><span class="nav-number">5.</span> <span class="nav-text"> How to Build an AI Agent</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#step-1-define-the-goal-and-environment"><span class="nav-number">5.0.1.</span> <span class="nav-text"> Step 1: Define the Goal and Environment</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step-2-design-the-perception-module"><span class="nav-number">5.0.2.</span> <span class="nav-text"> Step 2: Design the Perception Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step-3-develop-the-reasoning-and-decision-making-module"><span class="nav-number">5.0.3.</span> <span class="nav-text"> Step 3: Develop the Reasoning and Decision-Making Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step-4-construct-the-action-module"><span class="nav-number">5.0.4.</span> <span class="nav-text"> Step 4: Construct the Action Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step-5-implement-the-learning-module"><span class="nav-number">5.0.5.</span> <span class="nav-text"> Step 5: Implement the Learning Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step-6-test-and-iterate"><span class="nav-number">5.0.6.</span> <span class="nav-text"> Step 6: Test and Iterate</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tools-and-frameworks-for-building-ai-agents"><span class="nav-number">6.</span> <span class="nav-text"> Tools and Frameworks for Building AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#real-world-examples-of-ai-agents"><span class="nav-number">7.</span> <span class="nav-text"> Real-World Examples of AI Agents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#common-challenges-and-solutions"><span class="nav-number">8.</span> <span class="nav-text"> Common Challenges and Solutions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">9.</span> <span class="nav-text"> Conclusion</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -284,16 +286,18 @@
     
     
     <div class="post-body" itemprop="articleBody"><p>Artificial Intelligence (AI) has evolved dramatically in recent years, moving beyond simple algorithms and predictive models towards sophisticated entities known as AI agents. AI agents are autonomous programs capable of perceiving their environment, reasoning about it, making decisions, and acting to achieve specific goals. In this blog post, I will explore what AI agents are, their architecture, key components, and provide a clear guide on how we can build one.</p>
-<h2 id="What-is-an-AI-Agent"><a href="#What-is-an-AI-Agent" class="headerlink" title="What is an AI Agent?"></a>What is an AI Agent?</h2><p>An AI agent is a system that autonomously interacts with an environment to achieve predefined goals. The concept of an AI agent originates from the field of artificial intelligence, particularly reinforcement learning, and is widely applicable in various areas including autonomous driving, robotics, virtual assistants, gaming, financial trading, and more.</p>
-<h2 id="Characteristics-of-AI-Agents"><a href="#Characteristics-of-AI-Agents" class="headerlink" title="Characteristics of AI Agents"></a>Characteristics of AI Agents</h2><ul>
+<h2 id="what-is-an-ai-agent"><a class="markdownIt-Anchor" href="#what-is-an-ai-agent"></a> What is an AI Agent?</h2>
+<p>An AI agent is a system that autonomously interacts with an environment to achieve predefined goals. The concept of an AI agent originates from the field of artificial intelligence, particularly reinforcement learning, and is widely applicable in various areas including autonomous driving, robotics, virtual assistants, gaming, financial trading, and more.</p>
+<h2 id="characteristics-of-ai-agents"><a class="markdownIt-Anchor" href="#characteristics-of-ai-agents"></a> Characteristics of AI Agents</h2>
+<ul>
 <li><strong>Autonomy</strong>: Can independently make decisions.</li>
 <li><strong>Perception</strong>: Able to perceive and interpret environmental inputs.</li>
 <li><strong>Reasoning and Decision-Making</strong>: Uses algorithms to analyze information and determine the best course of action.</li>
 <li><strong>Adaptability</strong>: Learns and adapts from past experiences to improve future actions.</li>
 </ul>
-<h2 id="Architecture-of-an-AI-Agent"><a href="#Architecture-of-an-AI-Agent" class="headerlink" title="Architecture of an AI Agent"></a>Architecture of an AI Agent</h2><p>An AI agent typically consists of four main components forming its core architecture:</p>
+<h2 id="architecture-of-an-ai-agent"><a class="markdownIt-Anchor" href="#architecture-of-an-ai-agent"></a> Architecture of an AI Agent</h2>
+<p>An AI agent typically consists of four main components forming its core architecture:</p>
 <span id="more"></span>
-
 <p><strong>1. Perception Module</strong></p>
 <p>This module collects and processes data from the agent’s environment using sensors, user inputs, or APIs. It translates raw data into structured information usable by the agent.</p>
 <p><strong>Examples:</strong></p>
@@ -322,7 +326,8 @@
 <li>Reinforcement learning in gaming environments</li>
 <li>Adaptive recommendation systems</li>
 </ul>
-<h2 id="Key-Components-of-AI-Agents"><a href="#Key-Components-of-AI-Agents" class="headerlink" title="Key Components of AI Agents"></a>Key Components of AI Agents</h2><p>A deeper dive into AI agent architecture reveals several fundamental components essential for their functioning:</p>
+<h2 id="key-components-of-ai-agents"><a class="markdownIt-Anchor" href="#key-components-of-ai-agents"></a> Key Components of AI Agents</h2>
+<p>A deeper dive into AI agent architecture reveals several fundamental components essential for their functioning:</p>
 <p><strong>Environment</strong></p>
 <ul>
 <li>Defines the external conditions or contexts in which the agent operates.</li>
@@ -343,43 +348,58 @@
 <p>State Representation</p>
 <p>Encodes information about the environment relevant for making decisions.</p>
 <p>Typically modeled through structured data, graphs, embeddings, or neural network activations.</p>
-<h2 id="How-to-Build-an-AI-Agent"><a href="#How-to-Build-an-AI-Agent" class="headerlink" title="How to Build an AI Agent"></a>How to Build an AI Agent</h2><p>Here’s a step-by-step guide on building an AI agent:</p>
-<h4 id="Step-1-Define-the-Goal-and-Environment"><a href="#Step-1-Define-the-Goal-and-Environment" class="headerlink" title="Step 1: Define the Goal and Environment"></a>Step 1: Define the Goal and Environment</h4><p>Clearly specify the objectives the AI agent should achieve.</p>
+<h2 id="how-to-build-an-ai-agent"><a class="markdownIt-Anchor" href="#how-to-build-an-ai-agent"></a> How to Build an AI Agent</h2>
+<p>Here’s a step-by-step guide on building an AI agent:</p>
+<h4 id="step-1-define-the-goal-and-environment"><a class="markdownIt-Anchor" href="#step-1-define-the-goal-and-environment"></a> Step 1: Define the Goal and Environment</h4>
+<p>Clearly specify the objectives the AI agent should achieve.</p>
 <p>Understand the environment: Is it static or dynamic? Observable or partially observable?</p>
 <p><strong>Example:</strong></p>
 <ul>
 <li>Goal: Build an AI agent for automated stock trading.</li>
 <li>Environment: Financial market data, historical prices, news sentiment.</li>
 </ul>
-<h4 id="Step-2-Design-the-Perception-Module"><a href="#Step-2-Design-the-Perception-Module" class="headerlink" title="Step 2: Design the Perception Module"></a>Step 2: Design the Perception Module</h4><p>Identify and integrate necessary sensors or data streams.<br>Implement preprocessing pipelines for data collection and interpretation.</p>
+<h4 id="step-2-design-the-perception-module"><a class="markdownIt-Anchor" href="#step-2-design-the-perception-module"></a> Step 2: Design the Perception Module</h4>
+<p>Identify and integrate necessary sensors or data streams.<br>
+Implement preprocessing pipelines for data collection and interpretation.</p>
 <p><strong>Example:</strong></p>
 <p>Market data feeds and sentiment analysis tools as sensors.</p>
 <p>Data normalization, feature extraction.</p>
-<h4 id="Step-3-Develop-the-Reasoning-and-Decision-Making-Module"><a href="#Step-3-Develop-the-Reasoning-and-Decision-Making-Module" class="headerlink" title="Step 3: Develop the Reasoning and Decision-Making Module"></a>Step 3: Develop the Reasoning and Decision-Making Module</h4><p>Select an appropriate AI algorithm or combination (rule-based logic, reinforcement learning, deep learning).<br>Implement algorithms to evaluate state data and determine optimal actions.</p>
-<p><strong>Example:</strong><br>Deep reinforcement learning algorithms (like Deep Q-Networks) for trading decisions.</p>
-<h4 id="Step-4-Construct-the-Action-Module"><a href="#Step-4-Construct-the-Action-Module" class="headerlink" title="Step 4: Construct the Action Module"></a>Step 4: Construct the Action Module</h4><p>Ensure actions can be effectively executed within the environment.<br>Implement action mechanisms compatible with the environment’s capabilities.</p>
+<h4 id="step-3-develop-the-reasoning-and-decision-making-module"><a class="markdownIt-Anchor" href="#step-3-develop-the-reasoning-and-decision-making-module"></a> Step 3: Develop the Reasoning and Decision-Making Module</h4>
+<p>Select an appropriate AI algorithm or combination (rule-based logic, reinforcement learning, deep learning).<br>
+Implement algorithms to evaluate state data and determine optimal actions.</p>
+<p><strong>Example:</strong><br>
+Deep reinforcement learning algorithms (like Deep Q-Networks) for trading decisions.</p>
+<h4 id="step-4-construct-the-action-module"><a class="markdownIt-Anchor" href="#step-4-construct-the-action-module"></a> Step 4: Construct the Action Module</h4>
+<p>Ensure actions can be effectively executed within the environment.<br>
+Implement action mechanisms compatible with the environment’s capabilities.</p>
 <p><strong>Example:</strong></p>
 <p>Automated API trading systems executing buy and sell orders.</p>
-<h4 id="Step-5-Implement-the-Learning-Module"><a href="#Step-5-Implement-the-Learning-Module" class="headerlink" title="Step 5: Implement the Learning Module"></a>Step 5: Implement the Learning Module</h4><p>Choose suitable machine learning frameworks or algorithms for ongoing learning.</p>
+<h4 id="step-5-implement-the-learning-module"><a class="markdownIt-Anchor" href="#step-5-implement-the-learning-module"></a> Step 5: Implement the Learning Module</h4>
+<p>Choose suitable machine learning frameworks or algorithms for ongoing learning.</p>
 <p>Train and iterate on models using historical and real-time data.</p>
 <p><strong>Example:</strong></p>
 <p>Reinforcement learning frameworks (OpenAI Gym, RLlib, Stable-Baselines3).</p>
-<h4 id="Step-6-Test-and-Iterate"><a href="#Step-6-Test-and-Iterate" class="headerlink" title="Step 6: Test and Iterate"></a>Step 6: Test and Iterate</h4><p>Continuously test the AI agent in controlled environments.</p>
+<h4 id="step-6-test-and-iterate"><a class="markdownIt-Anchor" href="#step-6-test-and-iterate"></a> Step 6: Test and Iterate</h4>
+<p>Continuously test the AI agent in controlled environments.</p>
 <p>Adjust perception, reasoning, and learning components based on performance outcomes.</p>
-<h2 id="Tools-and-Frameworks-for-Building-AI-Agents"><a href="#Tools-and-Frameworks-for-Building-AI-Agents" class="headerlink" title="Tools and Frameworks for Building AI Agents"></a>Tools and Frameworks for Building AI Agents</h2><p>Several tools simplify the development of AI agents:</p>
+<h2 id="tools-and-frameworks-for-building-ai-agents"><a class="markdownIt-Anchor" href="#tools-and-frameworks-for-building-ai-agents"></a> Tools and Frameworks for Building AI Agents</h2>
+<p>Several tools simplify the development of AI agents:</p>
 <ul>
 <li>OpenAI Gym: Provides standardized environments for developing and benchmarking reinforcement learning agents.</li>
 <li>TensorFlow &amp; PyTorch: Powerful frameworks for building neural networks and learning modules.</li>
 <li>Unity ML-Agents: Platform for training intelligent agents in simulated environments.</li>
 <li>RLlib: A scalable reinforcement learning library built on Ray, suitable for large-scale training and deployment.</li>
 </ul>
-<h2 id="Real-World-Examples-of-AI-Agents"><a href="#Real-World-Examples-of-AI-Agents" class="headerlink" title="Real-World Examples of AI Agents"></a>Real-World Examples of AI Agents</h2><p>Autonomous Vehicles (e.g., Tesla Autopilot): Continuously perceiving surroundings through sensors, making real-time driving decisions, and adapting to new scenarios.</p>
+<h2 id="real-world-examples-of-ai-agents"><a class="markdownIt-Anchor" href="#real-world-examples-of-ai-agents"></a> Real-World Examples of AI Agents</h2>
+<p>Autonomous Vehicles (e.g., Tesla Autopilot): Continuously perceiving surroundings through sensors, making real-time driving decisions, and adapting to new scenarios.</p>
 <p>Virtual Assistants (e.g., Siri, Alexa): Understanding user commands and questions, performing reasoning tasks, and executing appropriate responses.</p>
 <p>AI Trading Bots: Analyzing market data and news sentiment, making investment decisions, and executing trades autonomously.</p>
-<h2 id="Common-Challenges-and-Solutions"><a href="#Common-Challenges-and-Solutions" class="headerlink" title="Common Challenges and Solutions"></a>Common Challenges and Solutions</h2><p>Data Scarcity: Solutions include data augmentation, simulation environments, or transfer learning.</p>
+<h2 id="common-challenges-and-solutions"><a class="markdownIt-Anchor" href="#common-challenges-and-solutions"></a> Common Challenges and Solutions</h2>
+<p>Data Scarcity: Solutions include data augmentation, simulation environments, or transfer learning.</p>
 <p>Model Explainability: Use interpretable models or post-hoc explanation tools like SHAP or LIME.</p>
-<p>Computational Complexity: Leverage cloud computing resources, distributed computing, or hardware accelerators (GPUs&#x2F;TPUs).</p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>AI agents represent a powerful evolution in AI technologies, combining perception, reasoning, decision-making, and learning into autonomous systems capable of navigating complex environments. Understanding their architecture and components is crucial for developing efficient agents. By following structured steps, leveraging modern frameworks, and addressing common challenges, developers can create robust and adaptive AI agents that effectively achieve their intended goals. The continuous advancement of AI agents promises transformative impacts across industries, unlocking new capabilities and driving innovation forward.</p>
+<p>Computational Complexity: Leverage cloud computing resources, distributed computing, or hardware accelerators (GPUs/TPUs).</p>
+<h2 id="conclusion"><a class="markdownIt-Anchor" href="#conclusion"></a> Conclusion</h2>
+<p>AI agents represent a powerful evolution in AI technologies, combining perception, reasoning, decision-making, and learning into autonomous systems capable of navigating complex environments. Understanding their architecture and components is crucial for developing efficient agents. By following structured steps, leveraging modern frameworks, and addressing common challenges, developers can create robust and adaptive AI agents that effectively achieve their intended goals. The continuous advancement of AI agents promises transformative impacts across industries, unlocking new capabilities and driving innovation forward.</p>
 
     </div>
 

@@ -21,12 +21,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="问题现象线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：  图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。 首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空间。">
+    <meta name="description" content="问题现象 线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：  图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。 首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空">
 <meta property="og:type" content="article">
 <meta property="og:title" content="交换空间使用率过高问题分析">
 <meta property="og:url" content="https://maohong.github.io/20150622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/index.html">
 <meta property="og:site_name" content="Hong&#39;s Notes">
-<meta property="og:description" content="问题现象线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：  图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。 首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空间。">
+<meta property="og:description" content="问题现象 线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：  图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。 首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/2.png">
@@ -71,7 +71,9 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
+<!-- hexo injector head_end end -->
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
@@ -159,7 +161,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E7%8E%B0%E8%B1%A1"><span class="nav-number">1.</span> <span class="nav-text">问题现象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%97%E7%95%99%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">遗留问题</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E7%8E%B0%E8%B1%A1"><span class="nav-number">1.</span> <span class="nav-text"> 问题现象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text"> 问题分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text"> 解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%97%E7%95%99%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text"> 遗留问题</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -302,37 +304,43 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p>线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png"></p>
+    <div class="post-body" itemprop="articleBody"><h2 id="问题现象"><a class="markdownIt-Anchor" href="#问题现象"></a> 问题现象</h2>
+<p>线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png" alt=""></p>
 <p>图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。</p>
 <p>首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空间。但究竟是什么原因引起物理内存不足呢？因为Jvm堆大小是固定的，所以推断是因堆外内存占用空间较大引起。</p>
-<p>于是，使用jmap -histo:live <pid>把进程中的对象信息dump出来，dump信息如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/2.png"></p>
+<p>于是，使用jmap -histo:live <pid>把进程中的对象信息dump出来，dump信息如下：</pid></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/2.png" alt=""></p>
 <p>确实发现存在大量DirectByteBuffer对象，这说明内存中确实有大量引用了堆外内存的对象没有被回收！</p>
 <p>同时，内存中也对应存在着大量的sun.misc.Cleaner和java.nio.DirectByteBuffer$Deallocator对象。这两个类是用于回收堆外内存的。Cleaner对象是在DirectByteBuffer的构造函数中创建，其中封装了回收堆外内存的逻辑，Cleaner执行clean资源的操作是通过启动Deallocator线程实现的，这个线程把DirectByteBuffer对象引用的堆外内存做回收。</p>
-<p> 那么问题来了：</p>
+<p>那么问题来了：</p>
 <ol>
-<li><p>为什么DirectByteBuffer对象没有被回收？</p>
+<li>
+<p>为什么DirectByteBuffer对象没有被回收？</p>
 </li>
-<li><p>怎么做才能让DirectByteBuffer对象能被及时回收？</p>
+<li>
+<p>怎么做才能让DirectByteBuffer对象能被及时回收？</p>
 </li>
 </ol>
-<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><span id="more"></span>
-<p>先看了下启动jvm参数为-Xmn8192M -Xms13312M -Xmx13312M -XX:PermSize&#x3D;512m -XX:MaxPermSize&#x3D;512m，很明显，新生代空间配的太大，同时，也没有指定堆外内存的最大空间（-XX:MaxDirectMemorySize），这个参数没设置则默认等于-Xmx，然而服务器总内存只有16G，所以时间长了很可能会发生堆外内存溢出！</p>
+<h2 id="问题分析"><a class="markdownIt-Anchor" href="#问题分析"></a> 问题分析</h2>
+<span id="more"></span>
+<p>先看了下启动jvm参数为-Xmn8192M -Xms13312M -Xmx13312M -XX:PermSize=512m -XX:MaxPermSize=512m，很明显，新生代空间配的太大，同时，也没有指定堆外内存的最大空间（-XX:MaxDirectMemorySize），这个参数没设置则默认等于-Xmx，然而服务器总内存只有16G，所以时间长了很可能会发生堆外内存溢出！</p>
 <p>因为此服务是kafka集群的消费者，每天接收的报文量在1亿以上，这个过程中产生了大量的DirectByteBuffer对象，这些对象直接引用堆外内存，而同时，这些临时对象也会被回收，由于新生代空间配的很大，触发minor GC的频率不够高，从而不能及时释放已被占用的堆外内存，随着时间的推移，进程启动过一段时间后，堆外内存占用越来越多，最终被OS交换到swap空间。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>调整jvm参数，减少新生代大小为jvm堆空间的3&#x2F;8，并指定堆外内存大小，调整后的jvm参数为-Xmn3840M -Xms10240M -Xmx10240M -XX:PermSize&#x3D;512m -XX:MaxPermSize&#x3D;512m -XX:MaxDirectMemorySize&#x3D;4096m</p>
+<h2 id="解决方案"><a class="markdownIt-Anchor" href="#解决方案"></a> 解决方案</h2>
+<p>调整jvm参数，减少新生代大小为jvm堆空间的3/8，并指定堆外内存大小，调整后的jvm参数为-Xmn3840M -Xms10240M -Xmx10240M -XX:PermSize=512m -XX:MaxPermSize=512m -XX:MaxDirectMemorySize=4096m</p>
 <p>调整后，swap空间占用情况有所好转，但依然占用2G左右！如下图所示。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/3.png"></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/3.png" alt=""></p>
 <p>4月21日调整参数重启服务后，在相当长的一段时间内，swap空间占用率极低，但在5月2日又出现swap空间使用率上升的情况。继续看了下jvm堆空间使用情况和full gc情况，如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/4.png"></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/5.png"></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/4.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/5.png" alt=""></p>
 <p>结合上面两张图，可见young gc较多，jvm堆空间整体使用率稳步上升，在5月2日与5月8日发生了两次full gc，并且每次发生fullgc后，jvm堆空间使用率下降较多，swap空间使用量只有小范围下降。这说明有一部分DirectByteBuffer对象在fullgc阶段做了回收，但依然有很多DirectByteBuffer对象没有被回收，仍然占用着堆外内存。</p>
-<p>选择一台机器，继续减小其堆空间，jvm参数为-Xmn2048M -Xms6144M -Xmx6144M -XX:PermSize&#x3D;512m -XX:MaxPermSize&#x3D;512m -XX:MaxDirectMemorySize&#x3D;4096m，经过一段时间观察，交换空间使用率很低，应该没再发生内存页交换了，同时gc频率变高，jvm堆空间的使用率在正常范围，说明DirectByteBuffer对象被更及时的回收了。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/6.png"></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/7.png"></p>
-<p><font color=red>由此可见，swap空间占用率高的原因主要还是JVM堆空间太高导致的堆外内存回收不及时。</font></p>
-<h2 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h2><p>看了下kafka-client的源码，接受消息时使用的是ByteBuffer，并没有使用DirectByteBuffer，所以很奇怪，这些大量的DirectByteBuffer对象是从哪生成的？哪里用到的？</p>
-<p>运行命令jmap -dump:live,format&#x3D;b,file&#x3D;&#x2F;data&#x2F;server.dump <pid>，dump出内存快照，并用eclipse mat分析后，发现是zkclient中的一个地方用的，由于dump出的这个快照是问题解决后的内存快照，所以并不能说明问题，如果要找到根本原因，还是需要复现swap空间过高的场景，再做内存快照的dump。</p>
+<p>选择一台机器，继续减小其堆空间，jvm参数为-Xmn2048M -Xms6144M -Xmx6144M -XX:PermSize=512m -XX:MaxPermSize=512m -XX:MaxDirectMemorySize=4096m，经过一段时间观察，交换空间使用率很低，应该没再发生内存页交换了，同时gc频率变高，jvm堆空间的使用率在正常范围，说明DirectByteBuffer对象被更及时的回收了。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/6.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/7.png" alt=""></p>
+<p><font color="red">由此可见，swap空间占用率高的原因主要还是JVM堆空间太高导致的堆外内存回收不及时。</font></p>
+<h2 id="遗留问题"><a class="markdownIt-Anchor" href="#遗留问题"></a> 遗留问题</h2>
+<p>看了下kafka-client的源码，接受消息时使用的是ByteBuffer，并没有使用DirectByteBuffer，所以很奇怪，这些大量的DirectByteBuffer对象是从哪生成的？哪里用到的？</p>
+<p>运行命令jmap -dump:live,format=b,file=/data/server.dump <pid>，dump出内存快照，并用eclipse mat分析后，发现是zkclient中的一个地方用的，由于dump出的这个快照是问题解决后的内存快照，所以并不能说明问题，如果要找到根本原因，还是需要复现swap空间过高的场景，再做内存快照的dump。</pid></p>
 
     </div>
 

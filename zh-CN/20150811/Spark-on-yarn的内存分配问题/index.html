@@ -21,12 +21,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="问题描述在测试spark on yarn时，发现一些内存分配上的问题，具体如下。 在$SPARK_HOME&#x2F;conf&#x2F;spark-env.sh中配置如下参数：  SPARK_EXECUTOR_INSTANCES&#x3D;4            在yarn集群中启动的executor进程数 SPARK_EXECUTOR_MEMORY&#x3D;2G">
+    <meta name="description" content="问题描述 在测试spark on yarn时，发现一些内存分配上的问题，具体如下。 在$SPARK_HOME&#x2F;conf&#x2F;spark-env.sh中配置如下参数：  SPARK_EXECUTOR_INSTANCES&#x3D;4            在yarn集群中启动的executor进程数 SPARK_EXECUTOR_MEMORY&#x3D;2G              为每个executor进程分配的内存">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spark on yarn的内存分配问题">
 <meta property="og:url" content="https://maohong.github.io/zh-CN/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="Hong&#39;s Notes">
-<meta property="og:description" content="问题描述在测试spark on yarn时，发现一些内存分配上的问题，具体如下。 在$SPARK_HOME&#x2F;conf&#x2F;spark-env.sh中配置如下参数：  SPARK_EXECUTOR_INSTANCES&#x3D;4            在yarn集群中启动的executor进程数 SPARK_EXECUTOR_MEMORY&#x3D;2G">
+<meta property="og:description" content="问题描述 在测试spark on yarn时，发现一些内存分配上的问题，具体如下。 在$SPARK_HOME&#x2F;conf&#x2F;spark-env.sh中配置如下参数：  SPARK_EXECUTOR_INSTANCES&#x3D;4            在yarn集群中启动的executor进程数 SPARK_EXECUTOR_MEMORY&#x3D;2G              为每个executor进程分配的内存">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-1.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-2.png">
@@ -41,8 +41,8 @@
 <meta property="article:published_time" content="2015-08-11T05:23:13.000Z">
 <meta property="article:modified_time" content="2025-03-17T10:10:40.029Z">
 <meta property="article:author" content="Hong">
-<meta property="article:tag" content="yarn">
 <meta property="article:tag" content="spark">
+<meta property="article:tag" content="yarn">
 <meta property="article:tag" content="内存分配">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-1.png">
@@ -74,7 +74,9 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
+<!-- hexo injector head_end end -->
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
@@ -162,7 +164,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">问题解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">3.</span> <span class="nav-text">验证</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text"> 问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text"> 问题解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">3.</span> <span class="nav-text"> 验证</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -305,63 +307,70 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在测试spark on yarn时，发现一些内存分配上的问题，具体如下。</p>
-<p>在$SPARK_HOME&#x2F;conf&#x2F;spark-env.sh中配置如下参数：</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="问题描述"><a class="markdownIt-Anchor" href="#问题描述"></a> 问题描述</h2>
+<p>在测试spark on yarn时，发现一些内存分配上的问题，具体如下。</p>
+<p>在$SPARK_HOME/conf/spark-env.sh中配置如下参数：</p>
 <blockquote>
-<p>SPARK_EXECUTOR_INSTANCES&#x3D;4            <em>在yarn集群中启动的executor进程数</em></p>
-<p>SPARK_EXECUTOR_MEMORY&#x3D;2G              <em>为每个executor进程分配的内存大小</em></p>
-<p>SPARK_DRIVER_MEMORY&#x3D;1G                <em>为spark-driver进程分配的内存大小</em></p>
+<p>SPARK_EXECUTOR_INSTANCES=4            <em>在yarn集群中启动的executor进程数</em></p>
+<p>SPARK_EXECUTOR_MEMORY=2G              <em>为每个executor进程分配的内存大小</em></p>
+<p>SPARK_DRIVER_MEMORY=1G                <em>为spark-driver进程分配的内存大小</em></p>
 </blockquote>
-<p>执行$SPARK_HOME&#x2F;bin&#x2F;spark-sql –master yarn，按yarn-client模式启动spark-sql交互命令行（即driver程序运行在本地，而非yarn的container中），日志显示的关于AppMaster和Executor的内存信息如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-1.png"></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-2.png"></p>
+<p>执行$SPARK_HOME/bin/spark-sql –master yarn，按yarn-client模式启动spark-sql交互命令行（即driver程序运行在本地，而非yarn的container中），日志显示的关于AppMaster和Executor的内存信息如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-1.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-2.png" alt=""></p>
 <p>日志显示，AppMaster的内存是896MB，其中包含了384MB的memoryOverhead；启动了5个executor，第一个的可用内存是530.3MB，其余每个Executor的可用内存是1060.3MB。</p>
 <p>到yarnUI看下资源使用情况，共启动了5个container，占用内存13G，其中一台NodeManager启动了2个container，占用内存4G（1个AppMaster占1G、另一个占3G），另外3台各启了1个container，每个占用3G内存。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-3.png"></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-3.png" alt=""></p>
 <p>再到sparkUI看下executors的情况，这里有5个executor，其中driver是运行在执行spark-sql命令的本地服务器上，另外4个是运行在yarn集群中。Driver的可用storage memory为530.3MB，另外4个都是1060.3MB（与日志信息一致）。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-4.png"></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-4.png" alt=""></p>
 <p>那么问题来了：</p>
 <ol>
-<li><p>Yarn为container分配的最小内存由yarn.scheduler.minimum-allocation-mb参数决定，默认是1G，从yarnUI中看确实如此，可为何spark的日志里显示AppMaster的实际内存是896-384&#x3D;512MB呢？384MB是怎么算出来的？</p>
+<li>
+<p>Yarn为container分配的最小内存由yarn.scheduler.minimum-allocation-mb参数决定，默认是1G，从yarnUI中看确实如此，可为何spark的日志里显示AppMaster的实际内存是896-384=512MB呢？384MB是怎么算出来的？</p>
 </li>
-<li><p>spark配置文件里指定了每个executor的内存为2G，为何日志和sparkUI上显示的是1060.3MB？</p>
+<li>
+<p>spark配置文件里指定了每个executor的内存为2G，为何日志和sparkUI上显示的是1060.3MB？</p>
 </li>
-<li><p>driver的内存配置为1G，为何sparkUI里显示的是530.3MB呢？</p>
+<li>
+<p>driver的内存配置为1G，为何sparkUI里显示的是530.3MB呢？</p>
 </li>
-<li><p>为何yarn中每个container分配的内存是3G，而不是executor需要的2G呢？</p>
+<li>
+<p>为何yarn中每个container分配的内存是3G，而不是executor需要的2G呢？</p>
 </li>
 </ol>
-<h2 id="问题解析"><a href="#问题解析" class="headerlink" title="问题解析"></a>问题解析</h2><p>进过一番调研，发现这里有些概念容易混淆，整理如下，序号对应上面的问题：</p>
+<h2 id="问题解析"><a class="markdownIt-Anchor" href="#问题解析"></a> 问题解析</h2>
+<p>进过一番调研，发现这里有些概念容易混淆，整理如下，序号对应上面的问题：</p>
 <span id="more"></span>
-<p>(1) spark的yarn-client向ResourceManager申请提交作业&#x2F;启动AppMaster时，会判断是否是集群模式，如果是集群模式，则AppMaster的内存大小与driver内存大小一致，否则由spark.yarn.am.memory决定，这个参数的默认值是512MB。我们使用的是yarn-client模式，所以实际内存是512MB。</p>
-<p><font color='red'>384MB是spark-client为appMaster额外申请的内存</font>，计算方法如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-5.png"></p>
+<p>(1) spark的yarn-client向ResourceManager申请提交作业/启动AppMaster时，会判断是否是集群模式，如果是集群模式，则AppMaster的内存大小与driver内存大小一致，否则由spark.yarn.am.memory决定，这个参数的默认值是512MB。我们使用的是yarn-client模式，所以实际内存是512MB。</p>
+<p><font color="red">384MB是spark-client为appMaster额外申请的内存</font>，计算方法如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-5.png" alt=""></p>
 <p>即，默认从参数读取（集群模式从spark.yarn.driver.memoryOverhead参数读，否则从spark.yarn.am.memoryOverhead参数读），若没配此参数，则从AppMaster的内存*一定系数和默认最小overhead中取较大值。</p>
-<p>在spark-1.4.1版本中，MEMORY_OVERHEAD_FACTOR的默认值为0.10（之前是0.07），MEMORY_OVERHEAD_MIN默认为384，我们没有指定spark.yarn.driver.memoryOverhead和spark.yarn.am.memoryOverhead，而amMemory&#x3D;512M（由spark.yarn.am.memory决定），因此memoryOverhead为max(512*0.10, 384)&#x3D;384MB。</p>
+<p>在spark-1.4.1版本中，MEMORY_OVERHEAD_FACTOR的默认值为0.10（之前是0.07），MEMORY_OVERHEAD_MIN默认为384，我们没有指定spark.yarn.driver.memoryOverhead和spark.yarn.am.memoryOverhead，而amMemory=512M（由spark.yarn.am.memory决定），因此memoryOverhead为max(512*0.10, 384)=384MB。</p>
 <p>Executor的memoryOverhead计算方法与此一样，只是不区分是否集群模式，都默认由spark.yarn.executor.memoryOverhead配置。</p>
-<p>(2) <font color='red'>日志和sparkUI上显示的是executor内部用于缓存计算结果的内存空间，并不是executor所拥有的全部内存</font>。这部分内存是由以下公式计算：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-6.png"></p>
+<p>(2) <font color="red">日志和sparkUI上显示的是executor内部用于缓存计算结果的内存空间，并不是executor所拥有的全部内存</font>。这部分内存是由以下公式计算：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-6.png" alt=""></p>
 <p>Runtime.getRuntime.maxMemory按2048MB算，storage memory大小为1105.92MB，sparkUI显示的略小于此值，是正常的。</p>
-<p>(3) 与上述第2点一样，storage memory的大小略小于1024<em>0.9</em>0.6&#x3D;552.96MB</p>
-<p>(4) 前面提到spark会为container额外申请一部分内存（memoryOverhead），因此，实际为container提交申请的内存大小是2048 + max(2048*0.10, 384) &#x3D; 2432MB，而<font color='red'>yarn在做资源分配时会做资源规整化，即应用程序申请的资源量一定是最小可申请资源量的整数倍（向上取整）</font>，最小可申请内存量由yarn.scheduler.minimum-allocation-mb指定，因此，会为container分配3G内存。</p>
-<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>为了验证上述规则，继续修改配置参数：</p>
+<p>(3) 与上述第2点一样，storage memory的大小略小于1024<em>0.9</em>0.6=552.96MB</p>
+<p>(4) 前面提到spark会为container额外申请一部分内存（memoryOverhead），因此，实际为container提交申请的内存大小是2048 + max(2048*0.10, 384) = 2432MB，而<font color="red">yarn在做资源分配时会做资源规整化，即应用程序申请的资源量一定是最小可申请资源量的整数倍（向上取整）</font>，最小可申请内存量由yarn.scheduler.minimum-allocation-mb指定，因此，会为container分配3G内存。</p>
+<h2 id="验证"><a class="markdownIt-Anchor" href="#验证"></a> 验证</h2>
+<p>为了验证上述规则，继续修改配置参数：</p>
 <blockquote>
-<p>SPARK_EXECUTOR_INSTANCES&#x3D;4          <em>在yarn集群中启动的executor进程数</em></p>
-<p>SPARK_EXECUTOR_MEMORY&#x3D;4G            <em>为每个executor进程分配的内存大小</em></p>
-<p>SPARK_DRIVER_MEMORY&#x3D;3G              <em>为spark-driver进程分配的内存大小</em></p>
+<p>SPARK_EXECUTOR_INSTANCES=4          <em>在yarn集群中启动的executor进程数</em></p>
+<p>SPARK_EXECUTOR_MEMORY=4G            <em>为每个executor进程分配的内存大小</em></p>
+<p>SPARK_DRIVER_MEMORY=3G              <em>为spark-driver进程分配的内存大小</em></p>
 </blockquote>
 <p>并在启动spark-sql时指定spark.yarn.am.memory参数：</p>
-<p><strong>bin&#x2F;spark-sql –master yarn –conf spark.yarn.am.memory&#x3D;1024m</strong></p>
+<p><strong>bin/spark-sql –master yarn –conf spark.yarn.am.memory=1024m</strong></p>
 <p>再看日志信息：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-7.png"></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-8.png"></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-7.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-8.png" alt=""></p>
 <p>yarnUI状态：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-9.png"></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-9.png" alt=""></p>
 <p>sparkUI的executors信息：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-10.png"></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-10.png" alt=""></p>
 <p>可见，AppMaster的实际内存为1024M（1408-384），而其在yarn中的container内存大小为2G（1408大于1G，yarn按资源规整化原则为其分配2G）。</p>
-<p>同理，driver的storage memory空间为3G*0.9*0.6&#x3D;1.62G，executor的storage memory空间为4G*0.9*0.6&#x3D;2.16G，executor所在container占用5G内存（4096+max(4096*0.10,384)&#x3D; 4505.6，大于4G， yarn按资源规整化原则为其分配5G）。</p>
-<p>Yarn集群的内存总占用空间为2+5*4&#x3D;22G。</p>
+<p>同理，driver的storage memory空间为3G*0.9*0.6=1.62G，executor的storage memory空间为4G*0.9*0.6=2.16G，executor所在container占用5G内存（4096+max(4096*0.10,384)= 4505.6，大于4G， yarn按资源规整化原则为其分配5G）。</p>
+<p>Yarn集群的内存总占用空间为2+5*4=22G。</p>
 
     </div>
 
@@ -388,8 +397,8 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/yarn/" rel="tag"># yarn</a>
               <a href="/tags/spark/" rel="tag"># spark</a>
+              <a href="/tags/yarn/" rel="tag"># yarn</a>
               <a href="/tags/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/" rel="tag"># 内存分配</a>
           </div>
 

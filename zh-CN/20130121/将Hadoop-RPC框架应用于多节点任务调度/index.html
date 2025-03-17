@@ -21,20 +21,20 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="背景在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前ha">
+    <meta name="description" content="背景 在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前">
 <meta property="og:type" content="article">
 <meta property="og:title" content="将Hadoop RPC框架应用于多节点任务调度">
 <meta property="og:url" content="https://maohong.github.io/zh-CN/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/index.html">
 <meta property="og:site_name" content="Hong&#39;s Notes">
-<meta property="og:description" content="背景在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前ha">
+<meta property="og:description" content="背景 在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2013-01-21T12:53:38.000Z">
 <meta property="article:modified_time" content="2025-03-17T10:10:40.101Z">
 <meta property="article:author" content="Hong">
 <meta property="article:tag" content="hadoop">
+<meta property="article:tag" content="分布式应用">
 <meta property="article:tag" content="RPC">
 <meta property="article:tag" content="任务调度">
-<meta property="article:tag" content="分布式应用">
 <meta name="twitter:card" content="summary">
 
 
@@ -64,7 +64,9 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
+<!-- hexo injector head_end end -->
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
@@ -152,7 +154,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">实现</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text"> 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text"> 问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text"> 方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text"> 实现</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -295,46 +297,52 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前hadoop RPC的数据序列化是通过实现自己定义的Writable接口实现，而从hadoop 2.0开始，数据的序列化工作交给了ProtocolBuffer去做。关于Hadoop RPC的实现原理已经有很多文章进行了详细的介绍（<span class="exturl" data-url="aHR0cDovL3dlaXhpYW9sdS5pdGV5ZS5jb20vYmxvZy8xNTA0ODk4">源码级强力分析hadoop的RPC机制<i class="fa fa-external-link-alt"></i></span>，<span class="exturl" data-url="aHR0cDovL3lhbmJvaGFwcHkuc2luYWFwcC5jb20vP3A9MTEw">Hadoop基于Protocol Buffer的RPC实现代码分析-Server端<i class="fa fa-external-link-alt"></i></span>，<span class="exturl" data-url="aHR0cDovL3lhbmJvaGFwcHkuc2luYWFwcC5jb20vP3A9MTE1">带有HA功能的Hadoop Client端RPC实现原理与代码分析<i class="fa fa-external-link-alt"></i></span>），这里就不在赘述了。下面就直接引入问题和方案吧。  </p>
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>工作中经常需要在定时任务系统上写一些定时任务，随着业务规模的增长和扩大，需要定时处理的任务越来越多，任务之间的执行间隔越来越小，某一时间段内（比如0点、整点或半点）执行的任务会越来越密集，只在一台机器上执行这些任务的话，会出现较大的风险：  </p>
+    <div class="post-body" itemprop="articleBody"><h2 id="背景"><a class="markdownIt-Anchor" href="#背景"></a> 背景</h2>
+<p>在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前hadoop RPC的数据序列化是通过实现自己定义的Writable接口实现，而从hadoop 2.0开始，数据的序列化工作交给了ProtocolBuffer去做。关于Hadoop RPC的实现原理已经有很多文章进行了详细的介绍（<span class="exturl" data-url="aHR0cDovL3dlaXhpYW9sdS5pdGV5ZS5jb20vYmxvZy8xNTA0ODk4">源码级强力分析hadoop的RPC机制<i class="fa fa-external-link-alt"></i></span>，<span class="exturl" data-url="aHR0cDovL3lhbmJvaGFwcHkuc2luYWFwcC5jb20vP3A9MTEw">Hadoop基于Protocol Buffer的RPC实现代码分析-Server端<i class="fa fa-external-link-alt"></i></span>，<span class="exturl" data-url="aHR0cDovL3lhbmJvaGFwcHkuc2luYWFwcC5jb20vP3A9MTE1">带有HA功能的Hadoop Client端RPC实现原理与代码分析<i class="fa fa-external-link-alt"></i></span>），这里就不在赘述了。下面就直接引入问题和方案吧。</p>
+<h2 id="问题"><a class="markdownIt-Anchor" href="#问题"></a> 问题</h2>
+<p>工作中经常需要在定时任务系统上写一些定时任务，随着业务规模的增长和扩大，需要定时处理的任务越来越多，任务之间的执行间隔越来越小，某一时间段内（比如0点、整点或半点）执行的任务会越来越密集，只在一台机器上执行这些任务的话，会出现较大的风险：</p>
 <ul>
-<li>任务并发度较高时，单机的系统资源将成为瓶颈  </li>
-<li>如果一个任务的运行占用了整个机器的大部分资源，比如sql查询耗费巨大内存和CPU资源，将直接影响其他任务的运行  </li>
-<li>任务失败后，如果仍然在同一台节点自动重新执行，失败率较高  </li>
-<li>机器宕机后，必须第一时间重启机器或重新部署定时任务系统，所有任务都不能按时执行  </li>
+<li>任务并发度较高时，单机的系统资源将成为瓶颈</li>
+<li>如果一个任务的运行占用了整个机器的大部分资源，比如sql查询耗费巨大内存和CPU资源，将直接影响其他任务的运行</li>
+<li>任务失败后，如果仍然在同一台节点自动重新执行，失败率较高</li>
+<li>机器宕机后，必须第一时间重启机器或重新部署定时任务系统，所有任务都不能按时执行</li>
 <li>等等</li>
 </ul>
-<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>可想而知的是，可以通过将定时任务系统进行分布式改造，使用多个节点执行任务，将任务分发到不同节点上进行处理，并且完善失败重试机制，从而提高系统稳定性，实现任务系统的高可靠。<br>既然是在多个节点之间分发任务，肯定得有个任务的管理者(主节点)，在我们现有的系统中，也就是一套可以部署定时任务的web系统，任务代码更新后，部署好这套web系统，即可通过web页面设置定时任务并且进行调度(在单个节点上执行)。执行任务的节点(子节点)有多个以后，如何分发任务到子节点呢，我们可以把任务的信息封装成一个bean，通过RPC发布给子节点，子节点通过这个任务bean获得任务信息，并在指定的时刻执行任务。同时，子节点可以通过与主节点的心跳通信将节点状态和执行任务的情况告诉主节点。<br>这样其实就与hadoop mapreduce分发任务有点相似了，呵呵，这里主节点与子节点之间的通信，我们就可以通过Hadoop RPC框架来实现了，不同的是，我们分发的任务是定时任务，发布任务时需要将任务的定时信息一并发给子节点。  </p>
-<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>单点的定时任务系统是基于Quartz的，在分布式环境下，可以继续基于Quartz进行改造，任务的定时信息可以通过Quartz中的JobDetail和Trigger对象来描述并封装，加上任务执行的入口类信息，再通过RPC由主节点发给子节点。子节点收到封装好的任务信息对象后，再构造JobDetail和Trigger，设置好启动时间后，通过入口类启动任务。下面是一个简单的demo。  </p>
+<h2 id="方案"><a class="markdownIt-Anchor" href="#方案"></a> 方案</h2>
+<p>可想而知的是，可以通过将定时任务系统进行分布式改造，使用多个节点执行任务，将任务分发到不同节点上进行处理，并且完善失败重试机制，从而提高系统稳定性，实现任务系统的高可靠。<br>
+既然是在多个节点之间分发任务，肯定得有个任务的管理者(主节点)，在我们现有的系统中，也就是一套可以部署定时任务的web系统，任务代码更新后，部署好这套web系统，即可通过web页面设置定时任务并且进行调度(在单个节点上执行)。执行任务的节点(子节点)有多个以后，如何分发任务到子节点呢，我们可以把任务的信息封装成一个bean，通过RPC发布给子节点，子节点通过这个任务bean获得任务信息，并在指定的时刻执行任务。同时，子节点可以通过与主节点的心跳通信将节点状态和执行任务的情况告诉主节点。<br>
+这样其实就与hadoop mapreduce分发任务有点相似了，呵呵，这里主节点与子节点之间的通信，我们就可以通过Hadoop RPC框架来实现了，不同的是，我们分发的任务是定时任务，发布任务时需要将任务的定时信息一并发给子节点。</p>
+<h2 id="实现"><a class="markdownIt-Anchor" href="#实现"></a> 实现</h2>
+<p>单点的定时任务系统是基于Quartz的，在分布式环境下，可以继续基于Quartz进行改造，任务的定时信息可以通过Quartz中的JobDetail和Trigger对象来描述并封装，加上任务执行的入口类信息，再通过RPC由主节点发给子节点。子节点收到封装好的任务信息对象后，再构造JobDetail和Trigger，设置好启动时间后，通过入口类启动任务。下面是一个简单的demo。</p>
 <span id="more"></span>
-<p>以下是一个简单的定时任务信息描述对象CronJobInfo，包括JobDetailInfo和TriggerInfo两个属性：  </p>
+<p>以下是一个简单的定时任务信息描述对象CronJobInfo，包括JobDetailInfo和TriggerInfo两个属性：</p>
 <pre><code class="java">/**
 * 定时任务信息，包括任务信息和触发器信息
 */
 public class CronJobInfo implements Writable
-&#123;
+{
     private JobDetailInfo jobDetailInfo = new JobDetailInfo();
     private TriggerInfo triggerInfo = new TriggerInfo();
  
     @Override
     public void readFields(DataInput in) throws IOException
-    &#123;
+    {
         jobDetailInfo.readFields(in);
         triggerInfo.readFields(in);
-    &#125;
+    }
  
     @Override
     public void write(DataOutput out) throws IOException
-    &#123;
+    {
         jobDetailInfo.write(out);
         triggerInfo.write(out);
-    &#125;
+    }
     // getters and setters...
-&#125;
+}
 </code></pre>
-<p>任务信息JobDetailInfo，由主节点构造，子节点解析构造JobDetail对象：  </p>
+<p>任务信息JobDetailInfo，由主节点构造，子节点解析构造JobDetail对象：</p>
 <pre><code class="java">public class JobDetailInfo implements Writable
-&#123;
+{
     private String name; // 任务名称
     private String group = Scheduler.DEFAULT_GROUP; // 任务组
     private String description; // 任务描述
@@ -346,37 +354,37 @@ public class CronJobInfo implements Writable
  
     @Override
     public void readFields(DataInput in) throws IOException
-    &#123;
+    {
         name = WritableUtils.readString(in);
         group = WritableUtils.readString(in);
         description = WritableUtils.readString(in);
         String className = WritableUtils.readString(in);
         if (className != null)
-        &#123;
+        {
           try
-          &#123;
+          {
              jobClass = Class.forName(new String(className));
-          &#125;
+          }
           catch (ClassNotFoundException e)
-          &#123;
+          {
              e.printStackTrace();
-          &#125;
-        &#125;
+          }
+        }
         int dataMapSize = WritableUtils.readVInt(in);
         while (dataMapSize-- &gt; 0)
-        &#123;
+        {
            String key = WritableUtils.readString(in);
            String value = WritableUtils.readString(in);
            jobDataMap.put(key, value);
-        &#125;
+        }
         volatility = in.readBoolean();
         durability = in.readBoolean();
         shouldRecover = in.readBoolean();
-    &#125;
+    }
  
     @Override
     public void write(DataOutput out) throws IOException
-    &#123;
+    {
         WritableUtils.writeString(out, name);
         WritableUtils.writeString(out, group);
         WritableUtils.writeString(out, description);
@@ -384,25 +392,25 @@ public class CronJobInfo implements Writable
         if (jobDataMap == null)
             WritableUtils.writeVInt(out, 0);
         else
-        &#123;
+        {
             WritableUtils.writeVInt(out, jobDataMap.size());
             for (Object k : jobDataMap.keySet())
-            &#123;
+            {
                 WritableUtils.writeString(out, k.toString());
                 WritableUtils.writeString(out, jobDataMap.get(k).toString());
-            &#125;
-        &#125;
+            }
+        }
         out.writeBoolean(volatility);
         out.writeBoolean(durability);
         out.writeBoolean(shouldRecover);
-   &#125;
+   }
    //getters and setters
    //.....
-&#125;
+}
 </code></pre>
-<p>任务触发器信息TriggerInfo ，由主节点构造，子节点解析构造Trigger对象：  </p>
+<p>任务触发器信息TriggerInfo ，由主节点构造，子节点解析构造Trigger对象：</p>
 <pre><code class="java">public class TriggerInfo implements Writable
-&#123;
+{
     private String name; // trigger名称
     private String group = Scheduler.DEFAULT_GROUP; // triger组名称
     private String description; // trigger描述
@@ -413,7 +421,7 @@ public class CronJobInfo implements Writable
  
     @Override
     public void readFields(DataInput in) throws IOException
-    &#123;
+    {
        name = WritableUtils.readString(in);
        group = WritableUtils.readString(in);
        description = WritableUtils.readString(in);
@@ -423,11 +431,11 @@ public class CronJobInfo implements Writable
        endTime = end==0 ? null : new Date(end);
        repeatInterval = in.readLong();
        repeatCount = in.readInt();
-    &#125;
+    }
  
     @Override
     public void write(DataOutput out) throws IOException
-    &#123;
+    {
        WritableUtils.writeString(out, name);
        WritableUtils.writeString(out, group);
        WritableUtils.writeString(out, description);
@@ -435,65 +443,65 @@ public class CronJobInfo implements Writable
        out.writeLong(endTime == null ? 0 : endTime.getTime());
        out.writeLong(repeatInterval);
        out.writeInt(repeatCount);
-    &#125;
+    }
     //getters and setters
     //.....
-&#125;
+}
 </code></pre>
-<p>主从节点通信的协议：  </p>
+<p>主从节点通信的协议：</p>
 <pre><code class="java">public interface TaskProtocol extends VersionedProtocol
-&#123;
+{
     public CronJobInfo hearbeat();
-&#125;
+}
 </code></pre>
-<p>在这个demo中，主节点启动后，启动RPC server线程，等待客户端（子节点）的连接，当客户端调用heartbeat方法时，主节点将会生成一个任务信息返回给客户端：  </p>
+<p>在这个demo中，主节点启动后，启动RPC server线程，等待客户端（子节点）的连接，当客户端调用heartbeat方法时，主节点将会生成一个任务信息返回给客户端：</p>
 <pre><code class="java">public class TaskScheduler implements TaskProtocol
-&#123;
+{
     private Logger logger = Logger.getLogger(getClass());
     private Server server;
  
     public TaskScheduler()
-    &#123;
+    {
         try
-        &#123;
-            server = RPC.getServer(this, &quot;192.168.1.101&quot;, 8888, new Configuration());
+        {
+            server = RPC.getServer(this, "192.168.1.101", 8888, new Configuration());
             server.start();
             server.join();
-        &#125;
+        }
         catch (UnknownHostException e)
-        &#123;
+        {
             e.printStackTrace();
-        &#125;
+        }
         catch (IOException e)
-        &#123;
+        {
             e.printStackTrace();
-        &#125;
+        }
         catch (InterruptedException e)
-        &#123;
+        {
             e.printStackTrace();
-        &#125;
-    &#125;
+        }
+    }
  
     @Override
     public long getProtocolVersion(String arg0, long arg1) throws IOException
-    &#123;
+    {
         return 1;
-    &#125;
+    }
  
     @Override
     public CronJobInfo generateCronJob()
-    &#123;
+    {
         // 1、创建JobDetial对象
         JobDetailInfo detail = new JobDetailInfo();
         // 设置工作项
         detail.setJobClass(DemoTask.class);
-        detail.setName(&quot;MyJob_1&quot;);
-        detail.setGroup(&quot;JobGroup_1&quot;);
+        detail.setName("MyJob_1");
+        detail.setGroup("JobGroup_1");
  
         // 2、创建Trigger对象
         TriggerInfo trigger = new TriggerInfo();
-        trigger.setName(&quot;Trigger_1&quot;);
-        trigger.setGroup(&quot;Trigger_Group_1&quot;);
+        trigger.setName("Trigger_1");
+        trigger.setGroup("Trigger_Group_1");
         trigger.setStartTime(new Date());
         // 设置重复停止时间，并销毁该Trigger对象
         Calendar c = Calendar.getInstance();
@@ -509,55 +517,55 @@ public class CronJobInfo implements Writable
         info.setTriggerInfo(trigger);
  
         return info;
-    &#125;
+    }
  
     public static void main(String[] args)
-    &#123;
+    {
         TaskScheduler ts = new TaskScheduler();
-    &#125;
+    }
  
-&#125;
+}
 </code></pre>
-<p>demo任务类，打印信息：  </p>
+<p>demo任务类，打印信息：</p>
 <pre><code class="java">public class DemoTask implements Job
-&#123;
+{
     public void execute(JobExecutionContext context)
             throws JobExecutionException
-    &#123;
-        System.out.println(this + &quot;: executing task @&quot; + new Date());
-    &#125;
-&#125; 
+    {
+        System.out.println(this + ": executing task @" + new Date());
+    }
+} 
 </code></pre>
-<p>子节点demo，启动后连接主节点，远程调用generateCronJob方法，获得一个任务描述信息，并启动定时任务。  </p>
+<p>子节点demo，启动后连接主节点，远程调用generateCronJob方法，获得一个任务描述信息，并启动定时任务。</p>
 <pre><code class="java">public class TaskRunner
-&#123;
+{
     private Logger logger = Logger.getLogger(getClass());
     private TaskProtocol proxy;
  
     public TaskRunner()
-    &#123;
-        InetSocketAddress addr = new InetSocketAddress(&quot;localhost&quot;, 8888);
+    {
+        InetSocketAddress addr = new InetSocketAddress("localhost", 8888);
         try
-        &#123;
+        {
             proxy = (TaskProtocol) RPC.waitForProxy(TaskProtocol.class, 1, addr,
                     new Configuration());
-        &#125;
+        }
         catch (IOException e)
-        &#123;
+        {
             e.printStackTrace();
-        &#125;
-    &#125;
+        }
+    }
  
     public void close()
-    &#123;
+    {
         RPC.stopProxy(proxy);
-    &#125;
+    }
  
     /**
      * 从server获取一个定时任务
      */
     public void getCronJob()
-    &#123;
+    {
         CronJobInfo info = proxy.generateCronJob();
         JobDetail jobDetail = getJobDetail(info.getJobDetailInfo());
         SimpleTrigger trigger = getTrigger(info.getTriggerInfo());
@@ -566,25 +574,25 @@ public class CronJobInfo implements Writable
         SchedulerFactory sf = new StdSchedulerFactory();
         Scheduler scheduler = null;
         try
-        &#123;
+        {
             scheduler = sf.getScheduler();
             scheduler.scheduleJob(jobDetail, trigger);
             // 执行启动操作
             scheduler.start();
  
-        &#125;
+        }
         catch (SchedulerException e)
-        &#123;
+        {
             e.printStackTrace();
-        &#125;
-    &#125;
+        }
+    }
  
     /**
      * @param jobDetailInfo
      * @return
      */
     private JobDetail getJobDetail(JobDetailInfo info)
-    &#123;
+    {
         JobDetail detail = new JobDetail();
         detail.setName(info.getName());
         detail.setGroup(info.getGroup());
@@ -594,16 +602,16 @@ public class CronJobInfo implements Writable
         detail.setRequestsRecovery(info.isShouldRecover());
         detail.setDurability(info.isDurability());
         detail.setVolatility(info.isVolatility());
-        logger.info(&quot;client get jobdetail:&quot; + detail);
+        logger.info("client get jobdetail:" + detail);
         return detail;
-    &#125;
+    }
  
     /**
      * @param triggerInfo
      * @return
      */
     private SimpleTrigger getTrigger(TriggerInfo info)
-    &#123;
+    {
         SimpleTrigger trigger = new SimpleTrigger();
         trigger.setName(info.getName());
         trigger.setGroup(info.getGroup());
@@ -612,22 +620,39 @@ public class CronJobInfo implements Writable
         trigger.setEndTime(info.getEndTime());
         trigger.setRepeatInterval(info.getRepeatInterval());
         trigger.setRepeatCount(info.getRepeatCount());
-        logger.info(&quot;client get trigger:&quot; + trigger);
+        logger.info("client get trigger:" + trigger);
         return trigger;
-    &#125;
+    }
  
     public static void main(String[] args)
-    &#123;
+    {
         TaskRunner t = new TaskRunner();
         t.getCronJob();
         t.close();
-    &#125;
-&#125;
+    }
+}
 </code></pre>
-<p>先启动TaskScheduler，再启动TaskRunner，结果如下：  </p>
+<p>先启动TaskScheduler，再启动TaskRunner，结果如下：</p>
 <blockquote>
-<p>TaskScheduler日志:<br>2013-01-20 15:42:21,661 [Socket Reader #1 for port 8888] INFO  [org.apache.hadoop.ipc.Server] – Starting Socket Reader #1 for port 8888<br>2013-01-20 15:42:21,662 [main] INFO  [org.apache.hadoop.ipc.metrics.RpcMetrics] – Initializing RPC Metrics with hostName&#x3D;TaskScheduler, port&#x3D;8888<br>2013-01-20 15:42:21,706 [main] INFO  [org.apache.hadoop.ipc.metrics.RpcDetailedMetrics] – Initializing RPC Metrics with hostName&#x3D;TaskScheduler, port&#x3D;8888<br>2013-01-20 15:42:21,710 [IPC Server listener on 8888] INFO  [org.apache.hadoop.ipc.Server] – IPC Server listener on 8888: starting<br>2013-01-20 15:42:21,711 [IPC Server Responder] INFO  [org.apache.hadoop.ipc.Server] – IPC Server Responder: starting<br>2013-01-20 15:42:21,711 [IPC Server handler 0 on 8888] INFO  [org.apache.hadoop.ipc.Server] – IPC Server handler 0 on 8888: starting<br>2013-01-20 15:42:24,084 [IPC Server handler 0 on 8888] INFO  [org.mh.rpc.task.TaskScheduler] – generate a task: org.mh.rpc.task.JobDetailInfo@1f26605</p>
-<p>TaskRunner:<br>2013-01-20 15:42:26,323 [main] INFO  [org.mh.rpc.task.TaskRunner] – client get jobdetail:JobDetail ‘JobGroup_1.MyJob_1′:  jobClass: ‘org.mh.rpc.quartz.GetSumTask isStateful: false isVolatile: false isDurable: false requestsRecovers: false<br>2013-01-20 15:42:26,329 [main] INFO  [org.mh.rpc.task.TaskRunner] – client get trigger:Trigger ‘Trigger_Group_1.Trigger_1′:  triggerClass: ‘org.quartz.SimpleTrigger isVolatile: false calendar: ‘null’ misfireInstruction: 0 nextFireTime: null<br>2013-01-20 15:42:26,382 [main] INFO  [org.quartz.simpl.SimpleThreadPool] – Job execution threads will use class loader of thread: main<br>2013-01-20 15:42:26,411 [main] INFO  [org.quartz.core.SchedulerSignalerImpl] – Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl<br>2013-01-20 15:42:26,411 [main] INFO  [org.quartz.core.QuartzScheduler] – Quartz Scheduler v.1.6.5 created.<br>2013-01-20 15:42:26,413 [main] INFO  [org.quartz.simpl.RAMJobStore] – RAMJobStore initialized.<br>2013-01-20 15:42:26,413 [main] INFO  [org.quartz.impl.StdSchedulerFactory] – Quartz scheduler ‘DefaultQuartzScheduler’ initialized from default resource file in Quartz package: ‘quartz.properties’<br>2013-01-20 15:42:26,413 [main] INFO  [org.quartz.impl.StdSchedulerFactory] – Quartz scheduler version: 1.6.5<br>2013-01-20 15:42:26,415 [main] INFO  [org.quartz.core.QuartzScheduler] – Scheduler DefaultQuartzScheduler_$_NON_CLUSTERED started.<br>org.mh.rpc.quartz.DemoTask@1b66b06: executing task @Sun Jan 20 15:42:26 CST 2013</p>
+<p>TaskScheduler日志:<br>
+2013-01-20 15:42:21,661 [Socket Reader #1 for port 8888] INFO  [org.apache.hadoop.ipc.Server] – Starting Socket Reader #1 for port 8888<br>
+2013-01-20 15:42:21,662 [main] INFO  [org.apache.hadoop.ipc.metrics.RpcMetrics] – Initializing RPC Metrics with hostName=TaskScheduler, port=8888<br>
+2013-01-20 15:42:21,706 [main] INFO  [org.apache.hadoop.ipc.metrics.RpcDetailedMetrics] – Initializing RPC Metrics with hostName=TaskScheduler, port=8888<br>
+2013-01-20 15:42:21,710 [IPC Server listener on 8888] INFO  [org.apache.hadoop.ipc.Server] – IPC Server listener on 8888: starting<br>
+2013-01-20 15:42:21,711 [IPC Server Responder] INFO  [org.apache.hadoop.ipc.Server] – IPC Server Responder: starting<br>
+2013-01-20 15:42:21,711 [IPC Server handler 0 on 8888] INFO  [org.apache.hadoop.ipc.Server] – IPC Server handler 0 on 8888: starting<br>
+2013-01-20 15:42:24,084 [IPC Server handler 0 on 8888] INFO  [org.mh.rpc.task.TaskScheduler] – generate a task: org.mh.rpc.task.JobDetailInfo@1f26605</p>
+<p>TaskRunner:<br>
+2013-01-20 15:42:26,323 [main] INFO  [org.mh.rpc.task.TaskRunner] – client get jobdetail:JobDetail ‘JobGroup_1.MyJob_1′:  jobClass: ‘org.mh.rpc.quartz.GetSumTask isStateful: false isVolatile: false isDurable: false requestsRecovers: false<br>
+2013-01-20 15:42:26,329 [main] INFO  [org.mh.rpc.task.TaskRunner] – client get trigger:Trigger ‘Trigger_Group_1.Trigger_1′:  triggerClass: ‘org.quartz.SimpleTrigger isVolatile: false calendar: ‘null’ misfireInstruction: 0 nextFireTime: null<br>
+2013-01-20 15:42:26,382 [main] INFO  [org.quartz.simpl.SimpleThreadPool] – Job execution threads will use class loader of thread: main<br>
+2013-01-20 15:42:26,411 [main] INFO  [org.quartz.core.SchedulerSignalerImpl] – Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl<br>
+2013-01-20 15:42:26,411 [main] INFO  [org.quartz.core.QuartzScheduler] – Quartz Scheduler v.1.6.5 created.<br>
+2013-01-20 15:42:26,413 [main] INFO  [org.quartz.simpl.RAMJobStore] – RAMJobStore initialized.<br>
+2013-01-20 15:42:26,413 [main] INFO  [org.quartz.impl.StdSchedulerFactory] – Quartz scheduler ‘DefaultQuartzScheduler’ initialized from default resource file in Quartz package: ‘quartz.properties’<br>
+2013-01-20 15:42:26,413 [main] INFO  [org.quartz.impl.StdSchedulerFactory] – Quartz scheduler version: 1.6.5<br>
+2013-01-20 15:42:26,415 [main] INFO  [org.quartz.core.QuartzScheduler] – Scheduler DefaultQuartzScheduler_$_NON_CLUSTERED started.<br>
+org.mh.rpc.quartz.DemoTask@1b66b06: executing task @Sun Jan 20 15:42:26 CST 2013</p>
 </blockquote>
 <p>上面是一个简单的demo，演示了如何通过RPC将任务调度给节点去执行，对于Quartz来说，任务的形式可以千变万化，关键就看怎么去使用了，分发到多个节点上执行的话，就还需要对任务的信息做更多的封装了。</p>
 
@@ -657,9 +682,9 @@ public class CronJobInfo implements Writable
 
           <div class="post-tags">
               <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/" rel="tag"># 分布式应用</a>
               <a href="/tags/RPC/" rel="tag"># RPC</a>
               <a href="/tags/%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/" rel="tag"># 任务调度</a>
-              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/" rel="tag"># 分布式应用</a>
           </div>
 
         

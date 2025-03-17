@@ -21,12 +21,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。 工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：  我需要拿到文件中第三列为1的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。  脚本如下： 1234for line i">
+    <meta name="description" content="在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。 工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：  我需要拿到文件中第三列为1的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。 脚本如下： 1234for line in">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Shell中的IFS分隔符使用">
 <meta property="og:url" content="https://maohong.github.io/20130129/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/index.html">
 <meta property="og:site_name" content="Hong&#39;s Notes">
-<meta property="og:description" content="在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。 工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：  我需要拿到文件中第三列为1的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。  脚本如下： 1234for line i">
+<meta property="og:description" content="在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。 工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：  我需要拿到文件中第三列为1的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。 脚本如下： 1234for line in">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell2.png">
@@ -65,7 +65,9 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
+<!-- hexo injector head_end end -->
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
@@ -297,19 +299,18 @@
     
     <div class="post-body" itemprop="articleBody"><p>在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。</p>
 <p>工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell.png"></p>
-<p>我需要拿到文件中<font color='blue'>第三列为1</font>的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。 </p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell.png" alt=""></p>
+<p>我需要拿到文件中<font color="blue">第三列为1</font>的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。</p>
 <p><strong>脚本如下：</strong></p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> line in `awk -F<span class="string">&quot;\3&quot;</span> <span class="string">&#x27;&#123;if($3==1) print $0&#125;&#x27;</span> datafile`</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">        echo $line</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<p><strong>结果如下：</strong>  </p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell2.png"> </p>
-<p>本来是想要逐行打印出来的，可结果却不是我想要的，究其原因，是因为在shell的for循环中，列出集合的item时，默认是以<space>或<tab>或<newline>为分隔符，我们的数据文件中有空格，因此它就以空格分割打印了。</p>
-<p>可以通过显式设置IFS的值来达到我们要的效果，修改后的脚本如下：  </p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">oldifs=$IFS</span><br><span class="line">IFS=$<span class="string">&#x27;\n&#x27;</span>    <span class="meta">#change seperator to <span class="string">&#x27;\n&#x27;</span> to get a <span class="keyword">line</span></span></span><br><span class="line"><span class="keyword">for</span> line in `awk -F<span class="string">&quot;\3&quot;</span> <span class="string">&#x27;&#123;if($3==1) print $0&#125;&#x27;</span> datafile`</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">        echo $line</span><br><span class="line">done</span><br><span class="line">IFS=$oldifs <span class="meta">#reset seperator</span></span><br></pre></td></tr></table></figure>
-
-<p>通过先保存当前的IFS变量的值到一个临时变量，再显式设置为我们想要的行分隔符$’\n’，然后在for循环结束后，再重置IFS的值即可。  </p>
-<p><strong>结果如下：</strong><br><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell3.png">  </p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> line in `awk -F<span class="string">"\3"</span> <span class="string">'{if($3==1) print $0}'</span> datafile`</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">        echo $line</span><br><span class="line">done</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>结果如下：</strong></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell2.png" alt=""></p>
+<p>本来是想要逐行打印出来的，可结果却不是我想要的，究其原因，是因为在shell的for循环中，列出集合的item时，默认是以<space>或<tab>或<newline>为分隔符，我们的数据文件中有空格，因此它就以空格分割打印了。</newline></tab></space></p>
+<p>可以通过显式设置IFS的值来达到我们要的效果，修改后的脚本如下：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">oldifs=$IFS</span><br><span class="line">IFS=$<span class="string">'\n'</span>    <span class="meta">#change seperator to <span class="string">'\n'</span> to get a <span class="keyword">line</span></span></span><br><span class="line"><span class="keyword">for</span> line in `awk -F<span class="string">"\3"</span> <span class="string">'{if($3==1) print $0}'</span> datafile`</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">        echo $line</span><br><span class="line">done</span><br><span class="line">IFS=$oldifs <span class="meta">#reset seperator</span></span><br></pre></td></tr></tbody></table></figure>
+<p>通过先保存当前的IFS变量的值到一个临时变量，再显式设置为我们想要的行分隔符$’\n’，然后在for循环结束后，再重置IFS的值即可。</p>
+<p><strong>结果如下：</strong><br>
+<img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell3.png" alt=""></p>
 
     </div>
 
