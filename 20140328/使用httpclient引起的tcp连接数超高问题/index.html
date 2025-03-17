@@ -29,7 +29,7 @@
 <meta property="og:description" content="组内的一个系统新上线了通过图片url上传图片到图片存储平台的功能。其中使用了httpclient，通过向图片存储平台发送MultipartPostMethod上传图片。当业务量较大时，10个处理线程满负荷运行，上传图片时，发现应用系统服务器的tcp连接数陡然升高，峰值能达到几万个tcp连接数！ 排查系统代码并结合分析httpclient的源码发现，应用系统每次上传图片时，都会做new HttpCl">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2014-03-28T09:44:58.000Z">
-<meta property="article:modified_time" content="2025-03-03T09:38:38.052Z">
+<meta property="article:modified_time" content="2025-03-17T10:10:40.069Z">
 <meta property="article:author" content="Hong">
 <meta property="article:tag" content="httpclient">
 <meta property="article:tag" content="tcp连接数">
@@ -249,7 +249,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-03 17:38:38" itemprop="dateModified" datetime="2025-03-03T17:38:38+08:00">2025-03-03</time>
+      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -338,13 +338,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/20140320/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" rel="prev" title="前后端的CharacterEncoding不一致导致提交的表单数据丢失问题">
-                  <i class="fa fa-angle-left"></i> 前后端的CharacterEncoding不一致导致提交的表单数据丢失问题
+                <a href="/20140513/%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/" rel="prev" title="基于zookeeper的分布式独占锁实现">
+                  <i class="fa fa-angle-left"></i> 基于zookeeper的分布式独占锁实现
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/20140513/%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/" rel="next" title="基于zookeeper的分布式独占锁实现">
-                  基于zookeeper的分布式独占锁实现 <i class="fa fa-angle-right"></i>
+                <a href="/20140320/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" rel="next" title="前后端的CharacterEncoding不一致导致提交的表单数据丢失问题">
+                  前后端的CharacterEncoding不一致导致提交的表单数据丢失问题 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -363,9 +363,27 @@
 
   <footer class="footer">
     <div class="footer-inner">
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>English</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="en" data-href="/20140328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/" selected="">
+          English
+        </option>
+      
+        <option value="zh-CN" data-href="/zh-CN/20140328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/" selected="">
+          简体中文
+        </option>
+      
+    </select>
+  </div>
 
   <div class="copyright">
-    &copy; 
+    &copy; 2020 – 
     <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>

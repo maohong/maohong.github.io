@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+  <meta name="google-site-verification" content="2gwXBUi9DEN5bqLdqlaiKGqJzQYOvyQNd7jvJSb0IEg">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Source+Code+Pro:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="背景在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前ha">
+<meta property="og:type" content="article">
+<meta property="og:title" content="将Hadoop RPC框架应用于多节点任务调度">
+<meta property="og:url" content="https://maohong.github.io/zh-CN/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/index.html">
+<meta property="og:site_name" content="Hong&#39;s Notes">
+<meta property="og:description" content="背景在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前ha">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2013-01-21T12:53:38.000Z">
+<meta property="article:modified_time" content="2025-03-17T10:10:40.101Z">
+<meta property="article:author" content="Hong">
+<meta property="article:tag" content="hadoop">
+<meta property="article:tag" content="分布式应用">
+<meta property="article:tag" content="RPC">
+<meta property="article:tag" content="任务调度">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://maohong.github.io/zh-CN/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://maohong.github.io/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/","path":"zh-CN/20130121/将Hadoop-RPC框架应用于多节点任务调度/","title":"将Hadoop RPC框架应用于多节点任务调度"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>将Hadoop RPC框架应用于多节点任务调度 | Hong's Notes</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YQVQS4CLD"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-4YQVQS4CLD","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hong's Notes</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">High Performance, High Availability and Scalable Architecture, ML, AI and Big Data</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-books"><a href="/books/" rel="section"><i class="fa fa-book fa-fw"></i>书单</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">实现</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Hong"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Hong</p>
+  <div class="site-description" itemprop="description">Overthinking only lead to problems, actions lead to answers.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL21hb2hvbmc=" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;maohong"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cubGlua2VkaW4uY29tL2luL2hvbmdtYW84Nw==" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;hongmao87"><i class="fab fa-linkedin fa-fw"></i>LinkedIn</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="将Hadoop RPC框架应用于多节点任务调度 | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          将Hadoop RPC框架应用于多节点任务调度
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2013-01-21 20:53:38" itemprop="dateCreated datePublished" datetime="2013-01-21T20:53:38+08:00">2013-01-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Hadoop/" itemprop="url" rel="index"><span itemprop="name">Hadoop</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前hadoop RPC的数据序列化是通过实现自己定义的Writable接口实现，而从hadoop 2.0开始，数据的序列化工作交给了ProtocolBuffer去做。关于Hadoop RPC的实现原理已经有很多文章进行了详细的介绍（<span class="exturl" data-url="aHR0cDovL3dlaXhpYW9sdS5pdGV5ZS5jb20vYmxvZy8xNTA0ODk4">源码级强力分析hadoop的RPC机制<i class="fa fa-external-link-alt"></i></span>，<span class="exturl" data-url="aHR0cDovL3lhbmJvaGFwcHkuc2luYWFwcC5jb20vP3A9MTEw">Hadoop基于Protocol Buffer的RPC实现代码分析-Server端<i class="fa fa-external-link-alt"></i></span>，<span class="exturl" data-url="aHR0cDovL3lhbmJvaGFwcHkuc2luYWFwcC5jb20vP3A9MTE1">带有HA功能的Hadoop Client端RPC实现原理与代码分析<i class="fa fa-external-link-alt"></i></span>），这里就不在赘述了。下面就直接引入问题和方案吧。  </p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>工作中经常需要在定时任务系统上写一些定时任务，随着业务规模的增长和扩大，需要定时处理的任务越来越多，任务之间的执行间隔越来越小，某一时间段内（比如0点、整点或半点）执行的任务会越来越密集，只在一台机器上执行这些任务的话，会出现较大的风险：  </p>
+<ul>
+<li>任务并发度较高时，单机的系统资源将成为瓶颈  </li>
+<li>如果一个任务的运行占用了整个机器的大部分资源，比如sql查询耗费巨大内存和CPU资源，将直接影响其他任务的运行  </li>
+<li>任务失败后，如果仍然在同一台节点自动重新执行，失败率较高  </li>
+<li>机器宕机后，必须第一时间重启机器或重新部署定时任务系统，所有任务都不能按时执行  </li>
+<li>等等</li>
+</ul>
+<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>可想而知的是，可以通过将定时任务系统进行分布式改造，使用多个节点执行任务，将任务分发到不同节点上进行处理，并且完善失败重试机制，从而提高系统稳定性，实现任务系统的高可靠。<br>既然是在多个节点之间分发任务，肯定得有个任务的管理者(主节点)，在我们现有的系统中，也就是一套可以部署定时任务的web系统，任务代码更新后，部署好这套web系统，即可通过web页面设置定时任务并且进行调度(在单个节点上执行)。执行任务的节点(子节点)有多个以后，如何分发任务到子节点呢，我们可以把任务的信息封装成一个bean，通过RPC发布给子节点，子节点通过这个任务bean获得任务信息，并在指定的时刻执行任务。同时，子节点可以通过与主节点的心跳通信将节点状态和执行任务的情况告诉主节点。<br>这样其实就与hadoop mapreduce分发任务有点相似了，呵呵，这里主节点与子节点之间的通信，我们就可以通过Hadoop RPC框架来实现了，不同的是，我们分发的任务是定时任务，发布任务时需要将任务的定时信息一并发给子节点。  </p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>单点的定时任务系统是基于Quartz的，在分布式环境下，可以继续基于Quartz进行改造，任务的定时信息可以通过Quartz中的JobDetail和Trigger对象来描述并封装，加上任务执行的入口类信息，再通过RPC由主节点发给子节点。子节点收到封装好的任务信息对象后，再构造JobDetail和Trigger，设置好启动时间后，通过入口类启动任务。下面是一个简单的demo。  </p>
+<span id="more"></span>
+<p>以下是一个简单的定时任务信息描述对象CronJobInfo，包括JobDetailInfo和TriggerInfo两个属性：  </p>
+<pre><code class="java">/**
+* 定时任务信息，包括任务信息和触发器信息
+*/
+public class CronJobInfo implements Writable
+&#123;
+    private JobDetailInfo jobDetailInfo = new JobDetailInfo();
+    private TriggerInfo triggerInfo = new TriggerInfo();
+ 
+    @Override
+    public void readFields(DataInput in) throws IOException
+    &#123;
+        jobDetailInfo.readFields(in);
+        triggerInfo.readFields(in);
+    &#125;
+ 
+    @Override
+    public void write(DataOutput out) throws IOException
+    &#123;
+        jobDetailInfo.write(out);
+        triggerInfo.write(out);
+    &#125;
+    // getters and setters...
+&#125;
+</code></pre>
+<p>任务信息JobDetailInfo，由主节点构造，子节点解析构造JobDetail对象：  </p>
+<pre><code class="java">public class JobDetailInfo implements Writable
+&#123;
+    private String name; // 任务名称
+    private String group = Scheduler.DEFAULT_GROUP; // 任务组
+    private String description; // 任务描述
+    private Class jobClass; // 任务的启动类
+    private JobDataMap jobDataMap; // 任务所需的参数，用来给作业提供数据支持的数据结构
+    private boolean volatility = false; // &lt;span&gt;重启应用之后是否删除任务的相关信息,&lt;/span&gt;
+    private boolean durability = false; // 任务完成之后是否依然保留到数据库
+    private boolean shouldRecover = false; // 应用重启之后时候忽略过期任务
+ 
+    @Override
+    public void readFields(DataInput in) throws IOException
+    &#123;
+        name = WritableUtils.readString(in);
+        group = WritableUtils.readString(in);
+        description = WritableUtils.readString(in);
+        String className = WritableUtils.readString(in);
+        if (className != null)
+        &#123;
+          try
+          &#123;
+             jobClass = Class.forName(new String(className));
+          &#125;
+          catch (ClassNotFoundException e)
+          &#123;
+             e.printStackTrace();
+          &#125;
+        &#125;
+        int dataMapSize = WritableUtils.readVInt(in);
+        while (dataMapSize-- &gt; 0)
+        &#123;
+           String key = WritableUtils.readString(in);
+           String value = WritableUtils.readString(in);
+           jobDataMap.put(key, value);
+        &#125;
+        volatility = in.readBoolean();
+        durability = in.readBoolean();
+        shouldRecover = in.readBoolean();
+    &#125;
+ 
+    @Override
+    public void write(DataOutput out) throws IOException
+    &#123;
+        WritableUtils.writeString(out, name);
+        WritableUtils.writeString(out, group);
+        WritableUtils.writeString(out, description);
+        WritableUtils.writeString(out, jobClass.getName());
+        if (jobDataMap == null)
+            WritableUtils.writeVInt(out, 0);
+        else
+        &#123;
+            WritableUtils.writeVInt(out, jobDataMap.size());
+            for (Object k : jobDataMap.keySet())
+            &#123;
+                WritableUtils.writeString(out, k.toString());
+                WritableUtils.writeString(out, jobDataMap.get(k).toString());
+            &#125;
+        &#125;
+        out.writeBoolean(volatility);
+        out.writeBoolean(durability);
+        out.writeBoolean(shouldRecover);
+   &#125;
+   //getters and setters
+   //.....
+&#125;
+</code></pre>
+<p>任务触发器信息TriggerInfo ，由主节点构造，子节点解析构造Trigger对象：  </p>
+<pre><code class="java">public class TriggerInfo implements Writable
+&#123;
+    private String name; // trigger名称
+    private String group = Scheduler.DEFAULT_GROUP; // triger组名称
+    private String description; // trigger描述
+    private Date startTime; // 启动时间
+    private Date endTime; // 结束时间
+    private long repeatInterval; // 重试时间间隔
+    private int repeatCount; //重试次数
+ 
+    @Override
+    public void readFields(DataInput in) throws IOException
+    &#123;
+       name = WritableUtils.readString(in);
+       group = WritableUtils.readString(in);
+       description = WritableUtils.readString(in);
+       long start = in.readLong();
+       startTime = start==0 ? null : new Date(start);
+       long end = in.readLong();
+       endTime = end==0 ? null : new Date(end);
+       repeatInterval = in.readLong();
+       repeatCount = in.readInt();
+    &#125;
+ 
+    @Override
+    public void write(DataOutput out) throws IOException
+    &#123;
+       WritableUtils.writeString(out, name);
+       WritableUtils.writeString(out, group);
+       WritableUtils.writeString(out, description);
+       out.writeLong(startTime == null ? 0 : startTime.getTime());
+       out.writeLong(endTime == null ? 0 : endTime.getTime());
+       out.writeLong(repeatInterval);
+       out.writeInt(repeatCount);
+    &#125;
+    //getters and setters
+    //.....
+&#125;
+</code></pre>
+<p>主从节点通信的协议：  </p>
+<pre><code class="java">public interface TaskProtocol extends VersionedProtocol
+&#123;
+    public CronJobInfo hearbeat();
+&#125;
+</code></pre>
+<p>在这个demo中，主节点启动后，启动RPC server线程，等待客户端（子节点）的连接，当客户端调用heartbeat方法时，主节点将会生成一个任务信息返回给客户端：  </p>
+<pre><code class="java">public class TaskScheduler implements TaskProtocol
+&#123;
+    private Logger logger = Logger.getLogger(getClass());
+    private Server server;
+ 
+    public TaskScheduler()
+    &#123;
+        try
+        &#123;
+            server = RPC.getServer(this, &quot;192.168.1.101&quot;, 8888, new Configuration());
+            server.start();
+            server.join();
+        &#125;
+        catch (UnknownHostException e)
+        &#123;
+            e.printStackTrace();
+        &#125;
+        catch (IOException e)
+        &#123;
+            e.printStackTrace();
+        &#125;
+        catch (InterruptedException e)
+        &#123;
+            e.printStackTrace();
+        &#125;
+    &#125;
+ 
+    @Override
+    public long getProtocolVersion(String arg0, long arg1) throws IOException
+    &#123;
+        return 1;
+    &#125;
+ 
+    @Override
+    public CronJobInfo generateCronJob()
+    &#123;
+        // 1、创建JobDetial对象
+        JobDetailInfo detail = new JobDetailInfo();
+        // 设置工作项
+        detail.setJobClass(DemoTask.class);
+        detail.setName(&quot;MyJob_1&quot;);
+        detail.setGroup(&quot;JobGroup_1&quot;);
+ 
+        // 2、创建Trigger对象
+        TriggerInfo trigger = new TriggerInfo();
+        trigger.setName(&quot;Trigger_1&quot;);
+        trigger.setGroup(&quot;Trigger_Group_1&quot;);
+        trigger.setStartTime(new Date());
+        // 设置重复停止时间，并销毁该Trigger对象
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis() + 1000 * 1L);
+        trigger.setEndTime(c.getTime());
+        // 设置重复间隔时间
+        trigger.setRepeatInterval(1000 * 1L);
+        // 设置重复执行次数
+        trigger.setRepeatCount(3);
+ 
+        CronJobInfo info = new CronJobInfo();
+        info.setJobDetailInfo(detail);
+        info.setTriggerInfo(trigger);
+ 
+        return info;
+    &#125;
+ 
+    public static void main(String[] args)
+    &#123;
+        TaskScheduler ts = new TaskScheduler();
+    &#125;
+ 
+&#125;
+</code></pre>
+<p>demo任务类，打印信息：  </p>
+<pre><code class="java">public class DemoTask implements Job
+&#123;
+    public void execute(JobExecutionContext context)
+            throws JobExecutionException
+    &#123;
+        System.out.println(this + &quot;: executing task @&quot; + new Date());
+    &#125;
+&#125; 
+</code></pre>
+<p>子节点demo，启动后连接主节点，远程调用generateCronJob方法，获得一个任务描述信息，并启动定时任务。  </p>
+<pre><code class="java">public class TaskRunner
+&#123;
+    private Logger logger = Logger.getLogger(getClass());
+    private TaskProtocol proxy;
+ 
+    public TaskRunner()
+    &#123;
+        InetSocketAddress addr = new InetSocketAddress(&quot;localhost&quot;, 8888);
+        try
+        &#123;
+            proxy = (TaskProtocol) RPC.waitForProxy(TaskProtocol.class, 1, addr,
+                    new Configuration());
+        &#125;
+        catch (IOException e)
+        &#123;
+            e.printStackTrace();
+        &#125;
+    &#125;
+ 
+    public void close()
+    &#123;
+        RPC.stopProxy(proxy);
+    &#125;
+ 
+    /**
+     * 从server获取一个定时任务
+     */
+    public void getCronJob()
+    &#123;
+        CronJobInfo info = proxy.generateCronJob();
+        JobDetail jobDetail = getJobDetail(info.getJobDetailInfo());
+        SimpleTrigger trigger = getTrigger(info.getTriggerInfo());
+ 
+        // 创建Scheduler对象，并配置JobDetail和Trigger对象
+        SchedulerFactory sf = new StdSchedulerFactory();
+        Scheduler scheduler = null;
+        try
+        &#123;
+            scheduler = sf.getScheduler();
+            scheduler.scheduleJob(jobDetail, trigger);
+            // 执行启动操作
+            scheduler.start();
+ 
+        &#125;
+        catch (SchedulerException e)
+        &#123;
+            e.printStackTrace();
+        &#125;
+    &#125;
+ 
+    /**
+     * @param jobDetailInfo
+     * @return
+     */
+    private JobDetail getJobDetail(JobDetailInfo info)
+    &#123;
+        JobDetail detail = new JobDetail();
+        detail.setName(info.getName());
+        detail.setGroup(info.getGroup());
+        detail.setDescription(info.getDescription());
+        detail.setJobClass(info.getJobClass());
+        detail.setJobDataMap(info.getJobDataMap());
+        detail.setRequestsRecovery(info.isShouldRecover());
+        detail.setDurability(info.isDurability());
+        detail.setVolatility(info.isVolatility());
+        logger.info(&quot;client get jobdetail:&quot; + detail);
+        return detail;
+    &#125;
+ 
+    /**
+     * @param triggerInfo
+     * @return
+     */
+    private SimpleTrigger getTrigger(TriggerInfo info)
+    &#123;
+        SimpleTrigger trigger = new SimpleTrigger();
+        trigger.setName(info.getName());
+        trigger.setGroup(info.getGroup());
+        trigger.setDescription(info.getDescription());
+        trigger.setStartTime(info.getStartTime());
+        trigger.setEndTime(info.getEndTime());
+        trigger.setRepeatInterval(info.getRepeatInterval());
+        trigger.setRepeatCount(info.getRepeatCount());
+        logger.info(&quot;client get trigger:&quot; + trigger);
+        return trigger;
+    &#125;
+ 
+    public static void main(String[] args)
+    &#123;
+        TaskRunner t = new TaskRunner();
+        t.getCronJob();
+        t.close();
+    &#125;
+&#125;
+</code></pre>
+<p>先启动TaskScheduler，再启动TaskRunner，结果如下：  </p>
+<blockquote>
+<p>TaskScheduler日志:<br>2013-01-20 15:42:21,661 [Socket Reader #1 for port 8888] INFO  [org.apache.hadoop.ipc.Server] – Starting Socket Reader #1 for port 8888<br>2013-01-20 15:42:21,662 [main] INFO  [org.apache.hadoop.ipc.metrics.RpcMetrics] – Initializing RPC Metrics with hostName&#x3D;TaskScheduler, port&#x3D;8888<br>2013-01-20 15:42:21,706 [main] INFO  [org.apache.hadoop.ipc.metrics.RpcDetailedMetrics] – Initializing RPC Metrics with hostName&#x3D;TaskScheduler, port&#x3D;8888<br>2013-01-20 15:42:21,710 [IPC Server listener on 8888] INFO  [org.apache.hadoop.ipc.Server] – IPC Server listener on 8888: starting<br>2013-01-20 15:42:21,711 [IPC Server Responder] INFO  [org.apache.hadoop.ipc.Server] – IPC Server Responder: starting<br>2013-01-20 15:42:21,711 [IPC Server handler 0 on 8888] INFO  [org.apache.hadoop.ipc.Server] – IPC Server handler 0 on 8888: starting<br>2013-01-20 15:42:24,084 [IPC Server handler 0 on 8888] INFO  [org.mh.rpc.task.TaskScheduler] – generate a task: org.mh.rpc.task.JobDetailInfo@1f26605</p>
+<p>TaskRunner:<br>2013-01-20 15:42:26,323 [main] INFO  [org.mh.rpc.task.TaskRunner] – client get jobdetail:JobDetail ‘JobGroup_1.MyJob_1′:  jobClass: ‘org.mh.rpc.quartz.GetSumTask isStateful: false isVolatile: false isDurable: false requestsRecovers: false<br>2013-01-20 15:42:26,329 [main] INFO  [org.mh.rpc.task.TaskRunner] – client get trigger:Trigger ‘Trigger_Group_1.Trigger_1′:  triggerClass: ‘org.quartz.SimpleTrigger isVolatile: false calendar: ‘null’ misfireInstruction: 0 nextFireTime: null<br>2013-01-20 15:42:26,382 [main] INFO  [org.quartz.simpl.SimpleThreadPool] – Job execution threads will use class loader of thread: main<br>2013-01-20 15:42:26,411 [main] INFO  [org.quartz.core.SchedulerSignalerImpl] – Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl<br>2013-01-20 15:42:26,411 [main] INFO  [org.quartz.core.QuartzScheduler] – Quartz Scheduler v.1.6.5 created.<br>2013-01-20 15:42:26,413 [main] INFO  [org.quartz.simpl.RAMJobStore] – RAMJobStore initialized.<br>2013-01-20 15:42:26,413 [main] INFO  [org.quartz.impl.StdSchedulerFactory] – Quartz scheduler ‘DefaultQuartzScheduler’ initialized from default resource file in Quartz package: ‘quartz.properties’<br>2013-01-20 15:42:26,413 [main] INFO  [org.quartz.impl.StdSchedulerFactory] – Quartz scheduler version: 1.6.5<br>2013-01-20 15:42:26,415 [main] INFO  [org.quartz.core.QuartzScheduler] – Scheduler DefaultQuartzScheduler_$_NON_CLUSTERED started.<br>org.mh.rpc.quartz.DemoTask@1b66b06: executing task @Sun Jan 20 15:42:26 CST 2013</p>
+</blockquote>
+<p>上面是一个简单的demo，演示了如何通过RPC将任务调度给节点去执行，对于Quartz来说，任务的形式可以千变万化，关键就看怎么去使用了，分发到多个节点上执行的话，就还需要对任务的信息做更多的封装了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Hong
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://maohong.github.io/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/" title="将Hadoop RPC框架应用于多节点任务调度">https://maohong.github.io/20130121/将Hadoop-RPC框架应用于多节点任务调度/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/" rel="tag"># 分布式应用</a>
+              <a href="/tags/RPC/" rel="tag"># RPC</a>
+              <a href="/tags/%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/" rel="tag"># 任务调度</a>
+          </div>
+
+        
+  <div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_dd" target="_blank" rel="noopener" href="https://www.addtoany.com/share"></a>
+      <a class="a2a_button_facebook"></a>
+      <a class="a2a_button_twitter"></a>
+      <a class="a2a_button_linkedin"></a>
+      <a class="a2a_button_wechat"></a>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/20130129/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/" rel="prev" title="Shell中的IFS分隔符使用">
+                  <i class="fa fa-angle-left"></i> Shell中的IFS分隔符使用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/20121113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/" rel="next" title="使用zookeeper协调多服务器的任务处理">
+                  使用zookeeper协调多服务器的任务处理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="" aria-label="选择语言">
+      
+        <option value="en" data-href="/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/" selected="">
+          English
+        </option>
+      
+        <option value="zh-CN" data-href="/zh-CN/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/" selected="">
+          简体中文
+        </option>
+      
+    </select>
+  </div>
+
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Hong</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">28k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:40</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL21hb2hvbmc=" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.3.0/pdfobject.min.js","integrity":"sha256-JJZNsid68vnh3/zyj0lY9BN5ynxVX/12XgOa1TlaYN0="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="/js/third-party/tags/pdf.js"></script>
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"8.8.4","theme":{"light":"default","dark":"dark"},"options":{"startOnLoad":true,"securityLevel":true,"flowchart":{"useMaxWidth":true},"sequenceDiagram":{"actorFontWeight":"normal","actorFontSize":14,"noteFontWeight":"normal","noteFontSize":14,"messageFontWeight":"normal","messageFontSize":16},"gantt":{"titleTopMargin":25,"barHeight":20,"barGap":4,"topPadding":50,"sidePadding":75,"gridLineStartPadding":35,"fontSize":11,"fontFamily":"\"Open-Sans\", \"sans-serif\"","numberSectionStyles":4,"axisFormat":"%Y-%m-%d"}},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.min.js","integrity":"sha256-G8ouPAnw4zzMbnAenHnVz6h9XpKbNdOkrqTh7AadyHs="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  <script src="/js/third-party/addtoany.js"></script>
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"maohong/maohong.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YQVQS4CLD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-4YQVQS4CLD');
+  </script>
+</body>
+</html>

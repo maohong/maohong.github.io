@@ -29,7 +29,7 @@
 <meta property="og:description" content="最近工作中需要使用shell，从远程rsync数据过来预处理后提交到hdfs中，再调用pig脚本在hadoop集群上处理数据，完了fs -get下来结果文件并进行进一步处理，再推送给其他系统使用。其间需要将pig作业的结果文件合并并且均分为10个文件推送给远程服务器上的应用加载。因为结果文件比较大，远程应用拿到结果文件后使用多线程加载，所以需均分为10个小文件。虽然mr作业出来的文件结果也是par">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2013-03-07T05:49:44.000Z">
-<meta property="article:modified_time" content="2025-03-03T09:38:38.053Z">
+<meta property="article:modified_time" content="2025-03-17T10:10:40.077Z">
 <meta property="article:author" content="Hong">
 <meta property="article:tag" content="shell">
 <meta property="article:tag" content="linux">
@@ -249,7 +249,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-03 17:38:38" itemprop="dateModified" datetime="2025-03-03T17:38:38+08:00">2025-03-03</time>
+      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
     </span>
 
   
@@ -327,13 +327,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/20130129/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/" rel="prev" title="Shell中的IFS分隔符使用">
-                  <i class="fa fa-angle-left"></i> Shell中的IFS分隔符使用
+                <a href="/20140320/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" rel="prev" title="前后端的CharacterEncoding不一致导致提交的表单数据丢失问题">
+                  <i class="fa fa-angle-left"></i> 前后端的CharacterEncoding不一致导致提交的表单数据丢失问题
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/20140320/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" rel="next" title="前后端的CharacterEncoding不一致导致提交的表单数据丢失问题">
-                  前后端的CharacterEncoding不一致导致提交的表单数据丢失问题 <i class="fa fa-angle-right"></i>
+                <a href="/20130129/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/" rel="next" title="Shell中的IFS分隔符使用">
+                  Shell中的IFS分隔符使用 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -352,9 +352,27 @@
 
   <footer class="footer">
     <div class="footer-inner">
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>English</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="en" data-href="/20130307/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/" selected="">
+          English
+        </option>
+      
+        <option value="zh-CN" data-href="/zh-CN/20130307/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/" selected="">
+          简体中文
+        </option>
+      
+    </select>
+  </div>
 
   <div class="copyright">
-    &copy; 
+    &copy; 2020 – 
     <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
