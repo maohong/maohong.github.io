@@ -6,7 +6,7 @@
   <link href="https://maohong.github.io/atom.xml" rel="self"/>
   
   <link href="https://maohong.github.io/"/>
-  <updated>2025-03-17T10:10:39.985Z</updated>
+  <updated>2025-03-28T10:36:30.257Z</updated>
   <id>https://maohong.github.io/</id>
   
   <author>
@@ -15,34 +15,6 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>AI Agents: Architecture, Key Components, and How to Build One</title>
-    <link href="https://maohong.github.io/20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/"/>
-    <id>https://maohong.github.io/20250316/AI-Agents-Architecture-Key-Components-and-How-to-Build-One/</id>
-    <published>2025-03-16T15:25:20.000Z</published>
-    <updated>2025-03-17T10:10:39.985Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;Artificial Intelligence (AI) has evolved dramatically in recent years, moving beyond simple algorithms and predictive models towards sophisticated entities known as AI agents. AI agents are autonomous programs capable of perceiving their environment, reasoning about it, making decisions, and acting to achieve specific goals. In this blog post, I will explore what AI agents are, their architecture, key components, and provide a clear guide on how we can build one.&lt;/p&gt;
-&lt;h2 id=&quot;what-is-an-ai-agent&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#what-is-an-ai-agent&quot;&gt;&lt;/a&gt; What is an AI Agent?&lt;/h2&gt;
-&lt;p&gt;An AI agent is a system that autonomously interacts with an environment to achieve predefined goals. The concept of an AI agent originates from the field of artificial intelligence, particularly reinforcement learning, and is widely applicable in various areas including autonomous driving, robotics, virtual assistants, gaming, financial trading, and more.&lt;/p&gt;
-&lt;h2 id=&quot;characteristics-of-ai-agents&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#characteristics-of-ai-agents&quot;&gt;&lt;/a&gt; Characteristics of AI Agents&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Autonomy&lt;/strong&gt;: Can independently make decisions.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Perception&lt;/strong&gt;: Able to perceive and interpret environmental inputs.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Reasoning and Decision-Making&lt;/strong&gt;: Uses algorithms to analyze information and determine the best course of action.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Adaptability&lt;/strong&gt;: Learns and adapts from past experiences to improve future actions.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&quot;architecture-of-an-ai-agent&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#architecture-of-an-ai-agent&quot;&gt;&lt;/a&gt; Architecture of an AI Agent&lt;/h2&gt;
-&lt;p&gt;An AI agent typically consists of four main components forming its core architecture:&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="AI" scheme="https://maohong.github.io/tags/AI/"/>
-    
-  </entry>
   
   <entry>
     <title>kafka-0.10.0启动过程分析</title>
@@ -415,9 +387,9 @@
     
     <category term="zookeeper" scheme="https://maohong.github.io/tags/zookeeper/"/>
     
-    <category term="分布式协调" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
-    
     <category term="分布式应用" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+    
+    <category term="分布式协调" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
     
   </entry>
   
@@ -490,9 +462,9 @@
     
     <category term="zookeeper" scheme="https://maohong.github.io/tags/zookeeper/"/>
     
-    <category term="横向扩展" scheme="https://maohong.github.io/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
-    
     <category term="分布式协调" scheme="https://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
+    
+    <category term="横向扩展" scheme="https://maohong.github.io/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
     
   </entry>
   
