@@ -319,9 +319,9 @@
             
             <tag> zookeeper </tag>
             
-            <tag> 分布式应用 </tag>
-            
             <tag> 分布式协调 </tag>
+            
+            <tag> 分布式应用 </tag>
             
         </tags>
       
@@ -479,9 +479,9 @@
             
             <tag> zookeeper </tag>
             
-            <tag> 分布式协调 </tag>
-            
             <tag> 横向扩展 </tag>
+            
+            <tag> 分布式协调 </tag>
             
         </tags>
       
