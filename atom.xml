@@ -45,49 +45,11 @@
   </entry>
   
   <entry>
-    <title>Storm源码编译及本地调试方法</title>
-    <link href="https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/"/>
-    <id>https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/</id>
-    <published>2016-07-13T15:53:12.000Z</published>
-    <updated>2025-03-17T10:10:40.042Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;基础环境&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#基础环境&quot;&gt;&lt;/a&gt; 基础环境&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;IDE开发环境：intelliJIdea&lt;/li&gt;
-&lt;li&gt;JDK1.7  64bit&lt;/li&gt;
-&lt;li&gt;intelliJIdea安装maven插件，配置好仓库源&lt;/li&gt;
-&lt;li&gt;intelliJIdea安装clojure插件Cursive（需要注册并获取一个license，否则只能使用30天）&lt;/li&gt;
-&lt;li&gt;如果需要自己创建clojure项目进行开发，需要安装leiningen，&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cDovL2xlaW5pbmdlbi5vcmcv&quot;&gt;下载地址&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&quot;源码获取&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#源码获取&quot;&gt;&lt;/a&gt; 源码获取&lt;/h2&gt;
-&lt;p&gt;从github checkout代码到本地即可，&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cHM6Ly9naXRodWIuY29tL2FwYWNoZS9zdG9ybS5naXQ=&quot;&gt;https://github.com/apache/storm.git&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;我这里编译的是我们目前正在用的0.10.0版本的代码。&lt;/p&gt;
-&lt;h2 id=&quot;导入idea及编译&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#导入idea及编译&quot;&gt;&lt;/a&gt; 导入idea及编译&lt;/h2&gt;
-&lt;p&gt;打开idea，新建project，从源码导入，如下：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;导入后，idea会自动根据pom.xml下载相关依赖包，部分依赖包如果下载不到，需要手动添加。完成后，可以看到project的module如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Storm" scheme="https://maohong.github.io/categories/Storm/"/>
-    
-    
-    <category term="storm" scheme="https://maohong.github.io/tags/storm/"/>
-    
-    <category term="源码编译" scheme="https://maohong.github.io/tags/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/"/>
-    
-    <category term="本地调试" scheme="https://maohong.github.io/tags/%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95/"/>
-    
-  </entry>
-  
-  <entry>
     <title>kafka-0.10.0启动过程分析</title>
-    <link href="https://maohong.github.io/20160708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/"/>
-    <id>https://maohong.github.io/20160708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</id>
-    <published>2016-07-08T14:46:18.000Z</published>
-    <updated>2025-03-17T10:10:40.002Z</updated>
+    <link href="https://maohong.github.io/20170708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/"/>
+    <id>https://maohong.github.io/20170708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</id>
+    <published>2017-07-08T14:46:18.000Z</published>
+    <updated>2025-03-28T10:36:30.257Z</updated>
     
     
     <summary type="html">&lt;p&gt;kafka-0.10.0是官方出的最新稳定版本，提供了大量新的feature，具体可见&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cDovL3d3dy5pdGVibG9nLmNvbS9hcmNoaXZlcy8xNjc3&quot;&gt;这里&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;，本文主要分析kafka-0.10-0的源码结构和启动过程。&lt;/p&gt;
@@ -114,11 +76,97 @@
   </entry>
   
   <entry>
+    <title>storm集群supervisor节点异常退出问题排查</title>
+    <link href="https://maohong.github.io/20170703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/"/>
+    <id>https://maohong.github.io/20170703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/</id>
+    <published>2017-07-03T12:48:50.000Z</published>
+    <updated>2025-03-28T10:36:08.774Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;问题出现&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#问题出现&quot;&gt;&lt;/a&gt; 问题出现&lt;/h2&gt;
+&lt;p&gt;测试storm集群为0.9.4版本，前段时间出现supervisor进程挂掉，而其上work进程仍然运行的诡异情况，通过日志看到supervisor进程挂掉之前出现以下异常：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;问题排查过程&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#问题排查过程&quot;&gt;&lt;/a&gt; 问题排查过程&lt;/h2&gt;
+&lt;p&gt;很明显，是commons-io包的FileUtils工具类抛出的异常，原因是在调用commons-io包的FileUtils工具类做move directory操作时，目的文件夹已存在。&lt;/p&gt;
+&lt;p&gt;查看调用代码（supervisor.clj的第374行），是调用download-storm-code方法从nimbus下载topology的代码，并且download-storm-code方法中做代码下载前加了锁避免并发写文件。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;果然，这里没有判断stormroot文件夹是否已存在，是个bug，具体可见这个issue：&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cHM6Ly9pc3N1ZXMuYXBhY2hlLm9yZy9qaXJhL2Jyb3dzZS9TVE9STS04MDU=&quot;&gt;https://issues.apache.org/jira/browse/STORM-805&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;。&lt;/p&gt;
+&lt;p&gt;这个问题在0.9.5版本中随着STORM-130一起修复了，代码如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;但这里有三个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在调用download-storm-code方法前，代码中已做判断是否已下载topology代码，若已下载就不会调用download-storm-code方法了。为何进入这个方法后，做move directory操作时，代码却已经下载好了呢？&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;storm的历史发布版本有很多，为何0.9.4版本里会出现这个不该出现的问题，0.9.4相对老的版本是不是做了什么修改？&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;为何抛出异常后，supervisor进程就这么直接退出了？太弱了吧。。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="Storm" scheme="https://maohong.github.io/categories/Storm/"/>
+    
+    
+    <category term="storm" scheme="https://maohong.github.io/tags/storm/"/>
+    
+    <category term="supervisor" scheme="https://maohong.github.io/tags/supervisor/"/>
+    
+    <category term="异常排查" scheme="https://maohong.github.io/tags/%E5%BC%82%E5%B8%B8%E6%8E%92%E6%9F%A5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>交换空间使用率过高问题分析</title>
+    <link href="https://maohong.github.io/20170622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    <id>https://maohong.github.io/20170622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</id>
+    <published>2017-06-22T02:02:04.000Z</published>
+    <updated>2025-03-28T10:38:48.595Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;问题现象&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#问题现象&quot;&gt;&lt;/a&gt; 问题现象&lt;/h2&gt;
+&lt;p&gt;线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。&lt;/p&gt;
+&lt;p&gt;首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空间。但究竟是什么原因引起物理内存不足呢？因为Jvm堆大小是固定的，所以推断是因堆外内存占用空间较大引起。&lt;/p&gt;
+&lt;p&gt;于是，使用jmap -histo:live &lt;pid&gt;把进程中的对象信息dump出来，dump信息如下：&lt;/pid&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;确实发现存在大量DirectByteBuffer对象，这说明内存中确实有大量引用了堆外内存的对象没有被回收！&lt;/p&gt;
+&lt;p&gt;同时，内存中也对应存在着大量的sun.misc.Cleaner和java.nio.DirectByteBuffer$Deallocator对象。这两个类是用于回收堆外内存的。Cleaner对象是在DirectByteBuffer的构造函数中创建，其中封装了回收堆外内存的逻辑，Cleaner执行clean资源的操作是通过启动Deallocator线程实现的，这个线程把DirectByteBuffer对象引用的堆外内存做回收。&lt;/p&gt;
+&lt;p&gt;那么问题来了：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;为什么DirectByteBuffer对象没有被回收？&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;怎么做才能让DirectByteBuffer对象能被及时回收？&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;问题分析&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#问题分析&quot;&gt;&lt;/a&gt; 问题分析&lt;/h2&gt;</summary>
+    
+    
+    
+    <category term="问题分析" scheme="https://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="swap分区" scheme="https://maohong.github.io/tags/swap%E5%88%86%E5%8C%BA/"/>
+    
+    <category term="问题分析" scheme="https://maohong.github.io/tags/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    
+    <category term="jvm调优" scheme="https://maohong.github.io/tags/jvm%E8%B0%83%E4%BC%98/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Storm的消息可靠处理机制</title>
-    <link href="https://maohong.github.io/20151105/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/"/>
-    <id>https://maohong.github.io/20151105/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/</id>
-    <published>2015-11-05T12:51:50.000Z</published>
-    <updated>2025-03-17T10:10:40.052Z</updated>
+    <link href="https://maohong.github.io/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/"/>
+    <id>https://maohong.github.io/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/</id>
+    <published>2017-02-05T12:51:50.000Z</published>
+    <updated>2025-03-28T10:36:04.433Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#简介&quot;&gt;&lt;/a&gt; 简介&lt;/h2&gt;
@@ -142,11 +190,39 @@
   </entry>
   
   <entry>
+    <title>使用hexo+gitpage搭建博客</title>
+    <link href="https://maohong.github.io/20160902/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
+    <id>https://maohong.github.io/20160902/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/</id>
+    <published>2016-09-02T11:50:40.000Z</published>
+    <updated>2025-03-28T10:35:10.792Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;环境准备&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#环境准备&quot;&gt;&lt;/a&gt; 环境准备&lt;/h2&gt;
+&lt;p&gt;系统：mac</summary>
+        
+      
+    
+    
+    
+    <category term="工具" scheme="https://maohong.github.io/categories/%E5%B7%A5%E5%85%B7/"/>
+    
+    
+    <category term="hexo" scheme="https://maohong.github.io/tags/hexo/"/>
+    
+    <category term="gitpage" scheme="https://maohong.github.io/tags/gitpage/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Spark on yarn的内存分配问题</title>
-    <link href="https://maohong.github.io/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/"/>
-    <id>https://maohong.github.io/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/</id>
-    <published>2015-08-11T05:23:13.000Z</published>
-    <updated>2025-03-17T10:10:40.029Z</updated>
+    <link href="https://maohong.github.io/20160811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/"/>
+    <id>https://maohong.github.io/20160811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/</id>
+    <published>2016-08-11T05:23:13.000Z</published>
+    <updated>2025-03-28T10:35:44.615Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;问题描述&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#问题描述&quot;&gt;&lt;/a&gt; 问题描述&lt;/h2&gt;
@@ -197,36 +273,29 @@
   </entry>
   
   <entry>
-    <title>storm集群supervisor节点异常退出问题排查</title>
-    <link href="https://maohong.github.io/20150703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/"/>
-    <id>https://maohong.github.io/20150703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/</id>
-    <published>2015-07-03T12:48:50.000Z</published>
-    <updated>2025-03-17T10:10:40.054Z</updated>
+    <title>Storm源码编译及本地调试方法</title>
+    <link href="https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/"/>
+    <id>https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/</id>
+    <published>2016-07-13T15:53:12.000Z</published>
+    <updated>2025-03-28T10:37:41.413Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;问题出现&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#问题出现&quot;&gt;&lt;/a&gt; 问题出现&lt;/h2&gt;
-&lt;p&gt;测试storm集群为0.9.4版本，前段时间出现supervisor进程挂掉，而其上work进程仍然运行的诡异情况，通过日志看到supervisor进程挂掉之前出现以下异常：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;h2 id=&quot;问题排查过程&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#问题排查过程&quot;&gt;&lt;/a&gt; 问题排查过程&lt;/h2&gt;
-&lt;p&gt;很明显，是commons-io包的FileUtils工具类抛出的异常，原因是在调用commons-io包的FileUtils工具类做move directory操作时，目的文件夹已存在。&lt;/p&gt;
-&lt;p&gt;查看调用代码（supervisor.clj的第374行），是调用download-storm-code方法从nimbus下载topology的代码，并且download-storm-code方法中做代码下载前加了锁避免并发写文件。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;果然，这里没有判断stormroot文件夹是否已存在，是个bug，具体可见这个issue：&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cHM6Ly9pc3N1ZXMuYXBhY2hlLm9yZy9qaXJhL2Jyb3dzZS9TVE9STS04MDU=&quot;&gt;https://issues.apache.org/jira/browse/STORM-805&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;。&lt;/p&gt;
-&lt;p&gt;这个问题在0.9.5版本中随着STORM-130一起修复了，代码如下：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150701/4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;但这里有三个问题：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;在调用download-storm-code方法前，代码中已做判断是否已下载topology代码，若已下载就不会调用download-storm-code方法了。为何进入这个方法后，做move directory操作时，代码却已经下载好了呢？&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;storm的历史发布版本有很多，为何0.9.4版本里会出现这个不该出现的问题，0.9.4相对老的版本是不是做了什么修改？&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;为何抛出异常后，supervisor进程就这么直接退出了？太弱了吧。。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;</summary>
+    <summary type="html">&lt;h2 id=&quot;基础环境&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#基础环境&quot;&gt;&lt;/a&gt; 基础环境&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;IDE开发环境：intelliJIdea&lt;/li&gt;
+&lt;li&gt;JDK1.7  64bit&lt;/li&gt;
+&lt;li&gt;intelliJIdea安装maven插件，配置好仓库源&lt;/li&gt;
+&lt;li&gt;intelliJIdea安装clojure插件Cursive（需要注册并获取一个license，否则只能使用30天）&lt;/li&gt;
+&lt;li&gt;如果需要自己创建clojure项目进行开发，需要安装leiningen，&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cDovL2xlaW5pbmdlbi5vcmcv&quot;&gt;下载地址&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;源码获取&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#源码获取&quot;&gt;&lt;/a&gt; 源码获取&lt;/h2&gt;
+&lt;p&gt;从github checkout代码到本地即可，&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cHM6Ly9naXRodWIuY29tL2FwYWNoZS9zdG9ybS5naXQ=&quot;&gt;https://github.com/apache/storm.git&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;我这里编译的是我们目前正在用的0.10.0版本的代码。&lt;/p&gt;
+&lt;h2 id=&quot;导入idea及编译&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#导入idea及编译&quot;&gt;&lt;/a&gt; 导入idea及编译&lt;/h2&gt;
+&lt;p&gt;打开idea，新建project，从源码导入，如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;导入后，idea会自动根据pom.xml下载相关依赖包，部分依赖包如果下载不到，需要手动添加。完成后，可以看到project的module如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20160713-storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;</summary>
     
     
     
@@ -235,59 +304,18 @@
     
     <category term="storm" scheme="https://maohong.github.io/tags/storm/"/>
     
-    <category term="supervisor" scheme="https://maohong.github.io/tags/supervisor/"/>
+    <category term="源码编译" scheme="https://maohong.github.io/tags/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/"/>
     
-    <category term="异常排查" scheme="https://maohong.github.io/tags/%E5%BC%82%E5%B8%B8%E6%8E%92%E6%9F%A5/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>交换空间使用率过高问题分析</title>
-    <link href="https://maohong.github.io/20150622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
-    <id>https://maohong.github.io/20150622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</id>
-    <published>2015-06-22T02:02:04.000Z</published>
-    <updated>2025-03-17T10:10:40.060Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;问题现象&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#问题现象&quot;&gt;&lt;/a&gt; 问题现象&lt;/h2&gt;
-&lt;p&gt;线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。&lt;/p&gt;
-&lt;p&gt;首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空间。但究竟是什么原因引起物理内存不足呢？因为Jvm堆大小是固定的，所以推断是因堆外内存占用空间较大引起。&lt;/p&gt;
-&lt;p&gt;于是，使用jmap -histo:live &lt;pid&gt;把进程中的对象信息dump出来，dump信息如下：&lt;/pid&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;确实发现存在大量DirectByteBuffer对象，这说明内存中确实有大量引用了堆外内存的对象没有被回收！&lt;/p&gt;
-&lt;p&gt;同时，内存中也对应存在着大量的sun.misc.Cleaner和java.nio.DirectByteBuffer$Deallocator对象。这两个类是用于回收堆外内存的。Cleaner对象是在DirectByteBuffer的构造函数中创建，其中封装了回收堆外内存的逻辑，Cleaner执行clean资源的操作是通过启动Deallocator线程实现的，这个线程把DirectByteBuffer对象引用的堆外内存做回收。&lt;/p&gt;
-&lt;p&gt;那么问题来了：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;为什么DirectByteBuffer对象没有被回收？&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;怎么做才能让DirectByteBuffer对象能被及时回收？&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&quot;问题分析&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#问题分析&quot;&gt;&lt;/a&gt; 问题分析&lt;/h2&gt;</summary>
-    
-    
-    
-    <category term="问题分析" scheme="https://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="swap分区" scheme="https://maohong.github.io/tags/swap%E5%88%86%E5%8C%BA/"/>
-    
-    <category term="问题分析" scheme="https://maohong.github.io/tags/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
-    
-    <category term="jvm调优" scheme="https://maohong.github.io/tags/jvm%E8%B0%83%E4%BC%98/"/>
+    <category term="本地调试" scheme="https://maohong.github.io/tags/%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95/"/>
     
   </entry>
   
   <entry>
     <title>hadoop-yarn中ResourceManager的服务模块</title>
-    <link href="https://maohong.github.io/20150606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/"/>
-    <id>https://maohong.github.io/20150606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/</id>
-    <published>2015-06-06T05:10:10.000Z</published>
-    <updated>2025-03-17T10:10:40.000Z</updated>
+    <link href="https://maohong.github.io/20160606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/"/>
+    <id>https://maohong.github.io/20160606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/</id>
+    <published>2016-06-06T05:10:10.000Z</published>
+    <updated>2025-03-28T10:39:49.049Z</updated>
     
     
       
@@ -311,70 +339,11 @@
   </entry>
   
   <entry>
-    <title>mac系统下hadoop-2.7源码编译、导入eclipse及打包</title>
-    <link href="https://maohong.github.io/20150518/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/"/>
-    <id>https://maohong.github.io/20150518/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/</id>
-    <published>2015-05-18T02:00:44.000Z</published>
-    <updated>2025-03-17T10:10:40.010Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;h2 id=&quot;编译环境要求&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#编译环境要求&quot;&gt;&lt;/a&gt; 编译环境要求&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;JDK1.7+&lt;br&gt;
-MAVEN 3.0以上版本&lt;br&gt;
-如果需要编译native</summary>
-        
-      
-    
-    
-    
-    <category term="Hadoop" scheme="https://maohong.github.io/categories/Hadoop/"/>
-    
-    
-    <category term="hadoop" scheme="https://maohong.github.io/tags/hadoop/"/>
-    
-    <category term="eclipse" scheme="https://maohong.github.io/tags/eclipse/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>使用hexo+gitpage搭建博客</title>
-    <link href="https://maohong.github.io/20140902/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
-    <id>https://maohong.github.io/20140902/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/</id>
-    <published>2014-09-02T11:50:40.000Z</published>
-    <updated>2025-03-17T10:10:40.063Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;h2 id=&quot;环境准备&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#环境准备&quot;&gt;&lt;/a&gt; 环境准备&lt;/h2&gt;
-&lt;p&gt;系统：mac</summary>
-        
-      
-    
-    
-    
-    <category term="工具" scheme="https://maohong.github.io/categories/%E5%B7%A5%E5%85%B7/"/>
-    
-    
-    <category term="hexo" scheme="https://maohong.github.io/tags/hexo/"/>
-    
-    <category term="gitpage" scheme="https://maohong.github.io/tags/gitpage/"/>
-    
-  </entry>
-  
-  <entry>
     <title>redis服务端连接断开问题诊断</title>
-    <link href="https://maohong.github.io/20140601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/"/>
-    <id>https://maohong.github.io/20140601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/</id>
-    <published>2014-06-01T13:29:28.000Z</published>
-    <updated>2025-03-17T10:10:40.020Z</updated>
+    <link href="https://maohong.github.io/20150601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/"/>
+    <id>https://maohong.github.io/20150601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/</id>
+    <published>2015-06-01T13:29:28.000Z</published>
+    <updated>2025-03-28T10:35:47.996Z</updated>
     
     
       
@@ -393,6 +362,33 @@ MAVEN 3.0以上版本&lt;br&gt;
     <category term="redis" scheme="https://maohong.github.io/tags/redis/"/>
     
     <category term="连接断开" scheme="https://maohong.github.io/tags/%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用httpclient引起的tcp连接数超高问题</title>
+    <link href="https://maohong.github.io/20150328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/"/>
+    <id>https://maohong.github.io/20150328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/</id>
+    <published>2015-03-28T09:44:58.000Z</published>
+    <updated>2025-03-28T10:37:33.787Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;组内的一个系统新上线了通过图片url上传图片到图片存储平台的功能。其中使用了httpclient，通过向图片存储平台发送MultipartPostMethod上传图片。当业务量较大时，10个处理线程满负荷运行，上传图片时，发现应用系统服务器的tcp连接数陡然升高，&lt;font</summary>
+        
+      
+    
+    
+    
+    <category term="问题分析" scheme="https://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="httpclient" scheme="https://maohong.github.io/tags/httpclient/"/>
+    
+    <category term="tcp连接数" scheme="https://maohong.github.io/tags/tcp%E8%BF%9E%E6%8E%A5%E6%95%B0/"/>
     
   </entry>
   
@@ -426,119 +422,11 @@ MAVEN 3.0以上版本&lt;br&gt;
   </entry>
   
   <entry>
-    <title>使用httpclient引起的tcp连接数超高问题</title>
-    <link href="https://maohong.github.io/20140328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/"/>
-    <id>https://maohong.github.io/20140328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/</id>
-    <published>2014-03-28T09:44:58.000Z</published>
-    <updated>2025-03-17T10:10:40.069Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;组内的一个系统新上线了通过图片url上传图片到图片存储平台的功能。其中使用了httpclient，通过向图片存储平台发送MultipartPostMethod上传图片。当业务量较大时，10个处理线程满负荷运行，上传图片时，发现应用系统服务器的tcp连接数陡然升高，&lt;font</summary>
-        
-      
-    
-    
-    
-    <category term="问题分析" scheme="https://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="httpclient" scheme="https://maohong.github.io/tags/httpclient/"/>
-    
-    <category term="tcp连接数" scheme="https://maohong.github.io/tags/tcp%E8%BF%9E%E6%8E%A5%E6%95%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>前后端的CharacterEncoding不一致导致提交的表单数据丢失问题</title>
-    <link href="https://maohong.github.io/20140320/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/"/>
-    <id>https://maohong.github.io/20140320/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/</id>
-    <published>2014-03-20T03:09:03.000Z</published>
-    <updated>2025-03-17T10:10:40.095Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;最近在开发分布式任务调度系统的web端时，遇到一个坑，记录如下：&lt;/p&gt;
-&lt;p&gt;在页面上新增和修改任务，提交后，任务的属性在后端怎么都接收不到，但是在另一个协同开发的同学那边本地调试就OK，在我的本地和公共开发环境都不行，这不合理啊。。。。。&lt;/p&gt;
-&lt;p&gt;排查了很多地方，</summary>
-        
-      
-    
-    
-    
-    <category term="问题分析" scheme="https://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="web开发" scheme="https://maohong.github.io/tags/web%E5%BC%80%E5%8F%91/"/>
-    
-    <category term="java" scheme="https://maohong.github.io/tags/java/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>使用shell切割文件</title>
-    <link href="https://maohong.github.io/20130307/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/"/>
-    <id>https://maohong.github.io/20130307/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/</id>
-    <published>2013-03-07T05:49:44.000Z</published>
-    <updated>2025-03-17T10:10:40.077Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;最近工作中需要使用shell，从远程rsync数据过来预处理后提交到hdfs中，再调用pig脚本在hadoop集群上处理数据，完了fs</summary>
-        
-      
-    
-    
-    
-    
-    <category term="shell" scheme="https://maohong.github.io/tags/shell/"/>
-    
-    <category term="linux" scheme="https://maohong.github.io/tags/linux/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Shell中的IFS分隔符使用</title>
-    <link href="https://maohong.github.io/20130129/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/"/>
-    <id>https://maohong.github.io/20130129/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/</id>
-    <published>2013-01-29T12:41:54.000Z</published>
-    <updated>2025-03-17T10:10:40.025Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。&lt;/p&gt;
-&lt;p&gt;工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘&#92;3′分割，如下(终端下’&#92;3′显示为方块)：&lt;/p&gt;
-&lt;p&gt;&lt;img</summary>
-        
-      
-    
-    
-    
-    <category term="Shell" scheme="https://maohong.github.io/categories/Shell/"/>
-    
-    
-    <category term="shell" scheme="https://maohong.github.io/tags/shell/"/>
-    
-  </entry>
-  
-  <entry>
     <title>将Hadoop RPC框架应用于多节点任务调度</title>
-    <link href="https://maohong.github.io/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/"/>
-    <id>https://maohong.github.io/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/</id>
-    <published>2013-01-21T12:53:38.000Z</published>
-    <updated>2025-03-17T10:10:40.101Z</updated>
+    <link href="https://maohong.github.io/20140121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/"/>
+    <id>https://maohong.github.io/20140121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/</id>
+    <published>2014-01-21T12:53:38.000Z</published>
+    <updated>2025-03-28T10:37:22.932Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#背景&quot;&gt;&lt;/a&gt; 背景&lt;/h2&gt;
@@ -576,10 +464,10 @@ MAVEN 3.0以上版本&lt;br&gt;
   
   <entry>
     <title>使用zookeeper协调多服务器的任务处理</title>
-    <link href="https://maohong.github.io/20121113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/"/>
-    <id>https://maohong.github.io/20121113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/</id>
-    <published>2012-11-13T08:16:43.000Z</published>
-    <updated>2025-03-17T10:10:40.085Z</updated>
+    <link href="https://maohong.github.io/20131113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/"/>
+    <id>https://maohong.github.io/20131113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/</id>
+    <published>2013-11-13T08:16:43.000Z</published>
+    <updated>2025-03-28T10:37:28.634Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#背景&quot;&gt;&lt;/a&gt; 背景&lt;/h2&gt;

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+  <meta name="google-site-verification" content="2gwXBUi9DEN5bqLdqlaiKGqJzQYOvyQNd7jvJSb0IEg">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Source+Code+Pro:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="简介 提交进入Storm运行的topology实际上是一个有向无环图（DAG），其中的节点是由spout和bolt组成，边则可以理解为消息从一个节点到传输到另一个节点的过程。对于spout产生的tuple，只有在topology上处理完毕后，才认为这个tuple被storm可靠处理。 Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，我们在写一个topology程序时，若需">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Storm的消息可靠处理机制">
+<meta property="og:url" content="https://maohong.github.io/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="Hong&#39;s Notes">
+<meta property="og:description" content="简介 提交进入Storm运行的topology实际上是一个有向无环图（DAG），其中的节点是由spout和bolt组成，边则可以理解为消息从一个节点到传输到另一个节点的过程。对于spout产生的tuple，只有在topology上处理完毕后，才认为这个tuple被storm可靠处理。 Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，我们在写一个topology程序时，若需">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20151105/bolt-executor.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20151105/storm-ack.png">
+<meta property="article:published_time" content="2017-02-05T12:51:50.000Z">
+<meta property="article:modified_time" content="2025-03-28T10:36:04.433Z">
+<meta property="article:author" content="Hong">
+<meta property="article:tag" content="storm">
+<meta property="article:tag" content="实时计算">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/maohong/picture/master/20151105/bolt-executor.png">
+
+
+<link rel="canonical" href="https://maohong.github.io/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://maohong.github.io/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/","path":"20170205/Storm的消息可靠处理机制/","title":"Storm的消息可靠处理机制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Storm的消息可靠处理机制 | Hong's Notes</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YQVQS4CLD"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-4YQVQS4CLD","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end -->
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="Hong's Notes" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hong's Notes</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">High Performance, High Availability and Scalable Architecture, ML, AI and Big Data</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-books"><a href="/books/" rel="section"><i class="fa fa-book fa-fw"></i>Books</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text"> 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E7%A8%8B%E5%BA%8F%E4%B8%AD%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text"> 在程序中实现消息可靠处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E7%AE%80%E4%BE%BF%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text"> 更简便的方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text"> 原理&amp;示例</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Hong"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Hong</p>
+  <div class="site-description" itemprop="description">Overthinking only lead to problems, actions lead to answers.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL21hb2hvbmc=" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;maohong"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cubGlua2VkaW4uY29tL2luL2hvbmdtYW84Nw==" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;hongmao87"><i class="fab fa-linkedin fa-fw"></i>LinkedIn</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Storm的消息可靠处理机制 | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Storm的消息可靠处理机制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-02-05 20:51:50" itemprop="dateCreated datePublished" datetime="2017-02-05T20:51:50+08:00">2017-02-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-03-28 18:36:04" itemprop="dateModified" datetime="2025-03-28T18:36:04+08:00">2025-03-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Storm/" itemprop="url" rel="index"><span itemprop="name">Storm</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>1.8k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>6 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h2>
+<p>提交进入Storm运行的topology实际上是一个有向无环图（DAG），其中的节点是由spout和bolt组成，边则可以理解为消息从一个节点到传输到另一个节点的过程。对于spout产生的tuple，只有在topology上处理完毕后，才认为这个tuple被storm可靠处理。</p>
+<p>Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，我们在写一个topology程序时，若需要保证spout产生的消息的可靠处理，需要做到两点：</p>
+<p>第一是spout/bolt每生成一个新的tuple都告诉storm一下（其中spout发出的tuple有个id叫rootId），从而让storm能够追踪rootId和每个衍生tuple的处理状态。</p>
+<p>第二是每个tuple被下游bolt处理完毕后，无论处理成功或失败，也再告诉storm一下，从而让storm知道是否需要spout重新发送rootId。</p>
+<p>做了这两件事，storm就能知道这个tuple是否被处理完毕。如果是处理成功了的，就说明最初从spout发出的tuple（rootId）已在topology中处理完毕，无需spout重新发送。如果是处理失败的，storm则会告知spout重新发送rootId这个tuple。</p>
+<h2 id="在程序中实现消息可靠处理"><a class="markdownIt-Anchor" href="#在程序中实现消息可靠处理"></a> 在程序中实现消息可靠处理</h2>
+<p>那在写一个topology时，我们该如何做上面提到的两件事呢？</p>
+<span id="more"></span>
+<p>Storm提供了BaseRichBolt抽象类（实现了IRichBolt接口），一个示例bolt如下：</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SplitSentence</span> <span class="keyword">extends</span> <span class="title class_">BaseRichBolt</span> {</span><br><span class="line">    OutputCollector _collector;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">prepare</span><span class="params">(Map conf, TopologyContext context, OutputCollector collector)</span> {</span><br><span class="line">        _collector = collector;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">execute</span><span class="params">(Tuple t)</span> {</span><br><span class="line">        <span class="type">String</span> <span class="variable">sentence</span> <span class="operator">=</span> t.getString(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">for</span>(String word: sentence.split(<span class="string">" "</span>)) {</span><br><span class="line">            <span class="comment">//1. 告诉storm生成了一个新的tuple，并且这个tuple的锚点是tuple</span></span><br><span class="line">            _collector.emit(t, <span class="keyword">new</span> <span class="title class_">Values</span>(word));</span><br><span class="line">        }</span><br><span class="line">        _collector.ack(t); <span class="comment">//2. 告诉storm，t这个tuple已处理完毕</span></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">declareOutputFields</span><span class="params">(OutputFieldsDeclarer declarer)</span> {</span><br><span class="line">        declarer.declare(<span class="keyword">new</span> <span class="title class_">Fields</span>(<span class="string">"word"</span>));</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>这段代码就做了这两件事，一是输出新的tuple并告知storm，二是对当前tuple t处理完毕后，告知storm。</p>
+<p>对于第一件事，这里要注意的是，在BaseRichBolt中输出一个新的tuple（示例中是word）时，必须指定其锚点（即当前bolt正在处理的tuple），因为输出新的tuple会继续被下游bolt处理，这个锚点tuple和下游tuple之间的路径就是DAG的一条边。如果不指定锚点，则可以理解为storm不知道这条边的存在，也就不会对新输出的tuple进行跟踪了。</p>
+<p>如果我们确实不需要保证消息的可靠处理，则使用以下方式输出新tuple即可。</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_collector.emit(<span class="keyword">new</span> <span class="title class_">Values</span>(word));</span><br></pre></td></tr></tbody></table></figure>
+<p>另外，一个tuple的锚点tuple可以有多个，比如如下代码，新输出的tuple的锚点就是tuple1和tuple2。</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">List</span> <span class="variable">anchors</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>();</span><br><span class="line">anchors.add(tuple1);</span><br><span class="line">anchors.add(tuple2);</span><br><span class="line">_collector.emit(anchors, <span class="keyword">new</span> <span class="title class_">Values</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>));</span><br></pre></td></tr></tbody></table></figure>
+<p>对于第二件事，通过调用OutputCollector的ack或fail方法，即可告知storm当前tuple的处理结果。比如，假设我们在bolt中做一些操作的时候出现异常（比如访问redis、DB、hdfs等），可以调fail方法快速重放rootId，避免等到storm判断这个tuple处理超时后才重放。</p>
+<h2 id="更简便的方式"><a class="markdownIt-Anchor" href="#更简便的方式"></a> 更简便的方式</h2>
+<p>很明显，以上方式有几个弊端：</p>
+<ol>
+<li>
+<p>输出新tuple和对tuple的ack/fail操作需要我们自己维护，代价很高，容易遗忘。</p>
+</li>
+<li>
+<p>storm是在内存中维护每个tuple的处理状态，如果只对tuple进行锚点标记但处理完毕后忘记ack/fail，在tuple量非常大时，有内存溢出的风险。</p>
+</li>
+</ol>
+<p>鉴于此，storm提供了BaseBasicBolt抽象类（实现了IBasicBolt接口）来帮助我们实现对每个tuple的锚点标记和ack/fail。<br>
+前面的例子可改写如下：</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SplitSentence</span> <span class="keyword">extends</span> <span class="title class_">BaseBasicBolt</span> {</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">execute</span><span class="params">(Tuple tuple, BasicOutputCollector collector)</span> {</span><br><span class="line">        <span class="type">String</span> <span class="variable">sentence</span> <span class="operator">=</span> tuple.getString(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">for</span>(String word: sentence.split(<span class="string">" "</span>)) {</span><br><span class="line">            collector.emit(<span class="keyword">new</span> <span class="title class_">Values</span>(word));</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">declareOutputFields</span><span class="params">(OutputFieldsDeclarer declarer)</span> {</span><br><span class="line">        declarer.declare(<span class="keyword">new</span> <span class="title class_">Fields</span>(<span class="string">"word"</span>));</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>可见，在代码中，我们只需要关心bolt的处理逻辑即可，至于标记锚点和ack/fail，均不用关心。</p>
+<p>细究一下storm框架对IBasicBolt的处理可知，在创建topology时，IBasicBolt是被封装在BasicBoltExecutor类（实现了IRichBolt接口）中处理的。</p>
+<p>构建topology时的setBolt方法：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20151105/bolt-executor.png" alt=""></p>
+<h2 id="原理示例"><a class="markdownIt-Anchor" href="#原理示例"></a> 原理&amp;示例</h2>
+<p>刚刚提到对每个topology，storm都在内存中维护其tuple的处理状态，那么对于一个大规模集群，storm是如何高效的维护大量tuple的处理状态的呢？</p>
+<p>其实，topology在运行时，内部有一组特殊的任务叫acker，专门用来做tuple的ack/fail。当一个root tuple（spout输出的tuple）在DAG中处理完毕后，acker会向产生该tuple的spout发送消息来ack这个tuple。</p>
+<p>我们可通过参数Config.TOPOLOGY_ACKER_EXECUTORS指定topology中的acker任务的数量，默认是与topology中的worker数相同，在处理大量消息的场景下，可以通过此参数增加topology的acker任务数，以提高对message做ack/fail的效率。</p>
+<p>storm通过给每个tuple设置一个全局唯一id，并在输出tuple和tuple处理完毕时收集tuple的id，并进行异或运算，巧妙的实现tuple状态的维护。先看下图示例：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20151105/storm-ack.png" alt=""></p>
+<p>在这个topology其中包含一个spout，3个bolt和一个acker bolt，紫色线表示tuple的流向，绿色线表示每个bolt处理完tuple后的ack/fail调用，红色线表示acker回调spout的ack/fail方法来标记root tuple处理完毕。</p>
+<p>以下是storm的ack框架对tuple的处理状态维护过程说明：</p>
+<p>第(1)(2)步，spout发送T1到bolt1，发送T2到bolt2，T1和T2具有相同的内容（可以认为都把spout的输出作为自己的输入）。每条消息都会有一个全局唯一id，T1的锚点为&lt;rootId,T1&gt;，T2的锚点为&lt;rootId,T2&gt;。</p>
+<p>第(3)步，spout发送完毕T1、T2后，在acker中注册一条记录rootId=T1^T2。</p>
+<p>第(4)(5)步，bolt1收到T1处理完毕后对T1进行ack并发送T3,T4到bolt3，所以在acker中注册T1,T3,T4，acker中的跟踪项变为rootId=T1<sup>T2</sup>T1<sup>T3</sup>T4=T2<sup>T3</sup>T4</p>
+<p>第(6)(7)步，bolt2收到T2处理完毕后对T2进行ack并发送T5,T6,T7到bolt4，所以在acker中注册T2,T5,T6,T7，acker中的跟踪项变为rootId=T2<sup>T3</sup>T4<sup>T2</sup>T5<sup>T6</sup>T7=T3<sup>T4</sup>T5<sup>T6</sup>T7</p>
+<p>第(8)步，bolt3收到T3,T4处理完毕后对T3,T4进行ack，没有输出新的tuple，所以在acker中注册T3,T4，acker中的跟踪项变为rootId=T3<sup>T4</sup>T5<sup>T6</sup>T7<sup>T3</sup>T4=T5<sup>T6</sup>T7</p>
+<p>第(9)步，bolt4收到T5,T6,T7处理完毕后对T5,T6,T7进行ack，没有输出新的tuple，所以在acker中注册T5,T6,T7，acker中的跟踪项变为rootId=T5<sup>T6</sup>T7<sup>T5</sup>T6^T7=0</p>
+<p>第(10)步，acker bolt发现rootId对应的追踪值为0，说明该rootId对应的源消息以及衍生出来的所有消息（bolt1,bolt2新输出的消息）都被成功处理完毕。于是acker bolt会回调spout的ack方法，标识消息rootId已被topology处理成功。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Hong
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://maohong.github.io/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/" title="Storm的消息可靠处理机制">https://maohong.github.io/20170205/Storm的消息可靠处理机制/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/storm/" rel="tag"># storm</a>
+              <a href="/tags/%E5%AE%9E%E6%97%B6%E8%AE%A1%E7%AE%97/" rel="tag"># 实时计算</a>
+          </div>
+
+        
+  <div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_dd" target="_blank" rel="noopener" href="https://www.addtoany.com/share"></a>
+      <a class="a2a_button_facebook"></a>
+      <a class="a2a_button_twitter"></a>
+      <a class="a2a_button_linkedin"></a>
+      <a class="a2a_button_wechat"></a>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/20170622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" rel="prev" title="交换空间使用率过高问题分析">
+                  <i class="fa fa-angle-left"></i> 交换空间使用率过高问题分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/20160902/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" rel="next" title="使用hexo+gitpage搭建博客">
+                  使用hexo+gitpage搭建博客 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>English</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="en" data-href="/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/" selected="">
+          English
+        </option>
+      
+        <option value="zh-CN" data-href="/zh-CN/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/" selected="">
+          简体中文
+        </option>
+      
+    </select>
+  </div>
+
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Hong</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="Word count total">26k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">1:34</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL21hb2hvbmc=" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.3.0/pdfobject.min.js","integrity":"sha256-JJZNsid68vnh3/zyj0lY9BN5ynxVX/12XgOa1TlaYN0="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="/js/third-party/tags/pdf.js"></script>
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"8.8.4","theme":{"light":"default","dark":"dark"},"options":{"startOnLoad":true,"securityLevel":true,"flowchart":{"useMaxWidth":true},"sequenceDiagram":{"actorFontWeight":"normal","actorFontSize":14,"noteFontWeight":"normal","noteFontSize":14,"messageFontWeight":"normal","messageFontSize":16},"gantt":{"titleTopMargin":25,"barHeight":20,"barGap":4,"topPadding":50,"sidePadding":75,"gridLineStartPadding":35,"fontSize":11,"fontFamily":"\"Open-Sans\", \"sans-serif\"","numberSectionStyles":4,"axisFormat":"%Y-%m-%d"}},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.min.js","integrity":"sha256-G8ouPAnw4zzMbnAenHnVz6h9XpKbNdOkrqTh7AadyHs="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  <script src="/js/third-party/addtoany.js"></script>
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"maohong/maohong.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YQVQS4CLD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-4YQVQS4CLD');
+  </script>
+</body>
+</html>

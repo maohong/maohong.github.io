@@ -162,18 +162,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -319,6 +319,755 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20170708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/20170708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">kafka-0.10.0启动过程分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-07-08 22:46:18" itemprop="dateCreated datePublished" datetime="2017-07-08T22:46:18+08:00">2017-07-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-03-28 18:36:30" itemprop="dateModified" datetime="2025-03-28T18:36:30+08:00">2025-03-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>1.4k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>5 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>kafka-0.10.0是官方出的最新稳定版本，提供了大量新的feature，具体可见<span class="exturl" data-url="aHR0cDovL3d3dy5pdGVibG9nLmNvbS9hcmNoaXZlcy8xNjc3">这里<i class="fa fa-external-link-alt"></i></span>，本文主要分析kafka-0.10-0的源码结构和启动过程。</p>
+<h2 id="源码结构"><a class="markdownIt-Anchor" href="#源码结构"></a> 源码结构</h2>
+<p>kafka-0.10.0的源码可以从github上fork一份，在源码目录下执行./gradlew idea生成idea项目，然后导入idea即可。这中间需要使用gradle进行依赖包的下载，导入后可以看到其源码结构如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20160708-kafka0.10.0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/1.png" alt=""></p>
+<p>包括几大重要模块：</p>
+<ul>
+<li>clients主要是kafka-client相关的代码，包括consumer、producer，还包括一些公共逻辑，如授权认证、序列化等。</li>
+<li>connect主要是kafka-connect模块的代码逻辑，Kafka connect是0.9版本增加的特性,支持创建和管理数据流管道。通过它可以将大数据从其它系统导入到Kafka中，也可以从Kafka中导出到其它系统，比如数据库、elastic search等。</li>
+<li>core模块是kafka的核心部分，主要包括broker的实现逻辑、producer和consumer的javaapi等。</li>
+<li>streams模块主要是kafka-streaming的实现，提供了一整套描述常见流操作的高级语言API（比如 joining, filtering以及aggregation等），我们可以基于此开发流处理应用程序。</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/20170708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20170703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/20170703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" class="post-title-link" itemprop="url">storm集群supervisor节点异常退出问题排查</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-07-03 20:48:50" itemprop="dateCreated datePublished" datetime="2017-07-03T20:48:50+08:00">2017-07-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-03-28 18:36:08" itemprop="dateModified" datetime="2025-03-28T18:36:08+08:00">2025-03-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Storm/" itemprop="url" rel="index"><span itemprop="name">Storm</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>915</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>3 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="问题出现"><a class="markdownIt-Anchor" href="#问题出现"></a> 问题出现</h2>
+<p>测试storm集群为0.9.4版本，前段时间出现supervisor进程挂掉，而其上work进程仍然运行的诡异情况，通过日志看到supervisor进程挂掉之前出现以下异常：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150701/1.png" alt=""></p>
+<h2 id="问题排查过程"><a class="markdownIt-Anchor" href="#问题排查过程"></a> 问题排查过程</h2>
+<p>很明显，是commons-io包的FileUtils工具类抛出的异常，原因是在调用commons-io包的FileUtils工具类做move directory操作时，目的文件夹已存在。</p>
+<p>查看调用代码（supervisor.clj的第374行），是调用download-storm-code方法从nimbus下载topology的代码，并且download-storm-code方法中做代码下载前加了锁避免并发写文件。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150701/2.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150701/3.png" alt=""></p>
+<p>果然，这里没有判断stormroot文件夹是否已存在，是个bug，具体可见这个issue：<span class="exturl" data-url="aHR0cHM6Ly9pc3N1ZXMuYXBhY2hlLm9yZy9qaXJhL2Jyb3dzZS9TVE9STS04MDU=">https://issues.apache.org/jira/browse/STORM-805<i class="fa fa-external-link-alt"></i></span>。</p>
+<p>这个问题在0.9.5版本中随着STORM-130一起修复了，代码如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150701/4.png" alt=""></p>
+<p>但这里有三个问题：</p>
+<ol>
+<li>
+<p>在调用download-storm-code方法前，代码中已做判断是否已下载topology代码，若已下载就不会调用download-storm-code方法了。为何进入这个方法后，做move directory操作时，代码却已经下载好了呢？</p>
+</li>
+<li>
+<p>storm的历史发布版本有很多，为何0.9.4版本里会出现这个不该出现的问题，0.9.4相对老的版本是不是做了什么修改？</p>
+</li>
+<li>
+<p>为何抛出异常后，supervisor进程就这么直接退出了？太弱了吧。。</p>
+</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/20170703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20170622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/20170622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">交换空间使用率过高问题分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-06-22 10:02:04" itemprop="dateCreated datePublished" datetime="2017-06-22T10:02:04+08:00">2017-06-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-03-28 18:38:48" itemprop="dateModified" datetime="2025-03-28T18:38:48+08:00">2025-03-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">问题分析</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>4 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="问题现象"><a class="markdownIt-Anchor" href="#问题现象"></a> 问题现象</h2>
+<p>线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png" alt=""></p>
+<p>图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。</p>
+<p>首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空间。但究竟是什么原因引起物理内存不足呢？因为Jvm堆大小是固定的，所以推断是因堆外内存占用空间较大引起。</p>
+<p>于是，使用jmap -histo:live <pid>把进程中的对象信息dump出来，dump信息如下：</pid></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/2.png" alt=""></p>
+<p>确实发现存在大量DirectByteBuffer对象，这说明内存中确实有大量引用了堆外内存的对象没有被回收！</p>
+<p>同时，内存中也对应存在着大量的sun.misc.Cleaner和java.nio.DirectByteBuffer$Deallocator对象。这两个类是用于回收堆外内存的。Cleaner对象是在DirectByteBuffer的构造函数中创建，其中封装了回收堆外内存的逻辑，Cleaner执行clean资源的操作是通过启动Deallocator线程实现的，这个线程把DirectByteBuffer对象引用的堆外内存做回收。</p>
+<p>那么问题来了：</p>
+<ol>
+<li>
+<p>为什么DirectByteBuffer对象没有被回收？</p>
+</li>
+<li>
+<p>怎么做才能让DirectByteBuffer对象能被及时回收？</p>
+</li>
+</ol>
+<h2 id="问题分析"><a class="markdownIt-Anchor" href="#问题分析"></a> 问题分析</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/20170622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">Storm的消息可靠处理机制</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-02-05 20:51:50" itemprop="dateCreated datePublished" datetime="2017-02-05T20:51:50+08:00">2017-02-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-03-28 18:36:04" itemprop="dateModified" datetime="2025-03-28T18:36:04+08:00">2025-03-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Storm/" itemprop="url" rel="index"><span itemprop="name">Storm</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>1.8k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>6 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h2>
+<p>提交进入Storm运行的topology实际上是一个有向无环图（DAG），其中的节点是由spout和bolt组成，边则可以理解为消息从一个节点到传输到另一个节点的过程。对于spout产生的tuple，只有在topology上处理完毕后，才认为这个tuple被storm可靠处理。</p>
+<p>Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，我们在写一个topology程序时，若需要保证spout产生的消息的可靠处理，需要做到两点：</p>
+<p>第一是spout/bolt每生成一个新的tuple都告诉storm一下（其中spout发出的tuple有个id叫rootId），从而让storm能够追踪rootId和每个衍生tuple的处理状态。</p>
+<p>第二是每个tuple被下游bolt处理完毕后，无论处理成功或失败，也再告诉storm一下，从而让storm知道是否需要spout重新发送rootId。</p>
+<p>做了这两件事，storm就能知道这个tuple是否被处理完毕。如果是处理成功了的，就说明最初从spout发出的tuple（rootId）已在topology中处理完毕，无需spout重新发送。如果是处理失败的，storm则会告知spout重新发送rootId这个tuple。</p>
+<h2 id="在程序中实现消息可靠处理"><a class="markdownIt-Anchor" href="#在程序中实现消息可靠处理"></a> 在程序中实现消息可靠处理</h2>
+<p>那在写一个topology时，我们该如何做上面提到的两件事呢？</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/20170205/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20160902/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/20160902/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" class="post-title-link" itemprop="url">使用hexo+gitpage搭建博客</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2016-09-02 19:50:40" itemprop="dateCreated datePublished" datetime="2016-09-02T19:50:40+08:00">2016-09-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-03-28 18:35:10" itemprop="dateModified" datetime="2025-03-28T18:35:10+08:00">2025-03-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">工具</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>378</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="环境准备"><a class="markdownIt-Anchor" href="#环境准备"></a> 环境准备</h2>
+<p>系统：mac osx<br>
+软件：Node.js，npm，git，hexo<br>
+具体安装以及git与github打通的配置就不详述了，可以google到各种方法。</p>
+<h2 id="hexo命令"><a class="markdownIt-Anchor" href="#hexo命令"></a> hexo命令</h2>
+<p>hexo init &lt;folder&gt;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #表示执行init命令初始化hexo到你指定的目录<br>
+<font color="red">以下命令需要在&lt;folder&gt;目录下执行：</font><br>
+hexo generate  &nbsp;&nbsp;&nbsp;#自动根据当前目录下文件,生成静态网页<br>
+hexo server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#运行本地服务</p>
+<p>启动服务后，就可以通过访问 <span class="exturl" data-url="aHR0cDovL2xvY2FsaG9zdDo0MDAw">http://localhost:4000<i class="fa fa-external-link-alt"></i></span> 来看看效果了。<br>
+接下来，可以使用以下命令来创建一篇新博文：<br>
+hexo new “test blog 1”<br>
+创建一个名为test blog 1的博客页面，对应的md文件路径是&lt;folder&gt;/source/_posts\test blog <span class="exturl" data-url="aHR0cDovLzEubWQ=">1.md<i class="fa fa-external-link-alt"></i></span></p>
+<p>接下来就可以在这个md文件中写文章了，我使用的是MacDown来编辑md文件，支持实时查看页面效果，还是挺好用的。</p>
+<h2 id="发布博客"><a class="markdownIt-Anchor" href="#发布博客"></a> 发布博客</h2>
+<p>文章写好后，通过以下方式发布到github上。<br>
+1.编辑./_config.yml文件，修改以下部分，配置本地内容同步至github：</p>
+<blockquote>
+<p>deploy:<br>
+&nbsp;&nbsp;type: git<br>
+&nbsp;&nbsp;repository: <span class="exturl" data-url="bWFpbHRvOmdpdEBnaXRodWIuY29t">git@github.com<i class="fa fa-external-link-alt"></i></span>:maohong/maohong.github.io.git<br>
+&nbsp;&nbsp;branch: master</p>
+</blockquote>
+<p>2.执行hexo generate(hexo g)生成html内容<br>
+3.执行hexo deploy(hexo d)讲更新内容发布至guthub</p>
+<p>然后就可以访问主页查看效果了，可以使用github帐户名.github.io进行访问, 也可以设置个性域名。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20160811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/20160811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">Spark on yarn的内存分配问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2016-08-11 13:23:13" itemprop="dateCreated datePublished" datetime="2016-08-11T13:23:13+08:00">2016-08-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-03-28 18:35:44" itemprop="dateModified" datetime="2025-03-28T18:35:44+08:00">2025-03-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spark/" itemprop="url" rel="index"><span itemprop="name">Spark</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>4 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="问题描述"><a class="markdownIt-Anchor" href="#问题描述"></a> 问题描述</h2>
+<p>在测试spark on yarn时，发现一些内存分配上的问题，具体如下。</p>
+<p>在$SPARK_HOME/conf/spark-env.sh中配置如下参数：</p>
+<blockquote>
+<p>SPARK_EXECUTOR_INSTANCES=4            <em>在yarn集群中启动的executor进程数</em></p>
+<p>SPARK_EXECUTOR_MEMORY=2G              <em>为每个executor进程分配的内存大小</em></p>
+<p>SPARK_DRIVER_MEMORY=1G                <em>为spark-driver进程分配的内存大小</em></p>
+</blockquote>
+<p>执行$SPARK_HOME/bin/spark-sql –master yarn，按yarn-client模式启动spark-sql交互命令行（即driver程序运行在本地，而非yarn的container中），日志显示的关于AppMaster和Executor的内存信息如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-1.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-2.png" alt=""></p>
+<p>日志显示，AppMaster的内存是896MB，其中包含了384MB的memoryOverhead；启动了5个executor，第一个的可用内存是530.3MB，其余每个Executor的可用内存是1060.3MB。</p>
+<p>到yarnUI看下资源使用情况，共启动了5个container，占用内存13G，其中一台NodeManager启动了2个container，占用内存4G（1个AppMaster占1G、另一个占3G），另外3台各启了1个container，每个占用3G内存。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-3.png" alt=""></p>
+<p>再到sparkUI看下executors的情况，这里有5个executor，其中driver是运行在执行spark-sql命令的本地服务器上，另外4个是运行在yarn集群中。Driver的可用storage memory为530.3MB，另外4个都是1060.3MB（与日志信息一致）。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-4.png" alt=""></p>
+<p>那么问题来了：</p>
+<ol>
+<li>
+<p>Yarn为container分配的最小内存由yarn.scheduler.minimum-allocation-mb参数决定，默认是1G，从yarnUI中看确实如此，可为何spark的日志里显示AppMaster的实际内存是896-384=512MB呢？384MB是怎么算出来的？</p>
+</li>
+<li>
+<p>spark配置文件里指定了每个executor的内存为2G，为何日志和sparkUI上显示的是1060.3MB？</p>
+</li>
+<li>
+<p>driver的内存配置为1G，为何sparkUI里显示的是530.3MB呢？</p>
+</li>
+<li>
+<p>为何yarn中每个container分配的内存是3G，而不是executor需要的2G呢？</p>
+</li>
+</ol>
+<h2 id="问题解析"><a class="markdownIt-Anchor" href="#问题解析"></a> 问题解析</h2>
+<p>进过一番调研，发现这里有些概念容易混淆，整理如下，序号对应上面的问题：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/20160811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20160713/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -355,7 +1104,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
+      <time title="Modified: 2025-03-28 18:37:41" itemprop="dateModified" datetime="2025-03-28T18:37:41+08:00">2025-03-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -441,7 +1190,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20160708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20160606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -459,7 +1208,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/20160708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">kafka-0.10.0启动过程分析</a>
+          <a href="/20160606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/" class="post-title-link" itemprop="url">hadoop-yarn中ResourceManager的服务模块</a>
         </h2>
 
         <div class="post-meta-container">
@@ -470,638 +1219,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2016-07-08 22:46:18" itemprop="dateCreated datePublished" datetime="2016-07-08T22:46:18+08:00">2016-07-08</time>
+      <time title="Created: 2016-06-06 13:10:10" itemprop="dateCreated datePublished" datetime="2016-06-06T13:10:10+08:00">2016-06-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>1.4k</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>5 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>kafka-0.10.0是官方出的最新稳定版本，提供了大量新的feature，具体可见<span class="exturl" data-url="aHR0cDovL3d3dy5pdGVibG9nLmNvbS9hcmNoaXZlcy8xNjc3">这里<i class="fa fa-external-link-alt"></i></span>，本文主要分析kafka-0.10-0的源码结构和启动过程。</p>
-<h2 id="源码结构"><a class="markdownIt-Anchor" href="#源码结构"></a> 源码结构</h2>
-<p>kafka-0.10.0的源码可以从github上fork一份，在源码目录下执行./gradlew idea生成idea项目，然后导入idea即可。这中间需要使用gradle进行依赖包的下载，导入后可以看到其源码结构如下图所示：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20160708-kafka0.10.0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/1.png" alt=""></p>
-<p>包括几大重要模块：</p>
-<ul>
-<li>clients主要是kafka-client相关的代码，包括consumer、producer，还包括一些公共逻辑，如授权认证、序列化等。</li>
-<li>connect主要是kafka-connect模块的代码逻辑，Kafka connect是0.9版本增加的特性,支持创建和管理数据流管道。通过它可以将大数据从其它系统导入到Kafka中，也可以从Kafka中导出到其它系统，比如数据库、elastic search等。</li>
-<li>core模块是kafka的核心部分，主要包括broker的实现逻辑、producer和consumer的javaapi等。</li>
-<li>streams模块主要是kafka-streaming的实现，提供了一整套描述常见流操作的高级语言API（比如 joining, filtering以及aggregation等），我们可以基于此开发流处理应用程序。</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/20160708/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20151105/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Hong">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hong's Notes">
-      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hong's Notes">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/20151105/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">Storm的消息可靠处理机制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2015-11-05 20:51:50" itemprop="dateCreated datePublished" datetime="2015-11-05T20:51:50+08:00">2015-11-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Storm/" itemprop="url" rel="index"><span itemprop="name">Storm</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>1.8k</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>6 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h2>
-<p>提交进入Storm运行的topology实际上是一个有向无环图（DAG），其中的节点是由spout和bolt组成，边则可以理解为消息从一个节点到传输到另一个节点的过程。对于spout产生的tuple，只有在topology上处理完毕后，才认为这个tuple被storm可靠处理。</p>
-<p>Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，我们在写一个topology程序时，若需要保证spout产生的消息的可靠处理，需要做到两点：</p>
-<p>第一是spout/bolt每生成一个新的tuple都告诉storm一下（其中spout发出的tuple有个id叫rootId），从而让storm能够追踪rootId和每个衍生tuple的处理状态。</p>
-<p>第二是每个tuple被下游bolt处理完毕后，无论处理成功或失败，也再告诉storm一下，从而让storm知道是否需要spout重新发送rootId。</p>
-<p>做了这两件事，storm就能知道这个tuple是否被处理完毕。如果是处理成功了的，就说明最初从spout发出的tuple（rootId）已在topology中处理完毕，无需spout重新发送。如果是处理失败的，storm则会告知spout重新发送rootId这个tuple。</p>
-<h2 id="在程序中实现消息可靠处理"><a class="markdownIt-Anchor" href="#在程序中实现消息可靠处理"></a> 在程序中实现消息可靠处理</h2>
-<p>那在写一个topology时，我们该如何做上面提到的两件事呢？</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/20151105/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Hong">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hong's Notes">
-      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hong's Notes">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">Spark on yarn的内存分配问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2015-08-11 13:23:13" itemprop="dateCreated datePublished" datetime="2015-08-11T13:23:13+08:00">2015-08-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Spark/" itemprop="url" rel="index"><span itemprop="name">Spark</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>1.1k</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>4 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="问题描述"><a class="markdownIt-Anchor" href="#问题描述"></a> 问题描述</h2>
-<p>在测试spark on yarn时，发现一些内存分配上的问题，具体如下。</p>
-<p>在$SPARK_HOME/conf/spark-env.sh中配置如下参数：</p>
-<blockquote>
-<p>SPARK_EXECUTOR_INSTANCES=4            <em>在yarn集群中启动的executor进程数</em></p>
-<p>SPARK_EXECUTOR_MEMORY=2G              <em>为每个executor进程分配的内存大小</em></p>
-<p>SPARK_DRIVER_MEMORY=1G                <em>为spark-driver进程分配的内存大小</em></p>
-</blockquote>
-<p>执行$SPARK_HOME/bin/spark-sql –master yarn，按yarn-client模式启动spark-sql交互命令行（即driver程序运行在本地，而非yarn的container中），日志显示的关于AppMaster和Executor的内存信息如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-1.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-2.png" alt=""></p>
-<p>日志显示，AppMaster的内存是896MB，其中包含了384MB的memoryOverhead；启动了5个executor，第一个的可用内存是530.3MB，其余每个Executor的可用内存是1060.3MB。</p>
-<p>到yarnUI看下资源使用情况，共启动了5个container，占用内存13G，其中一台NodeManager启动了2个container，占用内存4G（1个AppMaster占1G、另一个占3G），另外3台各启了1个container，每个占用3G内存。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-3.png" alt=""></p>
-<p>再到sparkUI看下executors的情况，这里有5个executor，其中driver是运行在执行spark-sql命令的本地服务器上，另外4个是运行在yarn集群中。Driver的可用storage memory为530.3MB，另外4个都是1060.3MB（与日志信息一致）。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150813/sparkonyarn-4.png" alt=""></p>
-<p>那么问题来了：</p>
-<ol>
-<li>
-<p>Yarn为container分配的最小内存由yarn.scheduler.minimum-allocation-mb参数决定，默认是1G，从yarnUI中看确实如此，可为何spark的日志里显示AppMaster的实际内存是896-384=512MB呢？384MB是怎么算出来的？</p>
-</li>
-<li>
-<p>spark配置文件里指定了每个executor的内存为2G，为何日志和sparkUI上显示的是1060.3MB？</p>
-</li>
-<li>
-<p>driver的内存配置为1G，为何sparkUI里显示的是530.3MB呢？</p>
-</li>
-<li>
-<p>为何yarn中每个container分配的内存是3G，而不是executor需要的2G呢？</p>
-</li>
-</ol>
-<h2 id="问题解析"><a class="markdownIt-Anchor" href="#问题解析"></a> 问题解析</h2>
-<p>进过一番调研，发现这里有些概念容易混淆，整理如下，序号对应上面的问题：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/20150811/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20150703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Hong">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hong's Notes">
-      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hong's Notes">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/20150703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" class="post-title-link" itemprop="url">storm集群supervisor节点异常退出问题排查</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2015-07-03 20:48:50" itemprop="dateCreated datePublished" datetime="2015-07-03T20:48:50+08:00">2015-07-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Storm/" itemprop="url" rel="index"><span itemprop="name">Storm</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>915</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>3 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="问题出现"><a class="markdownIt-Anchor" href="#问题出现"></a> 问题出现</h2>
-<p>测试storm集群为0.9.4版本，前段时间出现supervisor进程挂掉，而其上work进程仍然运行的诡异情况，通过日志看到supervisor进程挂掉之前出现以下异常：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150701/1.png" alt=""></p>
-<h2 id="问题排查过程"><a class="markdownIt-Anchor" href="#问题排查过程"></a> 问题排查过程</h2>
-<p>很明显，是commons-io包的FileUtils工具类抛出的异常，原因是在调用commons-io包的FileUtils工具类做move directory操作时，目的文件夹已存在。</p>
-<p>查看调用代码（supervisor.clj的第374行），是调用download-storm-code方法从nimbus下载topology的代码，并且download-storm-code方法中做代码下载前加了锁避免并发写文件。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150701/2.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150701/3.png" alt=""></p>
-<p>果然，这里没有判断stormroot文件夹是否已存在，是个bug，具体可见这个issue：<span class="exturl" data-url="aHR0cHM6Ly9pc3N1ZXMuYXBhY2hlLm9yZy9qaXJhL2Jyb3dzZS9TVE9STS04MDU=">https://issues.apache.org/jira/browse/STORM-805<i class="fa fa-external-link-alt"></i></span>。</p>
-<p>这个问题在0.9.5版本中随着STORM-130一起修复了，代码如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150701/4.png" alt=""></p>
-<p>但这里有三个问题：</p>
-<ol>
-<li>
-<p>在调用download-storm-code方法前，代码中已做判断是否已下载topology代码，若已下载就不会调用download-storm-code方法了。为何进入这个方法后，做move directory操作时，代码却已经下载好了呢？</p>
-</li>
-<li>
-<p>storm的历史发布版本有很多，为何0.9.4版本里会出现这个不该出现的问题，0.9.4相对老的版本是不是做了什么修改？</p>
-</li>
-<li>
-<p>为何抛出异常后，supervisor进程就这么直接退出了？太弱了吧。。</p>
-</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/20150703/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20150622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Hong">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hong's Notes">
-      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hong's Notes">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/20150622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">交换空间使用率过高问题分析</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2015-06-22 10:02:04" itemprop="dateCreated datePublished" datetime="2015-06-22T10:02:04+08:00">2015-06-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">问题分析</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>1.2k</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>4 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="问题现象"><a class="markdownIt-Anchor" href="#问题现象"></a> 问题现象</h2>
-<p>线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png" alt=""></p>
-<p>图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。</p>
-<p>首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空间。但究竟是什么原因引起物理内存不足呢？因为Jvm堆大小是固定的，所以推断是因堆外内存占用空间较大引起。</p>
-<p>于是，使用jmap -histo:live <pid>把进程中的对象信息dump出来，dump信息如下：</pid></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/2.png" alt=""></p>
-<p>确实发现存在大量DirectByteBuffer对象，这说明内存中确实有大量引用了堆外内存的对象没有被回收！</p>
-<p>同时，内存中也对应存在着大量的sun.misc.Cleaner和java.nio.DirectByteBuffer$Deallocator对象。这两个类是用于回收堆外内存的。Cleaner对象是在DirectByteBuffer的构造函数中创建，其中封装了回收堆外内存的逻辑，Cleaner执行clean资源的操作是通过启动Deallocator线程实现的，这个线程把DirectByteBuffer对象引用的堆外内存做回收。</p>
-<p>那么问题来了：</p>
-<ol>
-<li>
-<p>为什么DirectByteBuffer对象没有被回收？</p>
-</li>
-<li>
-<p>怎么做才能让DirectByteBuffer对象能被及时回收？</p>
-</li>
-</ol>
-<h2 id="问题分析"><a class="markdownIt-Anchor" href="#问题分析"></a> 问题分析</h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/20150622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20150606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Hong">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hong's Notes">
-      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hong's Notes">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/20150606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/" class="post-title-link" itemprop="url">hadoop-yarn中ResourceManager的服务模块</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2015-06-06 13:10:10" itemprop="dateCreated datePublished" datetime="2015-06-06T13:10:10+08:00">2015-06-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
+      <time title="Modified: 2025-03-28 18:39:49" itemprop="dateModified" datetime="2025-03-28T18:39:49+08:00">2025-03-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1367,7 +1492,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20150518/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20150601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1385,7 +1510,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/20150518/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/" class="post-title-link" itemprop="url">mac系统下hadoop-2.7源码编译、导入eclipse及打包</a>
+          <a href="/20150601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/" class="post-title-link" itemprop="url">redis服务端连接断开问题诊断</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1396,14 +1521,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2015-05-18 10:00:44" itemprop="dateCreated datePublished" datetime="2015-05-18T10:00:44+08:00">2015-05-18</time>
+      <time title="Created: 2015-06-01 21:29:28" itemprop="dateCreated datePublished" datetime="2015-06-01T21:29:28+08:00">2015-06-01</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
+      <time title="Modified: 2025-03-28 18:35:47" itemprop="dateModified" datetime="2025-03-28T18:35:47+08:00">2025-03-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1411,7 +1536,7 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Hadoop/" itemprop="url" rel="index"><span itemprop="name">Hadoop</span></a>
+          <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
         </span>
     </span>
 
@@ -1422,14 +1547,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>598</span>
+      <span>1k</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>2 mins.</span>
+      <span>4 mins.</span>
     </span>
 </div>
 
@@ -1440,161 +1565,47 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="编译环境要求"><a class="markdownIt-Anchor" href="#编译环境要求"></a> 编译环境要求</h2>
+          <h2 id="问题现象"><a class="markdownIt-Anchor" href="#问题现象"></a> 问题现象</h2>
+<p>前段时间，由于线上redis服务器的内存使用率达到了机器总内存的50%以上，导致内存数据的dump持久化一直失败。扩展到多台redis后，应用系统访问redis时，在业务量较少时，时不时会出现以下异常，当业务量较大，redis访问频率很高时，却不会发生这个异常，一时觉得很诡异。</p>
 <blockquote>
-<p>JDK1.7+<br>
-MAVEN 3.0以上版本<br>
-如果需要编译native code，还需要CMake 2.6、Zlib devel、openssl devel（mac下一般安装了xcode后应该都会有这些包）。</p>
+<p>redis.clients.jedis.exceptions.JedisConnectionException: It seems like server has closed the connection.<br>
+at redis.clients.util.RedisInputStream.readLine(RedisInputStream.java:90) ~[jedis-2.1.0.jar:na]<br>
+at redis.clients.jedis.Protocol.processInteger(Protocol.java:110) ~[jedis-2.1.0.jar:na]<br>
+at redis.clients.jedis.Protocol.process(Protocol.java:70) ~[jedis-2.1.0.jar:na]<br>
+at redis.clients.jedis.Protocol.read(Protocol.java:131) ~[jedis-2.1.0.jar:na]<br>
+at redis.clients.jedis.Connection.getIntegerReply(Connection.java:188) ~[jedis-2.1.0.jar:na]<br>
+at redis.clients.jedis.Jedis.sismember(Jedis.java:1266) ~[jedis-2.1.0.jar:na]</p>
 </blockquote>
-<h2 id="编译方法"><a class="markdownIt-Anchor" href="#编译方法"></a> 编译方法</h2>
-<p>解压源码包hadoop-2.7.0-src.tar.gz，iterm下进入文件夹hadoop-2.7.0-src，然后根据需要执行相应的mvn命令就可以了。</p>
+<p>看提示，应该是服务端主动关闭了连接。查看了新上线的redis服务器的配置，有这么一项：</p>
 <blockquote>
-<p>仅编译：mvn compile<br>
-打包生成jar：mvn package<br>
-生成eclipse项目：eclipse:eclipse -DskipTests，加上-DskipTests可跳过test阶段。</p>
+<p># Close the connection after a client is idle for N seconds (0 to disable)<br>
+timeout 120</p>
 </blockquote>
-<p>期间遇到几个问题，记录如下。</p>
-<h2 id="问题记录"><a class="markdownIt-Anchor" href="#问题记录"></a> 问题记录</h2>
-<p>先执行mvn eclipse:eclipse -DskipTest生成eclipse项目，执行到一半时，提示下面的报错：</p>
-<p><font color="red">‘protoc –version’ did not return a version -&gt; [Help 1]</font></p>
-<p>意思也就是是找不到protoc命令，安装protocolbuffer后重试，又提示错误：</p>
-<p><font color="red">protoc version is ‘libprotoc 2.6.1′, expected version is ’2.5.0′</font></p>
-<p>看上去是protocolbuffer版本问题，hadoop需要的版本是2.5.0，而系统安装的是2.6.1，查了很多资料，都是说protocolbuffer版本太低后来升到2.5的，而我这是2.6.1的版本，难不成还得降回去，不至于吧。因此，猜测这个版本限制是在pom.xml中写死的，于是grep了一下，发现果然在hadoop-project/pom.xml中配置了编译时使用的pb版本。</p>
-<p><font color="red">&lt;protobuf.version&gt;2.5.0&lt;/protobuf.version&gt;</font></p>
-<p>把以上配置项改为2.6.1，再重新执行生成eclipse项目的命令就OK了。</p>
-<h2 id="导入eclipse及打包"><a class="markdownIt-Anchor" href="#导入eclipse及打包"></a> 导入eclipse及打包</h2>
-<p>生成eclipse项目后，从eclipse里import existing project into workspace，选择hadoop-2.7.0-src目录，就会把所有代码模块导入eclipse了。接下来就可以看代码并修改了，比如增加一些日志信息等。</p>
-<p>代码修改完毕后，可以再打出一个新的hadoop-distribution包来验证代码修改效果。</p>
-<p>在hadoop-2.7.0-src目录下执行命令：<font color="red">mvn package -Pdist -Ptar -Pdocs -skipTests </font></p>
-<p>等上漫长的一段时间，编译成功后，可以到hadoop-dist/target下找到新的jar包。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150518-hadoop%E7%BC%96%E8%AF%91%E6%89%93%E5%8C%85/1.png" alt=""></p>
-<h2 id="补充说明"><a class="markdownIt-Anchor" href="#补充说明"></a> 补充说明</h2>
-<p>编译过程需要从maven中央仓库下载大量依赖包，我使用的是oschina的库。</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&lt;mirror&gt;</span><br><span class="line">  &lt;id&gt;CN&lt;/id&gt;</span><br><span class="line">  &lt;name&gt;OSChina Central&lt;/name&gt;</span><br><span class="line">  &lt;url&gt;http:<span class="comment">//maven.oschina.net/content/groups/public/&lt;/url&gt;</span></span><br><span class="line">  &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;</span><br><span class="line">&lt;/mirror&gt;</span><br><span class="line">  &lt;profile&gt;</span><br><span class="line">	&lt;id&gt;oschina&lt;/id&gt;</span><br><span class="line">	&lt;repositories&gt;</span><br><span class="line">		&lt;repository&gt;</span><br><span class="line">			&lt;id&gt;nexus&lt;/id&gt;</span><br><span class="line">			&lt;name&gt;local <span class="keyword">private</span> nexus&lt;/name&gt;</span><br><span class="line">			&lt;url&gt;http:<span class="comment">//maven.oschina.net/content/groups/public/&lt;/url&gt;</span></span><br><span class="line">			&lt;releases&gt;</span><br><span class="line">				&lt;enabled&gt;<span class="literal">true</span>&lt;/enabled&gt;</span><br><span class="line">			&lt;/releases&gt;</span><br><span class="line">			&lt;snapshots&gt;</span><br><span class="line">				&lt;enabled&gt;<span class="literal">false</span>&lt;/enabled&gt;</span><br><span class="line">			&lt;/snapshots&gt;</span><br><span class="line">		&lt;/repository&gt;</span><br><span class="line">	&lt;/repositories&gt;</span><br><span class="line">	&lt;pluginRepositories&gt;</span><br><span class="line">		&lt;pluginRepository&gt;</span><br><span class="line">			&lt;id&gt;nexus&lt;/id&gt;</span><br><span class="line">			&lt;name&gt;local <span class="keyword">private</span> nexus&lt;/name&gt;</span><br><span class="line">			&lt;url&gt;http:<span class="comment">//maven.oschina.net/content/groups/public/&lt;/url&gt;</span></span><br><span class="line">			&lt;releases&gt;</span><br><span class="line">				&lt;enabled&gt;<span class="literal">true</span>&lt;/enabled&gt;</span><br><span class="line">			&lt;/releases&gt;</span><br><span class="line">			&lt;snapshots&gt;</span><br><span class="line">				&lt;enabled&gt;<span class="literal">false</span>&lt;/enabled&gt;</span><br><span class="line">			&lt;/snapshots&gt;</span><br><span class="line">		&lt;/pluginRepository&gt;</span><br><span class="line">	&lt;/pluginRepositories&gt;</span><br><span class="line">  &lt;/profile&gt;</span><br></pre></td></tr></tbody></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20140902/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Hong">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hong's Notes">
-      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hong's Notes">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/20140902/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" class="post-title-link" itemprop="url">使用hexo+gitpage搭建博客</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2014-09-02 19:50:40" itemprop="dateCreated datePublished" datetime="2014-09-02T19:50:40+08:00">2014-09-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">工具</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>378</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>1 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="环境准备"><a class="markdownIt-Anchor" href="#环境准备"></a> 环境准备</h2>
-<p>系统：mac osx<br>
-软件：Node.js，npm，git，hexo<br>
-具体安装以及git与github打通的配置就不详述了，可以google到各种方法。</p>
-<h2 id="hexo命令"><a class="markdownIt-Anchor" href="#hexo命令"></a> hexo命令</h2>
-<p>hexo init &lt;folder&gt;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #表示执行init命令初始化hexo到你指定的目录<br>
-<font color="red">以下命令需要在&lt;folder&gt;目录下执行：</font><br>
-hexo generate  &nbsp;&nbsp;&nbsp;#自动根据当前目录下文件,生成静态网页<br>
-hexo server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#运行本地服务</p>
-<p>启动服务后，就可以通过访问 <span class="exturl" data-url="aHR0cDovL2xvY2FsaG9zdDo0MDAw">http://localhost:4000<i class="fa fa-external-link-alt"></i></span> 来看看效果了。<br>
-接下来，可以使用以下命令来创建一篇新博文：<br>
-hexo new “test blog 1”<br>
-创建一个名为test blog 1的博客页面，对应的md文件路径是&lt;folder&gt;/source/_posts\test blog <span class="exturl" data-url="aHR0cDovLzEubWQ=">1.md<i class="fa fa-external-link-alt"></i></span></p>
-<p>接下来就可以在这个md文件中写文章了，我使用的是MacDown来编辑md文件，支持实时查看页面效果，还是挺好用的。</p>
-<h2 id="发布博客"><a class="markdownIt-Anchor" href="#发布博客"></a> 发布博客</h2>
-<p>文章写好后，通过以下方式发布到github上。<br>
-1.编辑./_config.yml文件，修改以下部分，配置本地内容同步至github：</p>
-<blockquote>
-<p>deploy:<br>
-&nbsp;&nbsp;type: git<br>
-&nbsp;&nbsp;repository: <span class="exturl" data-url="bWFpbHRvOmdpdEBnaXRodWIuY29t">git@github.com<i class="fa fa-external-link-alt"></i></span>:maohong/maohong.github.io.git<br>
-&nbsp;&nbsp;branch: master</p>
-</blockquote>
-<p>2.执行hexo generate(hexo g)生成html内容<br>
-3.执行hexo deploy(hexo d)讲更新内容发布至guthub</p>
-<p>然后就可以访问主页查看效果了，可以使用github帐户名.github.io进行访问, 也可以设置个性域名。</p>
+<p>这项配置指的是客户端连接空闲超过多少秒后，服务端主动关闭连接，默认值0表示服务端永远不主动关闭。而op人员把服务器端的超时时间设置为了120秒。</p>
+<p>这就解释了发生这个异常的原因。客户端使用了一个连接池管理访问redis的所有连接，这些连接是长连接，当业务量较小时，客户端部分连接使用率较低，当两次使用之间的间隔超过120秒时，redis服务端就主动关闭了这个连接，而等客户端下次再使用这个连接对象时，发现服务端已经关闭了连接，进而报错。</p>
+<p>于是，再查看访问redis的系统（客户端）的配置：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/1.png" alt=""></p>
+<p>客户端使用的是jedis内置的连接池，看其源码本质上是基于apache commons-pool实现的，其中有一个eviction线程，用于回收idle对象，对于redis连接池来说，也就是回收空闲连接。</p>
+<p>JedisPoolConfig类继承自GenericObjectPoolConfig并覆盖了几项关于eviction线程的配置，具体如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/2.png" alt=""></p>
+<p><em><font color="red">_timeBetweenEvictionRunsMillis</font></em>：eviction线程的运行周期。默认是-1，表示不启动eviction线程。这里设置为30秒。</p>
+<p><em><font color="red">_minEvictableIdleTimeMillis</font></em>：对象处于idle状态的最长时间，默认是30分钟，这里设置为60秒。</p>
+<p>通过客户端的默认配置看，对象的最大空闲时长是小于服务端的配置的，应该不是配置上的问题了。</p>
+<p>于是，继续看是不是客户端代码使用上的问题。追踪到客户端代码如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/3.png" alt=""></p>
+<p>可见，客户端首先尝试从本线程的ThreadLocal对象中获取jedis对象，若获取不到，再从masterJedisPool中取得jedis对象并放入ThreadLocal对象以便下次使用，并且jedis对象使用完毕后，没有从ThreadLocal中清除，也没有returnResource给masterJedisPool。</p>
+<p>因此，问题产生的原因就在于此。ThreadLocal中的这个jedis对象被取出后没有return，对于对象池来说是处于非idle状态，因此不会被对象池evict。<font color="red">当业务量大时，这个jedis会被频繁使用，服务端认为这个jedis对应的连接是非空闲的，或者空闲时间达不到120秒，不会主动关闭，所以没什么问题。然而当业务量小时，这个jedis使用频率很低，当两次之间的使用间隔超出120秒时，服务端会主动把这个jedis的连接关闭，第二次调用时，就会出现上面的报错。</font></p>
+<p>从代码开发者的角度来说，这么做的目的是避免频繁从pool中获取jedis对象和return jedis对象以提高性能。</p>
+<p>解决方案有两个：</p>
+<ol>
+<li>
+<p>在redis-cli下在线修改redis 的配置，把timeout改回为0，无需重启redis即可直接生效，但redis若重启，配置会恢复。</p>
+</li>
+<li>
+<p>修改客户端代码，使用完jedis对象后，从ThreadLocal中清除，再返回给连接池。</p>
+</li>
+</ol>
+<p>出于改动成本考虑，先采用了第一种方案，在线修改redis配置后，报错不再出现。</p>
 
       
     </div>
@@ -1654,13 +1665,13 @@ hexo new “test blog 1”<br>
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="Word count total">28k</span>
+    <span title="Word count total">26k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">1:40</span>
+    <span title="Reading time total">1:34</span>
   </span>
 </div>
 <div class="busuanzi-count">

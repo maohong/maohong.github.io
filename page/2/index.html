@@ -162,18 +162,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -210,7 +210,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20140601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20150328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -228,7 +228,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/20140601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/" class="post-title-link" itemprop="url">redis服务端连接断开问题诊断</a>
+          <a href="/20150328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">使用httpclient引起的tcp连接数超高问题</a>
         </h2>
 
         <div class="post-meta-container">
@@ -239,14 +239,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2014-06-01 21:29:28" itemprop="dateCreated datePublished" datetime="2014-06-01T21:29:28+08:00">2014-06-01</time>
+      <time title="Created: 2015-03-28 17:44:58" itemprop="dateCreated datePublished" datetime="2015-03-28T17:44:58+08:00">2015-03-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
+      <time title="Modified: 2025-03-28 18:37:33" itemprop="dateModified" datetime="2025-03-28T18:37:33+08:00">2025-03-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -254,7 +254,7 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+          <a href="/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">问题分析</span></a>
         </span>
     </span>
 
@@ -265,14 +265,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>1k</span>
+      <span>456</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>4 mins.</span>
+      <span>2 mins.</span>
     </span>
 </div>
 
@@ -283,48 +283,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="问题现象"><a class="markdownIt-Anchor" href="#问题现象"></a> 问题现象</h2>
-<p>前段时间，由于线上redis服务器的内存使用率达到了机器总内存的50%以上，导致内存数据的dump持久化一直失败。扩展到多台redis后，应用系统访问redis时，在业务量较少时，时不时会出现以下异常，当业务量较大，redis访问频率很高时，却不会发生这个异常，一时觉得很诡异。</p>
-<blockquote>
-<p>redis.clients.jedis.exceptions.JedisConnectionException: It seems like server has closed the connection.<br>
-at redis.clients.util.RedisInputStream.readLine(RedisInputStream.java:90) ~[jedis-2.1.0.jar:na]<br>
-at redis.clients.jedis.Protocol.processInteger(Protocol.java:110) ~[jedis-2.1.0.jar:na]<br>
-at redis.clients.jedis.Protocol.process(Protocol.java:70) ~[jedis-2.1.0.jar:na]<br>
-at redis.clients.jedis.Protocol.read(Protocol.java:131) ~[jedis-2.1.0.jar:na]<br>
-at redis.clients.jedis.Connection.getIntegerReply(Connection.java:188) ~[jedis-2.1.0.jar:na]<br>
-at redis.clients.jedis.Jedis.sismember(Jedis.java:1266) ~[jedis-2.1.0.jar:na]</p>
-</blockquote>
-<p>看提示，应该是服务端主动关闭了连接。查看了新上线的redis服务器的配置，有这么一项：</p>
-<blockquote>
-<p># Close the connection after a client is idle for N seconds (0 to disable)<br>
-timeout 120</p>
-</blockquote>
-<p>这项配置指的是客户端连接空闲超过多少秒后，服务端主动关闭连接，默认值0表示服务端永远不主动关闭。而op人员把服务器端的超时时间设置为了120秒。</p>
-<p>这就解释了发生这个异常的原因。客户端使用了一个连接池管理访问redis的所有连接，这些连接是长连接，当业务量较小时，客户端部分连接使用率较低，当两次使用之间的间隔超过120秒时，redis服务端就主动关闭了这个连接，而等客户端下次再使用这个连接对象时，发现服务端已经关闭了连接，进而报错。</p>
-<p>于是，再查看访问redis的系统（客户端）的配置：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/1.png" alt=""></p>
-<p>客户端使用的是jedis内置的连接池，看其源码本质上是基于apache commons-pool实现的，其中有一个eviction线程，用于回收idle对象，对于redis连接池来说，也就是回收空闲连接。</p>
-<p>JedisPoolConfig类继承自GenericObjectPoolConfig并覆盖了几项关于eviction线程的配置，具体如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/2.png" alt=""></p>
-<p><em><font color="red">_timeBetweenEvictionRunsMillis</font></em>：eviction线程的运行周期。默认是-1，表示不启动eviction线程。这里设置为30秒。</p>
-<p><em><font color="red">_minEvictableIdleTimeMillis</font></em>：对象处于idle状态的最长时间，默认是30分钟，这里设置为60秒。</p>
-<p>通过客户端的默认配置看，对象的最大空闲时长是小于服务端的配置的，应该不是配置上的问题了。</p>
-<p>于是，继续看是不是客户端代码使用上的问题。追踪到客户端代码如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/3.png" alt=""></p>
-<p>可见，客户端首先尝试从本线程的ThreadLocal对象中获取jedis对象，若获取不到，再从masterJedisPool中取得jedis对象并放入ThreadLocal对象以便下次使用，并且jedis对象使用完毕后，没有从ThreadLocal中清除，也没有returnResource给masterJedisPool。</p>
-<p>因此，问题产生的原因就在于此。ThreadLocal中的这个jedis对象被取出后没有return，对于对象池来说是处于非idle状态，因此不会被对象池evict。<font color="red">当业务量大时，这个jedis会被频繁使用，服务端认为这个jedis对应的连接是非空闲的，或者空闲时间达不到120秒，不会主动关闭，所以没什么问题。然而当业务量小时，这个jedis使用频率很低，当两次之间的使用间隔超出120秒时，服务端会主动把这个jedis的连接关闭，第二次调用时，就会出现上面的报错。</font></p>
-<p>从代码开发者的角度来说，这么做的目的是避免频繁从pool中获取jedis对象和return jedis对象以提高性能。</p>
-<p>解决方案有两个：</p>
-<ol>
-<li>
-<p>在redis-cli下在线修改redis 的配置，把timeout改回为0，无需重启redis即可直接生效，但redis若重启，配置会恢复。</p>
-</li>
-<li>
-<p>修改客户端代码，使用完jedis对象后，从ThreadLocal中清除，再返回给连接池。</p>
-</li>
-</ol>
-<p>出于改动成本考虑，先采用了第一种方案，在线修改redis配置后，报错不再出现。</p>
-
+          <p>组内的一个系统新上线了通过图片url上传图片到图片存储平台的功能。其中使用了httpclient，通过向图片存储平台发送MultipartPostMethod上传图片。当业务量较大时，10个处理线程满负荷运行，上传图片时，发现应用系统服务器的tcp连接数陡然升高，<font color="red">峰值能达到几万个tcp连接数！</font></p>
+<p>排查系统代码并结合分析httpclient的源码发现，应用系统每次上传图片时，都会做new HttpClient()操作，这个操作内部默认使用的是SimpleHttpConnectionManager来管理http连接，而SimpleHttpConnectionManager有个默认字段alwaysClose=false，表示当外部程序调用了HttpMethod.releaseConnection()时并不会立即释放连接，而是保持这个连接并尝试用于后续的请求，在连接空闲一段时间后（默认3秒）才真正释放。</p>
+<p>因此，当业务量较大，<font color="red">系统高并发发送post请求时，new出来的HttpClient对象会很多，而这个对象使用完毕后，而当中建立的client对象在短时间内并不会立即释放连接</font>，因此，随着时间的积累，tcp连接数保持居高不下。</p>
+<p>通过查看官方文档，建议在高并发环境下使用MultiThreadedHttpConnectionManager来管理httpclient，因此，我们将httpclient改为单例后，tcp连接数回复正常水平。</p>
+<p>通过管理httpclient的代码如下：</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> HttpClient <span class="title function_">initHttpClient</span><span class="params">()</span></span><br><span class="line">{</span><br><span class="line">    <span class="type">HttpConnectionManagerParams</span> <span class="variable">params</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpConnectionManagerParams</span>();</span><br><span class="line">    <span class="comment">//指定向每个host发起的最大连接数，默认是2，太少了</span></span><br><span class="line">    params.setDefaultMaxConnectionsPerHost(<span class="number">1000</span>);</span><br><span class="line">    <span class="comment">//指定总共发起的最大连接数，默认是20，太少了</span></span><br><span class="line">    params.setMaxTotalConnections(<span class="number">5000</span>);</span><br><span class="line">    <span class="comment">//连接超时时间-10s</span></span><br><span class="line">    params.setConnectionTimeout(<span class="number">60</span>*<span class="number">1000</span>);</span><br><span class="line">    <span class="comment">//读取数据超时时间-60s</span></span><br><span class="line">    params.setSoTimeout(<span class="number">60</span>*<span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">MultiThreadedHttpConnectionManager</span> <span class="variable">manager</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MultiThreadedHttpConnectionManager</span>();</span><br><span class="line">    manager.setParams(params);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">HttpClient</span>(manager);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
       
     </div>
 
@@ -457,7 +421,7 @@ timeout 120</p>
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20140328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20140121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -475,7 +439,7 @@ timeout 120</p>
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/20140328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">使用httpclient引起的tcp连接数超高问题</a>
+          <a href="/20140121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/" class="post-title-link" itemprop="url">将Hadoop RPC框架应用于多节点任务调度</a>
         </h2>
 
         <div class="post-meta-container">
@@ -486,440 +450,14 @@ timeout 120</p>
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2014-03-28 17:44:58" itemprop="dateCreated datePublished" datetime="2014-03-28T17:44:58+08:00">2014-03-28</time>
+      <time title="Created: 2014-01-21 20:53:38" itemprop="dateCreated datePublished" datetime="2014-01-21T20:53:38+08:00">2014-01-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">问题分析</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>456</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>2 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>组内的一个系统新上线了通过图片url上传图片到图片存储平台的功能。其中使用了httpclient，通过向图片存储平台发送MultipartPostMethod上传图片。当业务量较大时，10个处理线程满负荷运行，上传图片时，发现应用系统服务器的tcp连接数陡然升高，<font color="red">峰值能达到几万个tcp连接数！</font></p>
-<p>排查系统代码并结合分析httpclient的源码发现，应用系统每次上传图片时，都会做new HttpClient()操作，这个操作内部默认使用的是SimpleHttpConnectionManager来管理http连接，而SimpleHttpConnectionManager有个默认字段alwaysClose=false，表示当外部程序调用了HttpMethod.releaseConnection()时并不会立即释放连接，而是保持这个连接并尝试用于后续的请求，在连接空闲一段时间后（默认3秒）才真正释放。</p>
-<p>因此，当业务量较大，<font color="red">系统高并发发送post请求时，new出来的HttpClient对象会很多，而这个对象使用完毕后，而当中建立的client对象在短时间内并不会立即释放连接</font>，因此，随着时间的积累，tcp连接数保持居高不下。</p>
-<p>通过查看官方文档，建议在高并发环境下使用MultiThreadedHttpConnectionManager来管理httpclient，因此，我们将httpclient改为单例后，tcp连接数回复正常水平。</p>
-<p>通过管理httpclient的代码如下：</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> HttpClient <span class="title function_">initHttpClient</span><span class="params">()</span></span><br><span class="line">{</span><br><span class="line">    <span class="type">HttpConnectionManagerParams</span> <span class="variable">params</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpConnectionManagerParams</span>();</span><br><span class="line">    <span class="comment">//指定向每个host发起的最大连接数，默认是2，太少了</span></span><br><span class="line">    params.setDefaultMaxConnectionsPerHost(<span class="number">1000</span>);</span><br><span class="line">    <span class="comment">//指定总共发起的最大连接数，默认是20，太少了</span></span><br><span class="line">    params.setMaxTotalConnections(<span class="number">5000</span>);</span><br><span class="line">    <span class="comment">//连接超时时间-10s</span></span><br><span class="line">    params.setConnectionTimeout(<span class="number">60</span>*<span class="number">1000</span>);</span><br><span class="line">    <span class="comment">//读取数据超时时间-60s</span></span><br><span class="line">    params.setSoTimeout(<span class="number">60</span>*<span class="number">1000</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="type">MultiThreadedHttpConnectionManager</span> <span class="variable">manager</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MultiThreadedHttpConnectionManager</span>();</span><br><span class="line">    manager.setParams(params);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">HttpClient</span>(manager);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20140320/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Hong">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hong's Notes">
-      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hong's Notes">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/20140320/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">前后端的CharacterEncoding不一致导致提交的表单数据丢失问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2014-03-20 11:09:03" itemprop="dateCreated datePublished" datetime="2014-03-20T11:09:03+08:00">2014-03-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">问题分析</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>348</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>1 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>最近在开发分布式任务调度系统的web端时，遇到一个坑，记录如下：</p>
-<p>在页面上新增和修改任务，提交后，任务的属性在后端怎么都接收不到，但是在另一个协同开发的同学那边本地调试就OK，在我的本地和公共开发环境都不行，这不合理啊。。。。。</p>
-<p>排查了很多地方，js、setter等等，一直没发现问题在哪。跟负责前端的同学交流了下，发现前端post的数据确实是修改过的，也就是后端接收有问题。</p>
-<p>于是把最新版本和历史版本对比，发现最新版本新增了一个LogFilter，用于记录pagedelay的，仔细一看，logFilter里面是</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">request.setCharacterEncoding(“UTF-<span class="number">8</span>″);</span><br><span class="line">response.setContentType(“text/html;charset=UTF-<span class="number">8</span>″);</span><br></pre></td></tr></tbody></table></figure>
-<p>但页面上是GBK编码，所以导致数据在这个filter中编码出错，造成数据丢失，后端接收到的数据为null。</p>
-<p><font color="red">解决方法：</font></p>
-<p>把logFilter里的UTF-8改为GBK，就一切正常了。</p>
-<p><font color="red">疑问：</font></p>
-<ol>
-<li>
-<p>为何历史本没问题呢，因为历史版本中的logFilter配在struts2Filter之后，请求根本走不到logFilter里去。。。。</p>
-</li>
-<li>
-<p>为何协同开发的同学本地调试没问题呢，那是因为他把web.xml里的LogFilter的filtermapping注掉了。。。。</p>
-</li>
-</ol>
-<p>好一个歪萝卜大烂坑。。。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20130307/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Hong">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hong's Notes">
-      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hong's Notes">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/20130307/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/" class="post-title-link" itemprop="url">使用shell切割文件</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2013-03-07 13:49:44" itemprop="dateCreated datePublished" datetime="2013-03-07T13:49:44+08:00">2013-03-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>387</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>1 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>最近工作中需要使用shell，从远程rsync数据过来预处理后提交到hdfs中，再调用pig脚本在hadoop集群上处理数据，完了fs -get下来结果文件并进行进一步处理，再推送给其他系统使用。其间需要将pig作业的结果文件合并并且均分为10个文件推送给远程服务器上的应用加载。因为结果文件比较大，远程应用拿到结果文件后使用多线程加载，所以需均分为10个小文件。虽然mr作业出来的文件结果也是part-00000、part-00001，但若pig脚本中不指定reduce任务数，产生的结果文件个数是3个，而且下下来之后需要进行重命名。与其这样还不如自己处理。</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">rm -rf $TODAY_ALL_INDUSKEY</span><br><span class="line">	<span class="keyword">for</span> allName in `find $TODAY_ALL_TMP_DIR -name <span class="string">"part-*"</span>`</span><br><span class="line">		<span class="keyword">do</span></span><br><span class="line">			INFO <span class="string">"Processing result file"</span> $allName</span><br><span class="line">			cat $allName &gt;&gt; $TODAY_ALL_INDUSKEY   #把结果文件重定向到一个文件</span><br><span class="line">	done</span><br><span class="line"></span><br><span class="line">	ALL_INDUSKEY_FILE_NUM=<span class="number">10</span>    #拆分的文件数量</span><br><span class="line">	ALL_KEY_LINES=<span class="number">0</span>             #结果文件行数</span><br><span class="line">	INFO <span class="string">"Split $TODAY_ALL_INDUSKEY into $ALL_INDUSKEY_FILE_NUM files"</span></span><br><span class="line">	<span class="keyword">for</span> str in `wc -l $TODAY_ALL_INDUSKEY`;	<span class="keyword">do</span></span><br><span class="line">		t=`expr match $str <span class="string">"[1-9][0-9]*$"</span>`;</span><br><span class="line">		<span class="keyword">if</span> [ $t -gt <span class="number">0</span> ]; then</span><br><span class="line">			ALL_KEY_LINES=$str         #获取结果文件行数</span><br><span class="line">			INFO <span class="string">"Line of $TODAY_ALL_INDUSKEY is $ALL_KEY_LINES"</span></span><br><span class="line">		fi</span><br><span class="line">	done</span><br><span class="line">	<span class="keyword">if</span> [ $ALL_KEY_LINES -ne <span class="number">0</span> ]; then</span><br><span class="line">		tmpLine=`echo <span class="string">"scale=2;$ALL_KEY_LINES/$ALL_INDUSKEY_FILE_NUM"</span>|bc`    #每个小文件的行数，保留两位小数</span><br><span class="line">		INFO <span class="string">"$ALL_KEY_LINES/$ALL_INDUSKEY_FILE_NUM=$tmpLine"</span></span><br><span class="line">		subFileLines=`echo $((${tmpLine<span class="comment">//.*/+1}))`        #向上取整</span></span><br><span class="line">		INFO <span class="string">"Per subfile lines:$subFileLines"</span></span><br><span class="line">		split -l $subFileLines -a <span class="number">1</span> -d $TODAY_ALL_INDUSKEY $TODAY_ALL_INDUSKEY<span class="string">"_"</span>      #拆分文件</span><br><span class="line">	fi</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> [ -f $TODAY_ALL_INDUSKEY ]; then</span><br><span class="line">		touch $TODAY_ALL_INDUSKEY.done       #创建done文件</span><br><span class="line">		rm -rf $TODAY_ALL_TMP_DIR</span><br><span class="line">		INFO <span class="string">"Process result file dir $TODAY_ALL_TMP_DIR done!"</span></span><br><span class="line">	fi</span><br></pre></td></tr></tbody></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20130129/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Hong">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hong's Notes">
-      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hong's Notes">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/20130129/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/" class="post-title-link" itemprop="url">Shell中的IFS分隔符使用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2013-01-29 20:41:54" itemprop="dateCreated datePublished" datetime="2013-01-29T20:41:54+08:00">2013-01-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Shell/" itemprop="url" rel="index"><span itemprop="name">Shell</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>357</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>1 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。</p>
-<p>工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell.png" alt=""></p>
-<p>我需要拿到文件中<font color="blue">第三列为1</font>的数据行再做具体的处理，比如取其中的某一列数据再去其他文件grep数据等等。简单点，直接逐行cat数据吧。</p>
-<p><strong>脚本如下：</strong></p>
-<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> line in `awk -F<span class="string">"\3"</span> <span class="string">'{if($3==1) print $0}'</span> datafile`</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">        echo $line</span><br><span class="line">done</span><br></pre></td></tr></tbody></table></figure>
-<p><strong>结果如下：</strong></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell2.png" alt=""></p>
-<p>本来是想要逐行打印出来的，可结果却不是我想要的，究其原因，是因为在shell的for循环中，列出集合的item时，默认是以<space>或<tab>或<newline>为分隔符，我们的数据文件中有空格，因此它就以空格分割打印了。</newline></tab></space></p>
-<p>可以通过显式设置IFS的值来达到我们要的效果，修改后的脚本如下：</p>
-<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">oldifs=$IFS</span><br><span class="line">IFS=$<span class="string">'\n'</span>    <span class="meta">#change seperator to <span class="string">'\n'</span> to get a <span class="keyword">line</span></span></span><br><span class="line"><span class="keyword">for</span> line in `awk -F<span class="string">"\3"</span> <span class="string">'{if($3==1) print $0}'</span> datafile`</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">        echo $line</span><br><span class="line">done</span><br><span class="line">IFS=$oldifs <span class="meta">#reset seperator</span></span><br></pre></td></tr></tbody></table></figure>
-<p>通过先保存当前的IFS变量的值到一个临时变量，再显式设置为我们想要的行分隔符$’\n’，然后在for循环结束后，再重置IFS的值即可。</p>
-<p><strong>结果如下：</strong><br>
-<img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell3.png" alt=""></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Hong">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hong's Notes">
-      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hong's Notes">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/" class="post-title-link" itemprop="url">将Hadoop RPC框架应用于多节点任务调度</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2013-01-21 20:53:38" itemprop="dateCreated datePublished" datetime="2013-01-21T20:53:38+08:00">2013-01-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
+      <time title="Modified: 2025-03-28 18:37:22" itemprop="dateModified" datetime="2025-03-28T18:37:22+08:00">2025-03-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -975,7 +513,7 @@ timeout 120</p>
 <p>单点的定时任务系统是基于Quartz的，在分布式环境下，可以继续基于Quartz进行改造，任务的定时信息可以通过Quartz中的JobDetail和Trigger对象来描述并封装，加上任务执行的入口类信息，再通过RPC由主节点发给子节点。子节点收到封装好的任务信息对象后，再构造JobDetail和Trigger，设置好启动时间后，通过入口类启动任务。下面是一个简单的demo。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/20130121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/#more" rel="contents">
+              <a class="btn" href="/20140121/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -1006,7 +544,7 @@ timeout 120</p>
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20121113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20131113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1024,7 +562,7 @@ timeout 120</p>
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/20121113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">使用zookeeper协调多服务器的任务处理</a>
+          <a href="/20131113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">使用zookeeper协调多服务器的任务处理</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1035,14 +573,14 @@ timeout 120</p>
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2012-11-13 16:16:43" itemprop="dateCreated datePublished" datetime="2012-11-13T16:16:43+08:00">2012-11-13</time>
+      <time title="Created: 2013-11-13 16:16:43" itemprop="dateCreated datePublished" datetime="2013-11-13T16:16:43+08:00">2013-11-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
+      <time title="Modified: 2025-03-28 18:37:28" itemprop="dateModified" datetime="2025-03-28T18:37:28+08:00">2025-03-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1093,7 +631,7 @@ timeout 120</p>
 也就是说，采用多节点同时处理数据时，需要将数据隔离开，分别给不同的节点处理，而且在有节点宕机的情况下，所有数据也必须可以无误的被其他可用节点处理。如何做到这一点呢，使用zookeeper吧！</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/20121113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/#more" rel="contents">
+              <a class="btn" href="/20131113/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -1157,13 +695,13 @@ timeout 120</p>
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="Word count total">28k</span>
+    <span title="Word count total">26k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">1:40</span>
+    <span title="Reading time total">1:34</span>
   </span>
 </div>
 <div class="busuanzi-count">
