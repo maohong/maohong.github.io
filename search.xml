@@ -154,9 +154,10 @@ A --&gt;|invoke| C[Tools]
 A &lt;--&gt;|context| D[Memory]
 A --&gt;|response| U</div></pre>
 <ul>
-<li>
-<p><strong>Agent Core:</strong> At the heart of the agent is the LLM itself (for example, GPT-4, Claude, or an open-source model like LLaMA 2). This core interprets the user’s input and generates the agent’s responses. On its own, the LLM is very powerful at understanding language and reasoning, but it’s essentially reactive (it responds to prompts without taking additional actions). In an agent setup, the LLM core is augmented with surrounding logic so it can be more proactive, meaning it needs other components to interface with the outside world and handle complex tasks.</p>
-</li>
+<li><strong>Agent Core:</strong> At the heart of the agent is the LLM itself (for example, GPT-4, Claude, or an open-source model like LLaMA 2). This core interprets the user’s input and generates the agent’s responses. On its own, the LLM is very powerful at understanding language and reasoning, but it’s essentially reactive (it responds to prompts without taking additional actions). In an agent setup, the LLM core is augmented with surrounding logic so it can be more proactive, meaning it needs other components to interface with the outside world and handle complex tasks.</li>
+</ul>
+<span id="more"></span>
+<ul>
 <li>
 <p><strong>Tools (Action Interfaces):</strong> Tools are how an LLM agent interacts with the world beyond its internal knowledge. A tool could be any external function or API the agent can call – for example, a web search engine, a database query, a code execution sandbox, a calculator, or a source code search function. Tools give the agent the ability to take actions like looking up information, running computations, or retrieving specific data​. In a software development context, useful tools might include:</p>
 <ul>
@@ -184,7 +185,6 @@ A --&gt;|response| U</div></pre>
 </ul>
 <p>These components work together in a cycle. Typically, an agent loop might look like: the <strong>LLM core</strong> (with the planning prompt) decides on an <strong>Action</strong> (calls a Tool), the tool returns some data which is stored in <strong>Memory</strong> or fed back to the LLM, and the LLM then decides the <strong>next steps</strong> or gives the final answer. This continues until the agent is confident it has solved the user’s request.</p>
 <p><img src="image1.png" alt=""></p>
-<span id="more"></span>
 ]]></content>
       <tags>
         <tag>AI</tag>

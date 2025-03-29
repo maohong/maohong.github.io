@@ -273,7 +273,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-29 10:46:43" itemprop="dateModified" datetime="2025-03-29T10:46:43+08:00">2025-03-29</time>
+      <time title="Modified: 2025-03-29 10:48:26" itemprop="dateModified" datetime="2025-03-29T10:48:26+08:00">2025-03-29</time>
     </span>
 
   
@@ -313,36 +313,8 @@ A --&gt;|invoke| C[Tools]
 A &lt;--&gt;|context| D[Memory]
 A --&gt;|response| U</div></pre>
 <ul>
-<li>
-<p><strong>Agent Core:</strong> At the heart of the agent is the LLM itself (for example, GPT-4, Claude, or an open-source model like LLaMA 2). This core interprets the user’s input and generates the agent’s responses. On its own, the LLM is very powerful at understanding language and reasoning, but it’s essentially reactive (it responds to prompts without taking additional actions). In an agent setup, the LLM core is augmented with surrounding logic so it can be more proactive, meaning it needs other components to interface with the outside world and handle complex tasks.</p>
-</li>
-<li>
-<p><strong>Tools (Action Interfaces):</strong> Tools are how an LLM agent interacts with the world beyond its internal knowledge. A tool could be any external function or API the agent can call – for example, a web search engine, a database query, a code execution sandbox, a calculator, or a source code search function. Tools give the agent the ability to take actions like looking up information, running computations, or retrieving specific data​. In a software development context, useful tools might include:</p>
-<ul>
-<li>A code search tool to find snippets in a repository</li>
-<li>A documentation lookup API to fetch reference docs</li>
-<li>A ticket database query to pull related support tickets</li>
-<li>or a shell command executor to run test cases</li>
+<li><strong>Agent Core:</strong> At the heart of the agent is the LLM itself (for example, GPT-4, Claude, or an open-source model like LLaMA 2). This core interprets the user’s input and generates the agent’s responses. On its own, the LLM is very powerful at understanding language and reasoning, but it’s essentially reactive (it responds to prompts without taking additional actions). In an agent setup, the LLM core is augmented with surrounding logic so it can be more proactive, meaning it needs other components to interface with the outside world and handle complex tasks.</li>
 </ul>
-</li>
-<li>
-<p><strong>Memory:</strong> Memory provides the agent with the ability to remember information across multiple steps or interactions. There are typically two kinds of memory in such agents​.</p>
-<ul>
-<li><strong>Short-term memory</strong> – which keeps track of the agent’s recent “thoughts” and actions during the current task (often called the context or the transcript of the reasoning so far). This is like the agent’s scratchpad for one session – it might include what the agent has already tried and what it observed.</li>
-<li><strong>Long-term memory</strong> – which persists information beyond a single session, allowing the agent to recall facts or past conversations from earlier. This could be implemented via a database or vector store that the agent queries as needed​.</li>
-</ul>
-</li>
-<li>
-<p><strong>Planning Module:</strong> This component is what makes an agent “agentic” – it allows the system to plan a multi-step strategy rather than just respond immediately. The planning module could be as simple as some prompt engineering that encourages the LLM to think step-by-step, or as elaborate as a separate algorithm or model that breaks tasks into sub-tasks. The idea is to enable task decomposition, decision-making, and iteration​. In practical, the planning does things like:</p>
-<ol>
-<li>Analyze the user’s request and break it into smaller problems if needed.</li>
-<li>Decide which tool to use at each step.</li>
-<li>Loop through actions and observations: the agent might use a tool, see the result, and then decide the next step based on that.</li>
-</ol>
-</li>
-</ul>
-<p>These components work together in a cycle. Typically, an agent loop might look like: the <strong>LLM core</strong> (with the planning prompt) decides on an <strong>Action</strong> (calls a Tool), the tool returns some data which is stored in <strong>Memory</strong> or fed back to the LLM, and the LLM then decides the <strong>next steps</strong> or gives the final answer. This continues until the agent is confident it has solved the user’s request.</p>
-<p><img src="image1.png" alt=""></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/20250316/Understanding%20LLM%20based%20AI%20Agents/#more" rel="contents">
