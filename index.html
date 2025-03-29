@@ -189,7 +189,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -200,7 +200,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -228,6 +228,145 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20250316/Understanding%20LLM%20based%20AI%20Agents/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/20250316/Understanding%20LLM%20based%20AI%20Agents/" class="post-title-link" itemprop="url">Understanding LLM based AI Agents</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-03-16 23:25:20" itemprop="dateCreated datePublished" datetime="2025-03-16T23:25:20+08:00">2025-03-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-03-29 10:46:43" itemprop="dateModified" datetime="2025-03-29T10:46:43+08:00">2025-03-29</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>674</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="what-are-llm-based-ai-agents"><a class="markdownIt-Anchor" href="#what-are-llm-based-ai-agents"></a> What are LLM-based AI Agents?</h2>
+<p>An LLM-based AI agent is an intelligent system that uses large language models (like GPT-4) to perform tasks autonomously, including <strong>perceiving the environment, reasoning about it, making decisions, and executing actions</strong>. Unlike traditional chatbots, these agents can plan tasks, take actions using external tools, and handle multi-step problems. It aims to enable people to perform and handle professional or complex tasks in a highly automated manner using natural language, driven by LLM technology, thereby freeing up personnel energy to the greatest extent.</p>
+<h2 id="core-components-of-an-ai-agent"><a class="markdownIt-Anchor" href="#core-components-of-an-ai-agent"></a> Core Components of an AI Agent</h2>
+<p>LLM-based agents usually rely on a modular architecture that gives the LLM the support it needs to operate autonomously. The typical agent is composed of a few key components.</p>
+<pre><div class="mermaid">graph LR
+U(User Request) --&gt;|input| A[Agent Core]
+A --&gt;|analyse| B[Planning]
+B --&gt;|action plan| A
+A --&gt;|invoke| C[Tools]
+A &lt;--&gt;|context| D[Memory]
+A --&gt;|response| U</div></pre>
+<ul>
+<li>
+<p><strong>Agent Core:</strong> At the heart of the agent is the LLM itself (for example, GPT-4, Claude, or an open-source model like LLaMA 2). This core interprets the user’s input and generates the agent’s responses. On its own, the LLM is very powerful at understanding language and reasoning, but it’s essentially reactive (it responds to prompts without taking additional actions). In an agent setup, the LLM core is augmented with surrounding logic so it can be more proactive, meaning it needs other components to interface with the outside world and handle complex tasks.</p>
+</li>
+<li>
+<p><strong>Tools (Action Interfaces):</strong> Tools are how an LLM agent interacts with the world beyond its internal knowledge. A tool could be any external function or API the agent can call – for example, a web search engine, a database query, a code execution sandbox, a calculator, or a source code search function. Tools give the agent the ability to take actions like looking up information, running computations, or retrieving specific data​. In a software development context, useful tools might include:</p>
+<ul>
+<li>A code search tool to find snippets in a repository</li>
+<li>A documentation lookup API to fetch reference docs</li>
+<li>A ticket database query to pull related support tickets</li>
+<li>or a shell command executor to run test cases</li>
+</ul>
+</li>
+<li>
+<p><strong>Memory:</strong> Memory provides the agent with the ability to remember information across multiple steps or interactions. There are typically two kinds of memory in such agents​.</p>
+<ul>
+<li><strong>Short-term memory</strong> – which keeps track of the agent’s recent “thoughts” and actions during the current task (often called the context or the transcript of the reasoning so far). This is like the agent’s scratchpad for one session – it might include what the agent has already tried and what it observed.</li>
+<li><strong>Long-term memory</strong> – which persists information beyond a single session, allowing the agent to recall facts or past conversations from earlier. This could be implemented via a database or vector store that the agent queries as needed​.</li>
+</ul>
+</li>
+<li>
+<p><strong>Planning Module:</strong> This component is what makes an agent “agentic” – it allows the system to plan a multi-step strategy rather than just respond immediately. The planning module could be as simple as some prompt engineering that encourages the LLM to think step-by-step, or as elaborate as a separate algorithm or model that breaks tasks into sub-tasks. The idea is to enable task decomposition, decision-making, and iteration​. In practical, the planning does things like:</p>
+<ol>
+<li>Analyze the user’s request and break it into smaller problems if needed.</li>
+<li>Decide which tool to use at each step.</li>
+<li>Loop through actions and observations: the agent might use a tool, see the result, and then decide the next step based on that.</li>
+</ol>
+</li>
+</ul>
+<p>These components work together in a cycle. Typically, an agent loop might look like: the <strong>LLM core</strong> (with the planning prompt) decides on an <strong>Action</strong> (calls a Tool), the tool returns some data which is stored in <strong>Memory</strong> or fed back to the LLM, and the LLM then decides the <strong>next steps</strong> or gives the final answer. This continues until the agent is confident it has solved the user’s request.</p>
+<p><img src="image1.png" alt=""></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/20250316/Understanding%20LLM%20based%20AI%20Agents/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1542,110 +1681,6 @@ timeout 120</p>
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20150328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Hong">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hong's Notes">
-      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hong's Notes">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/20150328/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">使用httpclient引起的tcp连接数超高问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2015-03-28 17:44:58" itemprop="dateCreated datePublished" datetime="2015-03-28T17:44:58+08:00">2015-03-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-28 18:37:33" itemprop="dateModified" datetime="2025-03-28T18:37:33+08:00">2025-03-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">问题分析</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>456</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>2 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>组内的一个系统新上线了通过图片url上传图片到图片存储平台的功能。其中使用了httpclient，通过向图片存储平台发送MultipartPostMethod上传图片。当业务量较大时，10个处理线程满负荷运行，上传图片时，发现应用系统服务器的tcp连接数陡然升高，<font color="red">峰值能达到几万个tcp连接数！</font></p>
-<p>排查系统代码并结合分析httpclient的源码发现，应用系统每次上传图片时，都会做new HttpClient()操作，这个操作内部默认使用的是SimpleHttpConnectionManager来管理http连接，而SimpleHttpConnectionManager有个默认字段alwaysClose=false，表示当外部程序调用了HttpMethod.releaseConnection()时并不会立即释放连接，而是保持这个连接并尝试用于后续的请求，在连接空闲一段时间后（默认3秒）才真正释放。</p>
-<p>因此，当业务量较大，<font color="red">系统高并发发送post请求时，new出来的HttpClient对象会很多，而这个对象使用完毕后，而当中建立的client对象在短时间内并不会立即释放连接</font>，因此，随着时间的积累，tcp连接数保持居高不下。</p>
-<p>通过查看官方文档，建议在高并发环境下使用MultiThreadedHttpConnectionManager来管理httpclient，因此，我们将httpclient改为单例后，tcp连接数回复正常水平。</p>
-<p>通过管理httpclient的代码如下：</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> HttpClient <span class="title function_">initHttpClient</span><span class="params">()</span></span><br><span class="line">{</span><br><span class="line">    <span class="type">HttpConnectionManagerParams</span> <span class="variable">params</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpConnectionManagerParams</span>();</span><br><span class="line">    <span class="comment">//指定向每个host发起的最大连接数，默认是2，太少了</span></span><br><span class="line">    params.setDefaultMaxConnectionsPerHost(<span class="number">1000</span>);</span><br><span class="line">    <span class="comment">//指定总共发起的最大连接数，默认是20，太少了</span></span><br><span class="line">    params.setMaxTotalConnections(<span class="number">5000</span>);</span><br><span class="line">    <span class="comment">//连接超时时间-10s</span></span><br><span class="line">    params.setConnectionTimeout(<span class="number">60</span>*<span class="number">1000</span>);</span><br><span class="line">    <span class="comment">//读取数据超时时间-60s</span></span><br><span class="line">    params.setSoTimeout(<span class="number">60</span>*<span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">MultiThreadedHttpConnectionManager</span> <span class="variable">manager</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MultiThreadedHttpConnectionManager</span>();</span><br><span class="line">    manager.setParams(params);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">HttpClient</span>(manager);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1693,7 +1728,7 @@ timeout 120</p>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">1:30</span>
+    <span title="Reading time total">1:33</span>
   </span>
 </div>
 <div class="busuanzi-count">
