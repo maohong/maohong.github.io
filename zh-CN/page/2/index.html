@@ -189,18 +189,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -228,6 +228,434 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20160606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/20160606/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/" class="post-title-link" itemprop="url">hadoop-yarn中ResourceManager的服务模块</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2016-06-06 13:10:10" itemprop="dateCreated datePublished" datetime="2016-06-06T13:10:10+08:00">2016-06-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Hadoop/" itemprop="url" rel="index"><span itemprop="name">Hadoop</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="yarn简述"><a class="markdownIt-Anchor" href="#yarn简述"></a> Yarn简述</h2>
+<p>Hadoop2.0引入了yarn（Yet Another Resource Negotiator）资源管理框架。1.0中的MapReduce计算框架变为运行在yarn上的一种application。</p>
+<p>Yarn依然采用了master/slave结构，master是ResourceManager，负责整个集群的资源管理和调度，并且支持HA，slave是NodeManager，负责管理各子节点上的资源和任务。每个MapReduce作业提交给ResourceManager并被接受后，ResourceManager会通知某个NodeManager启动一个ApplicationMaster管理此作业的生命周期。</p>
+<h2 id="resourcemanager中的模块划分"><a class="markdownIt-Anchor" href="#resourcemanager中的模块划分"></a> ResourceManager中的模块划分</h2>
+<p>Yarn中的大多数服务都是带状态的service实现，并通过事件驱动机制实现服务的状态转换和服务之间的交互。ResourceManager是yarn的核心组件，与NodeManager、ApplicationMaster、Client都有交互，提供了非常多的功能，下面基于hadoop2.7版本的实现，梳理一下ResourceManager中的重要service组件及其功能。</p>
+<p>ResourceManager中按功能划分的service模块如下图所示。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150606ResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/1.png" alt=""></p>
+<p>ResourceManager中核心模块主要包括客户端交互模块、NodeManager管理模块、ApplicationMaster管理模块、Application管理模块、安全管理模块、以及资源管理模块（调度、预留）等。</p>
+<h2 id="各模块中的服务介绍"><a class="markdownIt-Anchor" href="#各模块中的服务介绍"></a> 各模块中的服务介绍</h2>
+<p><strong>客户端交互模块：</strong></p>
+<ul>
+<li>
+<p>AdminService</p>
+<ul>
+<li>管理员可通过此接口管理集群，如更新节点、更新ACL、更新队列等。内部有个EmbeddedElectorService，如果RM启用了自动HA，则通过这个service做leader election。</li>
+</ul>
+</li>
+<li>
+<p>ClientRMService</p>
+<ul>
+<li>负责为客户端提供服务，是ApplicationClientProtocol协议的服务端。负责处理来自客户端的RPC请求，包括提交app、查询app运行状态、终止app等。</li>
+</ul>
+</li>
+<li>
+<p>Webapp</p>
+<ul>
+<li>提供web页面服务，展示集群状态和资源使用情况。</li>
+</ul>
+</li>
+</ul>
+<p><strong>NodeManager管理模块</strong></p>
+<ul>
+<li>
+<p>NMLivelinessMonitor</p>
+<ul>
+<li>用于监控NM是否存活，若NM在一定时间内（默认10分钟）未上报心跳，则认为其挂了。</li>
+</ul>
+</li>
+<li>
+<p>NodesListManager</p>
+<ul>
+<li>负责维护节点列表，并动态加载白名单（yarn.resourcemanager.nodes.include-path）和黑名单（yarn.resourcemanager.nodes.exlude-path）节点。</li>
+</ul>
+</li>
+<li>
+<p>RMNodeLabelsManager</p>
+<ul>
+<li>负责节点的标签管理。</li>
+</ul>
+</li>
+<li>
+<p>ResourceTrackerService</p>
+<ul>
+<li>负责与NodeManager通信，处理来自NodeManager的请求，包括注册NodeManager和节点心跳两种。接口定义在ResourceTracker中。</li>
+</ul>
+</li>
+</ul>
+<p><strong>ApplicationMaster管理模块</strong></p>
+<ul>
+<li>
+<p>AMLivelinessMonitor：两个实例</p>
+<ul>
+<li>用于监控ApplicationMaster是否正常，如果在指定时间内（默认10分钟）未收到AM的心跳，则认为其死掉了。</li>
+</ul>
+</li>
+<li>
+<p>ApplicationMasterLauncher</p>
+<ul>
+<li>负责通知某个NodeManager启动或销毁ApplicationMaster。在app请求被接受后，与某个NodeManager通信，告知其为此app启动相应的ApplicationMaster。若app运行结束或被kill，则通知app所在NodeManager销毁ApplicationMaster。其内部也维护了一个阻塞队列，并有一个后台线程异步处理提交进来的启动ApplicationMaster的请求。</li>
+</ul>
+</li>
+<li>
+<p>ApplicationMasterService</p>
+<ul>
+<li>负责与ApplicationMaster通信，是ApplicationMasterProtocol协议的服务端，ApplicationMaster在NodeManager上启动后通过此协议向ResourceManager注册自己，运行过程中向ResourceManager发送心跳，以及app运行结束后告知RM自己所在的container可以被释放了。</li>
+</ul>
+</li>
+</ul>
+<p><strong>Application管理模块</strong></p>
+<ul>
+<li>
+<p>RMAppManager</p>
+<ul>
+<li>ResourceManager接受客户端提交的app后，会通过RMAppManager来触发启动app的事件RMAppEventType.START，具体启动app的工作由RMAppImpl实现。</li>
+</ul>
+</li>
+<li>
+<p>ApplicationACLsManager</p>
+<ul>
+<li>负责app权限控制，包括查看和修改权限。</li>
+</ul>
+</li>
+<li>
+<p>ContainerAllocationExpirer</p>
+<ul>
+<li>用于监听NodeManager上是否正常启动了分配给ApplicationMaster的container，若在指定时间未启动（默认10分钟），ResourceManager会强制回收该container。</li>
+</ul>
+</li>
+<li>
+<p>RMApplicationHistoryWriter</p>
+<ul>
+<li>负责异步持久化Application运行中的相关日志，主要是Container、Application、ApplicationAttempt在启动和结束时的日志信息。</li>
+</ul>
+</li>
+</ul>
+<p><strong>安全管理模块</strong></p>
+<ul>
+<li>RMSecretManagerService
+<ul>
+<li>负责管理各种通信密钥，包括：
+<ul>
+<li>RM与NM通信的NMTokenSecretManagerInRM</li>
+<li>RM与container通信的RMContainerTokenSecretManager</li>
+<li>客户端与AM通信的ClientToAMTokenSecretManagerInRM</li>
+<li>AM与RM通信的AMRMTokenSecretManager</li>
+<li>DelegationTokenRenewer</li>
+<li>启用了安全时，负责定时更新认证token。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>资源管理模块</strong></p>
+<ul>
+<li>
+<p>ResourceScheduler</p>
+<ul>
+<li>资源调度器，可通过yarn.resourcemanager.scheduler.class指定，ResourceManager默认使用的是org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler。</li>
+</ul>
+</li>
+<li>
+<p>SchedulerEventDispatcher</p>
+<ul>
+<li>用于处理SchedulerEventType类型的事件，其内部维护了一个存储SchedulerEvent的阻塞队列，并由一个后台线程从队列中取出资源请求事件，再调用ResourceScheduler进行处理。</li>
+</ul>
+</li>
+<li>
+<p>ReservationSystem</p>
+<ul>
+<li>资源预留系统，对应的实现有CapacityReservationSystem和FairReservationSystem。</li>
+</ul>
+</li>
+</ul>
+<p>此外，SystemMetricsPublisher负责发布RM的系统统计信息。AsyncDispatcher是中央事件处理分发器，ResourceManager启动时，通过它绑定了几种类型的事件的处理器，包括SchedulerEventType、RMAppEventType、ApplicationAttempt、RMAppAttemptEventType、RMNodeEventType、RMAppManagerEventType、AMLaunchEventType等。</p>
+<p>上述各service在ResourceManager中的启动顺序为：</p>
+<ol>
+<li>
+<p>AsyncDispatcher</p>
+</li>
+<li>
+<p>AdminService</p>
+</li>
+<li>
+<p>RMActiveServices：是个CompositeService（即service列表，ResourceManager本身就是一个CompositeService），用于管理ResourceManager中的“活动”服务（必须在active的ResourceManager上启动的服务，启用HA时，备份ResourceManager上不启动这些服务），包括以下（按启动顺序）：</p>
+<ul>
+<li>
+<p>RMSecretManagerService</p>
+</li>
+<li>
+<p>ContainerAllocationExpirer</p>
+</li>
+<li>
+<p>AMLivelinessMonitor</p>
+</li>
+<li>
+<p>RMNodeLabelsManager</p>
+</li>
+<li>
+<p>RMApplicationHistoryWriter</p>
+</li>
+<li>
+<p>SystemMetricsPublisher</p>
+</li>
+<li>
+<p>NodesListManager</p>
+</li>
+<li>
+<p>ResourceScheduler</p>
+</li>
+<li>
+<p>SchedulerEventDispatcher</p>
+</li>
+<li>
+<p>NMLivelinessMonitor</p>
+</li>
+<li>
+<p>ResourceTrackerService</p>
+</li>
+<li>
+<p>ApplicationMasterService</p>
+</li>
+<li>
+<p>ClientRMService</p>
+</li>
+<li>
+<p>ApplicationMasterLauncher</p>
+</li>
+<li>
+<p>DelegationTokenRenewer</p>
+</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maohong.github.io/20150601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Hong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hong's Notes">
+      <meta itemprop="description" content="Overthinking only lead to problems, actions lead to answers.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hong's Notes">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/20150601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/" class="post-title-link" itemprop="url">redis服务端连接断开问题诊断</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2015-06-01 21:29:28" itemprop="dateCreated datePublished" datetime="2015-06-01T21:29:28+08:00">2015-06-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="问题现象"><a class="markdownIt-Anchor" href="#问题现象"></a> 问题现象</h2>
+<p>前段时间，由于线上redis服务器的内存使用率达到了机器总内存的50%以上，导致内存数据的dump持久化一直失败。扩展到多台redis后，应用系统访问redis时，在业务量较少时，时不时会出现以下异常，当业务量较大，redis访问频率很高时，却不会发生这个异常，一时觉得很诡异。</p>
+<blockquote>
+<p>redis.clients.jedis.exceptions.JedisConnectionException: It seems like server has closed the connection.<br>
+at redis.clients.util.RedisInputStream.readLine(RedisInputStream.java:90) ~[jedis-2.1.0.jar:na]<br>
+at redis.clients.jedis.Protocol.processInteger(Protocol.java:110) ~[jedis-2.1.0.jar:na]<br>
+at redis.clients.jedis.Protocol.process(Protocol.java:70) ~[jedis-2.1.0.jar:na]<br>
+at redis.clients.jedis.Protocol.read(Protocol.java:131) ~[jedis-2.1.0.jar:na]<br>
+at redis.clients.jedis.Connection.getIntegerReply(Connection.java:188) ~[jedis-2.1.0.jar:na]<br>
+at redis.clients.jedis.Jedis.sismember(Jedis.java:1266) ~[jedis-2.1.0.jar:na]</p>
+</blockquote>
+<p>看提示，应该是服务端主动关闭了连接。查看了新上线的redis服务器的配置，有这么一项：</p>
+<blockquote>
+<p># Close the connection after a client is idle for N seconds (0 to disable)<br>
+timeout 120</p>
+</blockquote>
+<p>这项配置指的是客户端连接空闲超过多少秒后，服务端主动关闭连接，默认值0表示服务端永远不主动关闭。而op人员把服务器端的超时时间设置为了120秒。</p>
+<p>这就解释了发生这个异常的原因。客户端使用了一个连接池管理访问redis的所有连接，这些连接是长连接，当业务量较小时，客户端部分连接使用率较低，当两次使用之间的间隔超过120秒时，redis服务端就主动关闭了这个连接，而等客户端下次再使用这个连接对象时，发现服务端已经关闭了连接，进而报错。</p>
+<p>于是，再查看访问redis的系统（客户端）的配置：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/1.png" alt=""></p>
+<p>客户端使用的是jedis内置的连接池，看其源码本质上是基于apache commons-pool实现的，其中有一个eviction线程，用于回收idle对象，对于redis连接池来说，也就是回收空闲连接。</p>
+<p>JedisPoolConfig类继承自GenericObjectPoolConfig并覆盖了几项关于eviction线程的配置，具体如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/2.png" alt=""></p>
+<p><em><font color="red">_timeBetweenEvictionRunsMillis</font></em>：eviction线程的运行周期。默认是-1，表示不启动eviction线程。这里设置为30秒。</p>
+<p><em><font color="red">_minEvictableIdleTimeMillis</font></em>：对象处于idle状态的最长时间，默认是30分钟，这里设置为60秒。</p>
+<p>通过客户端的默认配置看，对象的最大空闲时长是小于服务端的配置的，应该不是配置上的问题了。</p>
+<p>于是，继续看是不是客户端代码使用上的问题。追踪到客户端代码如下：</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/3.png" alt=""></p>
+<p>可见，客户端首先尝试从本线程的ThreadLocal对象中获取jedis对象，若获取不到，再从masterJedisPool中取得jedis对象并放入ThreadLocal对象以便下次使用，并且jedis对象使用完毕后，没有从ThreadLocal中清除，也没有returnResource给masterJedisPool。</p>
+<p>因此，问题产生的原因就在于此。ThreadLocal中的这个jedis对象被取出后没有return，对于对象池来说是处于非idle状态，因此不会被对象池evict。<font color="red">当业务量大时，这个jedis会被频繁使用，服务端认为这个jedis对应的连接是非空闲的，或者空闲时间达不到120秒，不会主动关闭，所以没什么问题。然而当业务量小时，这个jedis使用频率很低，当两次之间的使用间隔超出120秒时，服务端会主动把这个jedis的连接关闭，第二次调用时，就会出现上面的报错。</font></p>
+<p>从代码开发者的角度来说，这么做的目的是避免频繁从pool中获取jedis对象和return jedis对象以提高性能。</p>
+<p>解决方案有两个：</p>
+<ol>
+<li>
+<p>在redis-cli下在线修改redis 的配置，把timeout改回为0，无需重启redis即可直接生效，但redis若重启，配置会恢复。</p>
+</li>
+<li>
+<p>修改客户端代码，使用完jedis对象后，从ThreadLocal中清除，再返回给连接池。</p>
+</li>
+</ol>
+<p>出于改动成本考虑，先采用了第一种方案，在线修改redis配置后，报错不再出现。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -267,13 +695,6 @@
       <span class="post-meta-item-text">发表于</span>
 
       <time title="创建时间：2015-03-28 17:44:58" itemprop="dateCreated datePublished" datetime="2015-03-28T17:44:58+08:00">2015-03-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-03-28 18:37:33" itemprop="dateModified" datetime="2025-03-28T18:37:33+08:00">2025-03-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -374,13 +795,6 @@
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-03-17 18:10:40" itemprop="dateModified" datetime="2025-03-17T18:10:40+08:00">2025-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">分类于</span>
@@ -478,13 +892,6 @@
       <span class="post-meta-item-text">发表于</span>
 
       <time title="创建时间：2014-01-21 20:53:38" itemprop="dateCreated datePublished" datetime="2014-01-21T20:53:38+08:00">2014-01-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-03-28 18:37:22" itemprop="dateModified" datetime="2025-03-28T18:37:22+08:00">2025-03-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -604,13 +1011,6 @@
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-03-28 18:37:28" itemprop="dateModified" datetime="2025-03-28T18:37:28+08:00">2025-03-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">分类于</span>
@@ -722,13 +1122,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">25k</span>
+    <span title="站点总字数">27k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:33</span>
+    <span title="站点阅读时长">1:39</span>
   </span>
 </div>
 <div class="busuanzi-count">

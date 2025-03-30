@@ -29,7 +29,7 @@
 <meta property="og:description" content="组内的一个系统新上线了通过图片url上传图片到图片存储平台的功能。其中使用了httpclient，通过向图片存储平台发送MultipartPostMethod上传图片。当业务量较大时，10个处理线程满负荷运行，上传图片时，发现应用系统服务器的tcp连接数陡然升高，峰值能达到几万个tcp连接数！ 排查系统代码并结合分析httpclient的源码发现，应用系统每次上传图片时，都会做new HttpCl">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2015-03-28T09:44:58.000Z">
-<meta property="article:modified_time" content="2025-03-28T10:37:33.787Z">
+<meta property="article:modified_time" content="2015-03-28T09:44:58.000Z">
 <meta property="article:author" content="Hong">
 <meta property="article:tag" content="httpclient">
 <meta property="article:tag" content="tcp连接数">
@@ -193,18 +193,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -272,13 +272,6 @@
       <span class="post-meta-item-text">Posted on</span>
 
       <time title="Created: 2015-03-28 17:44:58" itemprop="dateCreated datePublished" datetime="2015-03-28T17:44:58+08:00">2015-03-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-28 18:37:33" itemprop="dateModified" datetime="2025-03-28T18:37:33+08:00">2025-03-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -424,13 +417,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="Word count total">25k</span>
+    <span title="Word count total">27k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">1:33</span>
+    <span title="Reading time total">1:39</span>
   </span>
 </div>
 <div class="busuanzi-count">
