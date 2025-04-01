@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="问题现象 线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：  图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。 首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空">
 <meta property="og:type" content="article">
@@ -66,8 +66,11 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/pjax.js" defer></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
 <script src="/js/third-party/search/local-search.js" defer></script>
@@ -85,11 +88,14 @@
   <script src="/js/third-party/addtoany.js" defer></script>
 
   
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous" defer></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://maohong.github.io/20170622/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"}</script>
+  <script src="/js/third-party/quicklink.js" defer></script>
 
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
@@ -236,6 +242,8 @@
     </div>
 
     
+        <div class="pjax">
+        </div>
   </aside>
 
 
@@ -326,11 +334,11 @@
     
     <div class="post-body" itemprop="articleBody"><h2 id="问题现象"><a class="markdownIt-Anchor" href="#问题现象"></a> 问题现象</h2>
 <p>线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png" alt=""></p>
+<p><img data-src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png" alt=""></p>
 <p>图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。</p>
 <p>首先，从操作系统层面分析，swap空间使用较高，说明是系统物理内存不够用从而发生内存页交换，将部分内存数据搬至虚拟内存空间，也就是swap空间。但究竟是什么原因引起物理内存不足呢？因为Jvm堆大小是固定的，所以推断是因堆外内存占用空间较大引起。</p>
 <p>于是，使用jmap -histo:live <pid>把进程中的对象信息dump出来，dump信息如下：</pid></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/2.png" alt=""></p>
+<p><img data-src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/2.png" alt=""></p>
 <p>确实发现存在大量DirectByteBuffer对象，这说明内存中确实有大量引用了堆外内存的对象没有被回收！</p>
 <p>同时，内存中也对应存在着大量的sun.misc.Cleaner和java.nio.DirectByteBuffer$Deallocator对象。这两个类是用于回收堆外内存的。Cleaner对象是在DirectByteBuffer的构造函数中创建，其中封装了回收堆外内存的逻辑，Cleaner执行clean资源的操作是通过启动Deallocator线程实现的，这个线程把DirectByteBuffer对象引用的堆外内存做回收。</p>
 <p>那么问题来了：</p>
@@ -349,14 +357,14 @@
 <h2 id="解决方案"><a class="markdownIt-Anchor" href="#解决方案"></a> 解决方案</h2>
 <p>调整jvm参数，减少新生代大小为jvm堆空间的3/8，并指定堆外内存大小，调整后的jvm参数为-Xmn3840M -Xms10240M -Xmx10240M -XX:PermSize=512m -XX:MaxPermSize=512m -XX:MaxDirectMemorySize=4096m</p>
 <p>调整后，swap空间占用情况有所好转，但依然占用2G左右！如下图所示。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/3.png" alt=""></p>
+<p><img data-src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/3.png" alt=""></p>
 <p>4月21日调整参数重启服务后，在相当长的一段时间内，swap空间占用率极低，但在5月2日又出现swap空间使用率上升的情况。继续看了下jvm堆空间使用情况和full gc情况，如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/4.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/5.png" alt=""></p>
+<p><img data-src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/4.png" alt=""></p>
+<p><img data-src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/5.png" alt=""></p>
 <p>结合上面两张图，可见young gc较多，jvm堆空间整体使用率稳步上升，在5月2日与5月8日发生了两次full gc，并且每次发生fullgc后，jvm堆空间使用率下降较多，swap空间使用量只有小范围下降。这说明有一部分DirectByteBuffer对象在fullgc阶段做了回收，但依然有很多DirectByteBuffer对象没有被回收，仍然占用着堆外内存。</p>
 <p>选择一台机器，继续减小其堆空间，jvm参数为-Xmn2048M -Xms6144M -Xmx6144M -XX:PermSize=512m -XX:MaxPermSize=512m -XX:MaxDirectMemorySize=4096m，经过一段时间观察，交换空间使用率很低，应该没再发生内存页交换了，同时gc频率变高，jvm堆空间的使用率在正常范围，说明DirectByteBuffer对象被更及时的回收了。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/6.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/7.png" alt=""></p>
+<p><img data-src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/6.png" alt=""></p>
+<p><img data-src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/7.png" alt=""></p>
 <p><font color="red">由此可见，swap空间占用率高的原因主要还是JVM堆空间太高导致的堆外内存回收不及时。</font></p>
 <h2 id="遗留问题"><a class="markdownIt-Anchor" href="#遗留问题"></a> 遗留问题</h2>
 <p>看了下kafka-client的源码，接受消息时使用的是ByteBuffer，并没有使用DirectByteBuffer，所以很奇怪，这些大量的DirectByteBuffer对象是从哪生成的？哪里用到的？</p>

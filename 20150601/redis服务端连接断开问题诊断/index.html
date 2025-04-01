@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maohong.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.22.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"sections":["site_state","menu","social","links","tags","categories","archives"]},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":{"gitalk":{"text":"Load Gitalk","order":-1}},"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":-1,"unescape":true,"preload":true,"hints":true,"instant_search":true,"path":"/search.xml"}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="问题现象 前段时间，由于线上redis服务器的内存使用率达到了机器总内存的50%以上，导致内存数据的dump持久化一直失败。扩展到多台redis后，应用系统访问redis时，在业务量较少时，时不时会出现以下异常，当业务量较大，redis访问频率很高时，却不会发生这个异常，一时觉得很诡异。  redis.clients.jedis.exceptions.JedisConnectionExcepti">
 <meta property="og:type" content="article">
@@ -61,8 +61,11 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/pjax.js" defer></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
 <script src="/js/third-party/search/local-search.js" defer></script>
@@ -80,11 +83,14 @@
   <script src="/js/third-party/addtoany.js" defer></script>
 
   
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous" defer></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://maohong.github.io/20150601/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/"}</script>
+  <script src="/js/third-party/quicklink.js" defer></script>
 
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
@@ -231,6 +237,8 @@
     </div>
 
     
+        <div class="pjax">
+        </div>
   </aside>
 
 
@@ -338,15 +346,15 @@ timeout 120</p>
 <p>这项配置指的是客户端连接空闲超过多少秒后，服务端主动关闭连接，默认值0表示服务端永远不主动关闭。而op人员把服务器端的超时时间设置为了120秒。</p>
 <p>这就解释了发生这个异常的原因。客户端使用了一个连接池管理访问redis的所有连接，这些连接是长连接，当业务量较小时，客户端部分连接使用率较低，当两次使用之间的间隔超过120秒时，redis服务端就主动关闭了这个连接，而等客户端下次再使用这个连接对象时，发现服务端已经关闭了连接，进而报错。</p>
 <p>于是，再查看访问redis的系统（客户端）的配置：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/1.png" alt=""></p>
+<p><img data-src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/1.png" alt=""></p>
 <p>客户端使用的是jedis内置的连接池，看其源码本质上是基于apache commons-pool实现的，其中有一个eviction线程，用于回收idle对象，对于redis连接池来说，也就是回收空闲连接。</p>
 <p>JedisPoolConfig类继承自GenericObjectPoolConfig并覆盖了几项关于eviction线程的配置，具体如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/2.png" alt=""></p>
+<p><img data-src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/2.png" alt=""></p>
 <p><em><font color="red">_timeBetweenEvictionRunsMillis</font></em>：eviction线程的运行周期。默认是-1，表示不启动eviction线程。这里设置为30秒。</p>
 <p><em><font color="red">_minEvictableIdleTimeMillis</font></em>：对象处于idle状态的最长时间，默认是30分钟，这里设置为60秒。</p>
 <p>通过客户端的默认配置看，对象的最大空闲时长是小于服务端的配置的，应该不是配置上的问题了。</p>
 <p>于是，继续看是不是客户端代码使用上的问题。追踪到客户端代码如下：</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/3.png" alt=""></p>
+<p><img data-src="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/3.png" alt=""></p>
 <p>可见，客户端首先尝试从本线程的ThreadLocal对象中获取jedis对象，若获取不到，再从masterJedisPool中取得jedis对象并放入ThreadLocal对象以便下次使用，并且jedis对象使用完毕后，没有从ThreadLocal中清除，也没有returnResource给masterJedisPool。</p>
 <p>因此，问题产生的原因就在于此。ThreadLocal中的这个jedis对象被取出后没有return，对于对象池来说是处于非idle状态，因此不会被对象池evict。<font color="red">当业务量大时，这个jedis会被频繁使用，服务端认为这个jedis对应的连接是非空闲的，或者空闲时间达不到120秒，不会主动关闭，所以没什么问题。然而当业务量小时，这个jedis使用频率很低，当两次之间的使用间隔超出120秒时，服务端会主动把这个jedis的连接关闭，第二次调用时，就会出现上面的报错。</font></p>
 <p>从代码开发者的角度来说，这么做的目的是避免频繁从pool中获取jedis对象和return jedis对象以提高性能。</p>
